@@ -1,9 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:move_on/core/utils/functions/assets.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
+
+import '../../../../../core/utils/functions/app_router.dart';
 
 class SplashViewBody extends StatefulWidget {
   const SplashViewBody({super.key});
@@ -21,6 +24,7 @@ class _SplashViewBodyState extends State<SplashViewBody>
   void initState() {
     super.initState();
     initSlidingAnimation();
+    _navigateToQuote();
   }
 
   @override
@@ -101,6 +105,13 @@ class _SplashViewBodyState extends State<SplashViewBody>
       ),
     );
     _animationController.forward();
+  }
+
+  void _navigateToQuote() {
+    Future.delayed(const Duration(seconds: 5), () {
+      if (!mounted) return;
+      GoRouter.of(context).push(AppRouter.kQuoteView);
+    });
   }
 }
 
