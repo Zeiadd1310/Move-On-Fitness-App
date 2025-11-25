@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:move_on/core/animations/animation_builders.dart';
 import 'package:move_on/core/utils/functions/assets.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 
@@ -65,50 +66,53 @@ class _SplashViewBodyState extends State<SplashViewBody>
       duration: const Duration(milliseconds: 3200),
     );
     _animations = _SplashAnimations(
-      bgFade: CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.0, 0.45, curve: Curves.easeInOut),
+      bgFade: buildFadeAnimation(
+        controller: _animationController,
+        start: 0.0,
+        end: 0.45,
+        curve: Curves.easeInOut,
       ),
-      logoSlide: Tween<Offset>(begin: const Offset(0, 0.7), end: Offset.zero)
-          .animate(
-            CurvedAnimation(
-              parent: _animationController,
-              curve: const Interval(0.45, 0.80, curve: Curves.easeOutCubic),
-            ),
-          ),
-      logoFade: CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.45, 0.80, curve: Curves.easeIn),
+      logoSlide: buildSlideAnimation(
+        controller: _animationController,
+        start: 0.45,
+        end: 0.80,
+        begin: const Offset(0, 0.7),
       ),
-      logoScale: Tween<double>(begin: 0.88, end: 1.0).animate(
-        CurvedAnimation(
-          parent: _animationController,
-          curve: const Interval(0.45, 0.80, curve: Curves.easeOutBack),
-        ),
+      logoFade: buildFadeAnimation(
+        controller: _animationController,
+        start: 0.45,
+        end: 0.80,
       ),
-      textSlide: Tween<Offset>(begin: const Offset(0, 0.40), end: Offset.zero)
-          .animate(
-            CurvedAnimation(
-              parent: _animationController,
-              curve: const Interval(0.80, 1.0, curve: Curves.easeOutCubic),
-            ),
-          ),
-      textFade: CurvedAnimation(
-        parent: _animationController,
-        curve: const Interval(0.80, 1.0, curve: Curves.easeIn),
+      logoScale: buildScaleAnimation(
+        controller: _animationController,
+        start: 0.45,
+        end: 0.80,
+        begin: 0.88,
       ),
-      textScale: Tween<double>(begin: 0.95, end: 1.0).animate(
-        CurvedAnimation(
-          parent: _animationController,
-          curve: const Interval(0.80, 1.0, curve: Curves.easeOutQuad),
-        ),
+      textSlide: buildSlideAnimation(
+        controller: _animationController,
+        start: 0.80,
+        end: 1.0,
+        begin: const Offset(0, 0.4),
+      ),
+      textFade: buildFadeAnimation(
+        controller: _animationController,
+        start: 0.80,
+        end: 1.0,
+      ),
+      textScale: buildScaleAnimation(
+        controller: _animationController,
+        start: 0.80,
+        end: 1.0,
+        begin: 0.95,
+        curve: Curves.easeOutQuad,
       ),
     );
     _animationController.forward();
   }
 
   void _navigateToQuote() {
-    Future.delayed(const Duration(seconds: 5), () {
+    Future.delayed(const Duration(seconds: 6), () {
       if (!mounted) return;
       GoRouter.of(context).push(AppRouter.kQuoteView);
     });
