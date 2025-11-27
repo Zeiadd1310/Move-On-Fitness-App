@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:move_on/core/animations/animation_builders.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/core/utils/functions/assets.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
+import '../../../../../core/utils/functions/app_router.dart';
 
 class QuoteViewBody extends StatefulWidget {
   const QuoteViewBody({super.key});
@@ -66,12 +68,20 @@ class _QuoteViewBodyState extends State<QuoteViewBody>
       ),
     );
     _controller.forward();
+    _navigateToGetStarted();
   }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _navigateToGetStarted() {
+    Future.delayed(const Duration(seconds: 6), () {
+      if (!mounted) return;
+      GoRouter.of(context).push(AppRouter.kGetStartedView);
+    });
   }
 
   @override
@@ -155,10 +165,8 @@ class _QuoteAnimatedContent extends StatelessWidget {
           child: SlideTransition(
             position: animations.quoteSlide,
             child: Text(
-              '"Remember, physical fitness can neither be acquired by wishful thinking nor by outright purchase.”',
-              style: GoogleFonts.workSans(
-                textStyle: Styles.textStyle24.copyWith(color: Colors.white),
-              ),
+              '"Remember, physical fitness can neither be acquired by wishful thinking nor by outright purchase."',
+              style: GoogleFonts.workSans(textStyle: Styles.textStyle24),
               textAlign: TextAlign.center,
             ),
           ),
@@ -172,7 +180,6 @@ class _QuoteAnimatedContent extends StatelessWidget {
               '- Joseph Pilates',
               style: GoogleFonts.workSans(
                 textStyle: Styles.textStyle18.copyWith(
-                  color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
               ),

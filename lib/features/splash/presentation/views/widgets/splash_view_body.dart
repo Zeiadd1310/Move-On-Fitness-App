@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:move_on/core/animations/animation_builders.dart';
 import 'package:move_on/core/utils/functions/assets.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
+import 'package:move_on/features/splash/presentation/views/widgets/custom_background_widget.dart';
 
 import '../../../../../core/utils/functions/app_router.dart';
 
@@ -133,14 +134,7 @@ class _SplashBackground extends StatelessWidget {
           Colors.black.withOpacity(0.4),
           BlendMode.darken,
         ),
-        child: ImageFiltered(
-          imageFilter: ImageFilter.blur(sigmaX: 0.1, sigmaY: 0.1),
-          child: Image.asset(
-            AssetsData.splashBackground,
-            fit: BoxFit.cover,
-            alignment: AlignmentGeometry.xy(0.5, 0),
-          ),
-        ),
+        child: CustomBackgroundWidget(),
       ),
     );
   }
@@ -191,7 +185,6 @@ class _SplashContent extends StatelessWidget {
                     "Your personal AI fitness coach.",
                     style: GoogleFonts.workSans(
                       textStyle: Styles.textStyle18.copyWith(
-                        color: Colors.white,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
