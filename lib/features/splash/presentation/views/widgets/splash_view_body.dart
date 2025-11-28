@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:move_on/core/animations/animation_builders.dart';
 import 'package:move_on/core/utils/functions/assets.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
-import 'package:move_on/features/splash/presentation/views/widgets/custom_background_widget.dart';
+import 'package:move_on/core/widgets/custom_background_widget.dart';
 
 import '../../../../../core/utils/functions/app_router.dart';
 
@@ -134,7 +134,10 @@ class _SplashBackground extends StatelessWidget {
           Colors.black.withOpacity(0.4),
           BlendMode.darken,
         ),
-        child: CustomBackgroundWidget(),
+        child: CustomBackgroundWidget(
+          imagePath: AssetsData.splashBackground,
+          alignmentGeometry: AlignmentGeometry.xy(0.5, 0),
+        ),
       ),
     );
   }

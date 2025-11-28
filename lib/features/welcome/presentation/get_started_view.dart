@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:move_on/features/welcome/presentation/widgets/get_started_view_body.dart';
+import 'package:move_on/features/welcome/presentation/views/widgets/get_started_view_body.dart';
 
 class GetStartedView extends StatelessWidget {
   const GetStartedView({super.key});

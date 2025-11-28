@@ -4,8 +4,8 @@ import 'package:move_on/constants.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/assets.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
-import 'package:move_on/features/splash/presentation/views/widgets/custom_background_widget.dart';
-import 'package:move_on/features/welcome/presentation/widgets/custom_button.dart';
+import 'package:move_on/core/widgets/custom_background_widget.dart';
+import 'package:move_on/features/welcome/presentation/views/widgets/custom_button.dart';
 
 class GetStartedViewBody extends StatelessWidget {
   const GetStartedViewBody({super.key});
@@ -16,7 +16,10 @@ class GetStartedViewBody extends StatelessWidget {
       body: Stack(
         fit: StackFit.expand,
         children: [
-          const CustomBackgroundWidget(),
+          CustomBackgroundWidget(
+            imagePath: AssetsData.splashBackground,
+            alignmentGeometry: AlignmentGeometry.xy(0.5, 0),
+          ),
           Align(
             alignment: const Alignment(0, -0.6),
             child: Image.asset(
@@ -49,7 +52,11 @@ class GetStartedViewBody extends StatelessWidget {
                 text: 'Get Started',
                 width: 207,
                 height: 64,
+                radius: 20,
                 style: Styles.textStyle20.copyWith(fontWeight: FontWeight.bold),
+                onTap: () {
+                  GoRouter.of(context).push(AppRouter.kFirstWelcome);
+                },
               ),
             ),
           ),

@@ -9,6 +9,7 @@ class CustomButton extends StatelessWidget {
     required this.width,
     required this.height,
     required this.style,
+    required this.radius,
   });
 
   final VoidCallback? onTap;
@@ -16,6 +17,7 @@ class CustomButton extends StatelessWidget {
   final double width;
   final double height;
   final TextStyle style;
+  final double radius;
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +26,9 @@ class CustomButton extends StatelessWidget {
       child: Container(
         width: width,
         height: height,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: kPrimaryColor,
-          borderRadius: BorderRadius.all(Radius.circular(20)),
+          borderRadius: BorderRadius.circular(radius),
         ),
         child: Center(child: Text(text, style: style)),
       ),

@@ -1,12 +1,14 @@
 import 'package:move_on/features/splash/presentation/views/quote_view.dart';
 import 'package:move_on/features/splash/presentation/views/splash_view.dart';
 import 'package:go_router/go_router.dart';
+import 'package:move_on/features/welcome/presentation/first_welcome_view.dart';
 import 'package:move_on/features/welcome/presentation/get_started_view.dart';
 import 'package:move_on/features/welcome/presentation/sign_in_view.dart';
 
 abstract class AppRouter {
   static const kQuoteView = '/quoteView';
   static const kGetStartedView = '/getStartedView';
+  static const kFirstWelcome = '/firstWelcome';
   static const kSignInView = '/signInView';
   static const kHomeView = '/homeView';
 
@@ -17,6 +19,10 @@ abstract class AppRouter {
       GoRoute(
         path: kGetStartedView,
         builder: (context, state) => GetStartedView(),
+      ),
+      GoRoute(
+        path: kFirstWelcome,
+        builder: (context, state) => FirstWelcomeView(),
       ),
       GoRoute(
         path: kSignInView,
