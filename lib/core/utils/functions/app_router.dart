@@ -1,14 +1,22 @@
 import 'package:move_on/features/splash/presentation/views/quote_view.dart';
 import 'package:move_on/features/splash/presentation/views/splash_view.dart';
 import 'package:go_router/go_router.dart';
-import 'package:move_on/features/welcome/presentation/first_welcome_view.dart';
-import 'package:move_on/features/welcome/presentation/get_started_view.dart';
-import 'package:move_on/features/welcome/presentation/sign_in_view.dart';
+import 'package:move_on/features/welcome/presentation/views/fifth_welcome_view.dart';
+import 'package:move_on/features/welcome/presentation/views/first_welcome_view.dart';
+import 'package:move_on/features/welcome/presentation/views/fourth_welcome_view.dart';
+import 'package:move_on/features/welcome/presentation/views/get_started_view.dart';
+import 'package:move_on/features/welcome/presentation/views/second_welcome_view.dart';
+import 'package:move_on/features/welcome/presentation/views/sign_in_view.dart';
+import 'package:move_on/features/welcome/presentation/views/third_welcome_view.dart';
 
 abstract class AppRouter {
   static const kQuoteView = '/quoteView';
   static const kGetStartedView = '/getStartedView';
   static const kFirstWelcome = '/firstWelcome';
+  static const kSecondWelcome = '/secondWelcome';
+  static const kThirdWelcome = '/thirdWelcome';
+  static const kFourthWelcome = '/fourthWelcome';
+  static const kFifthWelcome = '/fifthWelcome';
   static const kSignInView = '/signInView';
   static const kHomeView = '/homeView';
 
@@ -23,6 +31,22 @@ abstract class AppRouter {
       GoRoute(
         path: kFirstWelcome,
         builder: (context, state) => FirstWelcomeView(),
+      ),
+      GoRoute(
+        path: kSecondWelcome,
+        builder: (context, state) => SecondWelcomeView(),
+      ),
+      GoRoute(
+        path: kThirdWelcome,
+        builder: (context, state) => ThirdWelcomeView(),
+      ),
+      GoRoute(
+        path: kFourthWelcome,
+        builder: (context, state) => FourthWelcomeView(),
+      ),
+      GoRoute(
+        path: kFifthWelcome,
+        builder: (context, state) => FifthWelcomeView(),
       ),
       GoRoute(
         path: kSignInView,
