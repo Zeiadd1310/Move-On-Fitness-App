@@ -34,6 +34,26 @@ class WelcomeScreenTemplate extends StatelessWidget {
             alignmentGeometry: AlignmentGeometry.xy(0.15, 0),
           ),
 
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: MediaQuery.of(context).size.height * 0.4,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withOpacity(0.7),
+                    Colors.black.withOpacity(0.9),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
           Align(
             alignment: AlignmentGeometry.topCenter,
             child: CustomTopIndicator(progress: progress),
@@ -65,9 +85,7 @@ class WelcomeScreenTemplate extends StatelessWidget {
               height: 51.85,
               radius: 30,
               style: Styles.textStyle20.copyWith(fontWeight: FontWeight.bold),
-              onTap: () {
-                context.push(nextRoute);
-              },
+              onTap: () => context.push(nextRoute),
             ),
           ),
 

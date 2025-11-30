@@ -13,7 +13,7 @@ class FifthWelcomeViewBody extends StatelessWidget {
       title: 'Nutrition & Diet Guidance',
       subtitle: 'Lose weight and get fit with Move On ! 🥒',
       progress: 1,
-      nextRoute: AppRouter.kHomeView,
+      nextRoute: AppRouter.kSignUpView,
     );
   }
 }
