@@ -89,7 +89,7 @@ class SignInViewBody extends StatelessWidget {
           CustomTextSpanWidget(
             text: '',
             textSpan: 'Forget Password',
-            route: AppRouter.kSignUpView,
+            route: AppRouter.kForgetPasswordView,
           ),
         ],
       ),

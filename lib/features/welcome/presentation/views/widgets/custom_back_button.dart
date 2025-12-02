@@ -9,12 +9,16 @@ class CustomBackButton extends StatelessWidget {
     this.iconColor = Colors.white,
     this.iconSize = 24.0,
     this.radius = 12.0,
+    required this.width,
+    required this.height,
   });
 
   final VoidCallback? onTap;
   final Color iconColor;
   final double iconSize;
   final double radius;
+  final double width;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +28,18 @@ class CustomBackButton extends StatelessWidget {
       },
 
       child: Container(
-        width: 57.29,
-        height: 56,
+        width: width,
+        height: height,
         decoration: BoxDecoration(
           color: kBackColor,
           borderRadius: BorderRadius.circular(radius),
         ),
         child: Center(
-          child: Icon(Icons.arrow_back, color: iconColor, size: iconSize),
+          child: Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: iconColor,
+            size: iconSize,
+          ),
         ),
       ),
     );

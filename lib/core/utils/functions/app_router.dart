@@ -1,3 +1,4 @@
+import 'package:move_on/features/sign/presentation/views/forget_password_view.dart';
 import 'package:move_on/features/sign/presentation/views/sign_up_view.dart';
 import 'package:move_on/features/splash/presentation/views/quote_view.dart';
 import 'package:move_on/features/splash/presentation/views/splash_view.dart';
@@ -20,6 +21,7 @@ abstract class AppRouter {
   static const kFifthWelcome = '/fifthWelcome';
   static const kSignUpView = '/signUpView';
   static const kSignInView = '/signInView';
+  static const kForgetPasswordView = '/forgetPasswordView';
   static const kHomeView = '/homeView';
 
   static final router = GoRouter(
@@ -57,6 +59,10 @@ abstract class AppRouter {
       GoRoute(
         path: kSignInView,
         builder: (context, state) => const SignInView(),
+      ),
+      GoRoute(
+        path: kForgetPasswordView,
+        builder: (context, state) => const ForgetPasswordView(),
       ),
       // GoRoute(path: kHomeView, builder: (context, state) => const HomeView()),
     ],

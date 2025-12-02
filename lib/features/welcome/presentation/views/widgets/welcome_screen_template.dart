@@ -91,7 +91,7 @@ class WelcomeScreenTemplate extends StatelessWidget {
 
           Align(
             alignment: const Alignment(-0.9, 0.9),
-            child: const CustomBackButton(radius: 30),
+            child: const CustomBackButton(radius: 30, height: 56, width: 57.29),
           ),
         ],
       ),
