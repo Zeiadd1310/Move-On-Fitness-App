@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:move_on/core/utils/functions/app_router.dart' show AppRouter;
+import 'package:move_on/core/utils/functions/app_router.dart';
 
 void main() {
   runApp(const MoveOn());

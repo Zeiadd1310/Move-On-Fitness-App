@@ -10,6 +10,7 @@ class CustomButton extends StatelessWidget {
     required this.height,
     required this.style,
     required this.radius,
+    // this.icon,
   });
 
   final VoidCallback? onTap;
@@ -18,6 +19,7 @@ class CustomButton extends StatelessWidget {
   final double height;
   final TextStyle style;
   final double radius;
+  // final IconData? icon;
 
   @override
   Widget build(BuildContext context) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/custom_text_field.dart';
@@ -65,6 +66,9 @@ class SignInViewBody extends StatelessWidget {
             height: 56,
             style: Styles.textStyle16.copyWith(fontFamily: 'Work Sans'),
             radius: 19,
+            onTap: () {
+              GoRouter.of(context).push(AppRouter.kAssessmentOneView);
+            },
           ),
           SizedBox(height: 50),
           Row(
