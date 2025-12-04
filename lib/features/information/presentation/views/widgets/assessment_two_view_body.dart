@@ -4,8 +4,8 @@ import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/features/information/presentation/views/widgets/custom_assessment_options_widget.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_back_button.dart';
 
-class AssessmentOneViewBody extends StatelessWidget {
-  const AssessmentOneViewBody({super.key});
+class AssessmentTwoViewBody extends StatelessWidget {
+  const AssessmentTwoViewBody({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,10 +40,14 @@ class AssessmentOneViewBody extends StatelessWidget {
               SizedBox(height: height * 0.04),
               Expanded(
                 child: CustomAssessmentOptionsWidget(
-                  title: 'Your Regular Physical Activity Level ?',
+                  title: 'What’s your fitness\ngoal/target?',
                   subtitle: 'This helps us create your personalized plan',
-                  options: const ['Beginner', 'Intermediate', 'Advanced'],
-                  nextRoute: AppRouter.kAssessmentTwoView,
+                  options: const [
+                    'Lose Weight',
+                    'Gain Muscle',
+                    'Gain Muscles and Lose Weight',
+                  ],
+                  nextRoute: AppRouter.kAssessmentThreeView,
                 ),
               ),
             ],

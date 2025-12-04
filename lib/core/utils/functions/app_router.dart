@@ -1,4 +1,6 @@
 import 'package:move_on/features/information/presentation/views/assessment_one_view.dart';
+import 'package:move_on/features/information/presentation/views/assessment_three_view.dart';
+import 'package:move_on/features/information/presentation/views/assessment_two_view.dart';
 import 'package:move_on/features/sign/presentation/views/forget_password_view.dart';
 import 'package:move_on/features/sign/presentation/views/sign_up_view.dart';
 import 'package:move_on/features/splash/presentation/views/quote_view.dart';
@@ -71,14 +73,14 @@ abstract class AppRouter {
         path: kAssessmentOneView,
         builder: (context, state) => const AssessmentOneView(),
       ),
-      // GoRoute(
-      //   path: kAssessmentTwoView,
-      //   builder: (context, state) => const AssessmentTwoView(),
-      // ),
-      // GoRoute(
-      //   path: kAssessmentThreeView,
-      //   builder: (context, state) => const AssessmentThreeView(),
-      // ),
+      GoRoute(
+        path: kAssessmentTwoView,
+        builder: (context, state) => const AssessmentTwoView(),
+      ),
+      GoRoute(
+        path: kAssessmentThreeView,
+        builder: (context, state) => const AssessmentThreeView(),
+      ),
     ],
   );
 }
