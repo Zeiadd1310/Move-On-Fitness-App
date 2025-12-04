@@ -56,7 +56,7 @@ class _CustomAssessmentOptionsWidgetState
           child: Text(
             widget.title,
             textAlign: TextAlign.center,
-            style: Styles.textStyle30.copyWith(fontFamily: 'Work Sans'),
+            style: Styles.textStyle36.copyWith(fontFamily: 'Work Sans'),
           ),
         ),
         SizedBox(height: height * 0.05),
