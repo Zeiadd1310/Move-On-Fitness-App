@@ -13,6 +13,11 @@ import 'package:move_on/features/welcome/presentation/views/get_started_view.dar
 import 'package:move_on/features/welcome/presentation/views/second_welcome_view.dart';
 import 'package:move_on/features/sign/presentation/views/sign_in_view.dart';
 import 'package:move_on/features/welcome/presentation/views/third_welcome_view.dart';
+import 'package:move_on/features/workout/presentation/views/five_days_view.dart';
+import 'package:move_on/features/workout/presentation/views/four_days_view.dart';
+import 'package:move_on/features/workout/presentation/views/one_day_view.dart';
+import 'package:move_on/features/workout/presentation/views/three_days_view.dart';
+import 'package:move_on/features/workout/presentation/views/two_days_view.dart';
 
 abstract class AppRouter {
   static const kQuoteView = '/quoteView';
@@ -28,6 +33,11 @@ abstract class AppRouter {
   static const kAssessmentOneView = '/assessmentOneView';
   static const kAssessmentTwoView = '/assessmentTwoView';
   static const kAssessmentThreeView = '/assessmentThreeView';
+  static const kOneDayView = '/oneDayView';
+  static const kTwoDaysView = '/twoDaysView';
+  static const kThreeDaysView = '/threeDaysView';
+  static const kFourDaysView = '/fourDaysView';
+  static const kFiveDaysView = '/fiveDaysView';
 
   static final router = GoRouter(
     routes: [
@@ -80,6 +90,26 @@ abstract class AppRouter {
       GoRoute(
         path: kAssessmentThreeView,
         builder: (context, state) => const AssessmentThreeView(),
+      ),
+      GoRoute(
+        path: kOneDayView,
+        builder: (context, state) => const OneDayView(),
+      ),
+      GoRoute(
+        path: kTwoDaysView,
+        builder: (context, state) => const TwoDaysView(),
+      ),
+      GoRoute(
+        path: kThreeDaysView,
+        builder: (context, state) => const ThreeDaysView(),
+      ),
+      GoRoute(
+        path: kFourDaysView,
+        builder: (context, state) => const FourDaysView(),
+      ),
+      GoRoute(
+        path: kFiveDaysView,
+        builder: (context, state) => const FiveDaysView(),
       ),
     ],
   );

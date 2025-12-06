@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_back_button.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_button.dart';
@@ -105,7 +107,7 @@ class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
               ),
               const Spacer(),
               CustomButton(
-                text: 'Continue  →',
+                text: 'Continue',
                 width: width * 0.9,
                 height: 56,
                 style: Styles.textStyle18.copyWith(
@@ -113,6 +115,9 @@ class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
                   fontWeight: FontWeight.w600,
                 ),
                 radius: 19,
+                onTap: () {
+                  GoRouter.of(context).push(AppRouter.kOneDayView);
+                },
               ),
             ],
           ),
