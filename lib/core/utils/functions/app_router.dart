@@ -13,6 +13,7 @@ import 'package:move_on/features/welcome/presentation/views/get_started_view.dar
 import 'package:move_on/features/welcome/presentation/views/second_welcome_view.dart';
 import 'package:move_on/features/sign/presentation/views/sign_in_view.dart';
 import 'package:move_on/features/welcome/presentation/views/third_welcome_view.dart';
+import 'package:move_on/features/workout/presentation/views/about_workout_view.dart';
 import 'package:move_on/features/workout/presentation/views/five_days_view.dart';
 import 'package:move_on/features/workout/presentation/views/four_days_view.dart';
 import 'package:move_on/features/workout/presentation/views/one_day_view.dart';
@@ -40,6 +41,7 @@ abstract class AppRouter {
   static const kFourDaysView = '/fourDaysView';
   static const kFiveDaysView = '/fiveDaysView';
   static const kWorkoutDetailsView = '/workoutDetailsView';
+  static const kAboutWorkoutView = '/aboutWorkoutView';
 
   static final router = GoRouter(
     routes: [
@@ -116,6 +118,10 @@ abstract class AppRouter {
       GoRoute(
         path: kWorkoutDetailsView,
         builder: (context, state) => const WorkoutDetailsView(),
+      ),
+      GoRoute(
+        path: kAboutWorkoutView,
+        builder: (context, state) => const AboutWorkoutView(),
       ),
     ],
   );
