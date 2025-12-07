@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_button.dart';
 
@@ -8,15 +10,13 @@ class CustomWorkoutCard extends StatelessWidget {
     required this.title,
     required this.subtitle,
     required this.imagePath,
-
-    required this.onStart,
+    this.onStart,
   });
 
   final String title;
   final String subtitle;
   final String imagePath;
-
-  final VoidCallback onStart;
+  final VoidCallback? onStart;
 
   @override
   Widget build(BuildContext context) {
@@ -73,6 +73,9 @@ class CustomWorkoutCard extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                     radius: 19,
+                    onTap: () {
+                      GoRouter.of(context).push(AppRouter.kWorkoutDetailsView);
+                    },
                   ),
                 ],
               ),
