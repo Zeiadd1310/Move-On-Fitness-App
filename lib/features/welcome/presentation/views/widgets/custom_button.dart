@@ -10,7 +10,7 @@ class CustomButton extends StatelessWidget {
     required this.height,
     required this.style,
     required this.radius,
-    // this.icon,
+    this.icon,
   });
 
   final VoidCallback? onTap;
@@ -19,7 +19,7 @@ class CustomButton extends StatelessWidget {
   final double height;
   final TextStyle style;
   final double radius;
-  // final IconData? icon;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,18 @@ class CustomButton extends StatelessWidget {
           color: kPrimaryColor,
           borderRadius: BorderRadius.circular(radius),
         ),
-        child: Center(child: Text(text, style: style)),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(text, style: style),
+              if (icon != null) ...[
+                const SizedBox(width: 8),
+                Icon(icon, color: Colors.white, size: 20),
+              ],
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -67,18 +67,16 @@ class SignInViewBody extends StatelessWidget {
             style: Styles.textStyle16.copyWith(fontFamily: 'Work Sans'),
             radius: 19,
             onTap: () {
-              GoRouter.of(context).push(AppRouter.kAssessmentOneView);
+              GoRouter.of(context).push(AppRouter.kBodyDataView);
             },
           ),
           SizedBox(height: 50),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SocialIcon(icon: FontAwesomeIcons.instagram),
-              const SizedBox(width: 16),
+              SocialIcon(icon: FontAwesomeIcons.google),
+              const SizedBox(width: 20),
               SocialIcon(icon: FontAwesomeIcons.facebook),
-              const SizedBox(width: 16),
-              SocialIcon(icon: FontAwesomeIcons.linkedin),
             ],
           ),
 

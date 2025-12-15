@@ -34,7 +34,7 @@ class CustomWorkoutCard extends StatelessWidget {
               children: [
                 Image.asset(
                   imagePath,
-                  height: 250,
+                  height: 175,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),

@@ -27,14 +27,14 @@ class ThreeDaysViewBody extends StatelessWidget {
 
                 onStart: () {},
               ),
-              SizedBox(height: height * 0.03),
+              SizedBox(height: height * 0.01),
               CustomWorkoutCard(
                 title: 'Pull Day',
                 subtitle: 'Day 2',
                 imagePath: 'assets/images/pull day.png',
                 onStart: () {},
               ),
-              SizedBox(height: height * 0.03),
+              SizedBox(height: height * 0.01),
               CustomWorkoutCard(
                 title: 'Leg Day',
                 subtitle: 'Day 3',

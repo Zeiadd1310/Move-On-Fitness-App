@@ -63,7 +63,7 @@ class FiveDaysViewBody extends StatelessWidget {
                 style: Styles.textStyle14,
                 radius: 15,
                 onTap: () {
-                  GoRouter.of(context).push(AppRouter.kFiveDaysView);
+                  GoRouter.of(context).push(AppRouter.kBodyDataView);
                 },
               ),
             ],
