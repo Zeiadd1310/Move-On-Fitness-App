@@ -67,7 +67,7 @@ class SignInViewBody extends StatelessWidget {
             style: Styles.textStyle16.copyWith(fontFamily: 'Work Sans'),
             radius: 19,
             onTap: () {
-              GoRouter.of(context).push(AppRouter.kBodyDataView);
+              GoRouter.of(context).push(AppRouter.kProfileView);
             },
           ),
           SizedBox(height: 50),

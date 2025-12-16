@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 
 import 'package:move_on/core/utils/functions/styles.dart';
@@ -90,6 +91,9 @@ class SignUpViewBody extends StatelessWidget {
             height: 56,
             style: Styles.textStyle16.copyWith(fontFamily: 'Work Sans'),
             radius: 19,
+            onTap: () {
+              GoRouter.of(context).push(AppRouter.kBodyDataView);
+            },
           ),
           SizedBox(height: 30),
           CustomTextSpanWidget(

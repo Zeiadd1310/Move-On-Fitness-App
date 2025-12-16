@@ -1,6 +1,7 @@
 import 'package:move_on/features/information/presentation/views/assessment_one_view.dart';
 import 'package:move_on/features/information/presentation/views/assessment_three_view.dart';
 import 'package:move_on/features/information/presentation/views/assessment_two_view.dart';
+import 'package:move_on/features/profile/presentation/profile_view.dart';
 import 'package:move_on/features/sign/presentation/views/forget_password_view.dart';
 import 'package:move_on/features/sign/presentation/views/sign_up_view.dart';
 import 'package:move_on/features/splash/presentation/views/quote_view.dart';
@@ -44,6 +45,7 @@ abstract class AppRouter {
   static const kWorkoutDetailsView = '/workoutDetailsView';
   static const kAboutWorkoutView = '/aboutWorkoutView';
   static const kBodyDataView = '/bodyDataView';
+  static const kProfileView = '/profileView';
 
   static final router = GoRouter(
     routes: [
@@ -128,6 +130,10 @@ abstract class AppRouter {
       GoRoute(
         path: kBodyDataView,
         builder: (context, state) => const BodyDataView(),
+      ),
+      GoRoute(
+        path: kProfileView,
+        builder: (context, state) => const ProfileView(),
       ),
     ],
   );
