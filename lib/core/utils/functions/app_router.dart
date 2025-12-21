@@ -1,7 +1,9 @@
 import 'package:move_on/features/information/presentation/views/assessment_one_view.dart';
 import 'package:move_on/features/information/presentation/views/assessment_three_view.dart';
 import 'package:move_on/features/information/presentation/views/assessment_two_view.dart';
+import 'package:move_on/features/profile/presentation/edit_profile_view.dart';
 import 'package:move_on/features/profile/presentation/profile_view.dart';
+import 'package:move_on/features/profile/presentation/settings_view.dart';
 import 'package:move_on/features/sign/presentation/views/forget_password_view.dart';
 import 'package:move_on/features/sign/presentation/views/sign_up_view.dart';
 import 'package:move_on/features/splash/presentation/views/quote_view.dart';
@@ -46,6 +48,8 @@ abstract class AppRouter {
   static const kAboutWorkoutView = '/aboutWorkoutView';
   static const kBodyDataView = '/bodyDataView';
   static const kProfileView = '/profileView';
+  static const kEditProfileView = '/editProfileView';
+  static const kSettingsView = '/settingsView';
 
   static final router = GoRouter(
     routes: [
@@ -134,6 +138,14 @@ abstract class AppRouter {
       GoRoute(
         path: kProfileView,
         builder: (context, state) => const ProfileView(),
+      ),
+      GoRoute(
+        path: kEditProfileView,
+        builder: (context, state) => const EditProfileView(),
+      ),
+      GoRoute(
+        path: kSettingsView,
+        builder: (context, state) => const SettingsView(),
       ),
     ],
   );

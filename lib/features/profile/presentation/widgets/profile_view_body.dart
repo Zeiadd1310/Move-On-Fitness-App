@@ -1,12 +1,10 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
-import 'package:move_on/core/utils/functions/styles.dart';
+import 'package:move_on/core/utils/functions/app_router.dart';
+import 'package:move_on/features/profile/presentation/widgets/logout_bottom_sheet.dart';
 import 'package:move_on/features/profile/presentation/widgets/profile_action_tile.dart';
-import 'package:move_on/features/profile/presentation/widgets/profile_stat.dart';
-import 'package:move_on/features/profile/presentation/widgets/profile_vertical_divider.dart';
-part 'profile_header_card.dart';
+import 'package:move_on/features/profile/presentation/widgets/profile_header_card.dart';
 
 class ProfileViewBody extends StatelessWidget {
   const ProfileViewBody({
@@ -62,19 +60,36 @@ class ProfileViewBody extends StatelessWidget {
                 ProfileActionTile(
                   icon: Icons.person_outline,
                   title: 'Edit Profile',
-                  onTap: () {},
+                  onTap: () {
+                    GoRouter.of(context).push(AppRouter.kEditProfileView);
+                  },
                 ),
                 const SizedBox(height: 12),
                 ProfileActionTile(
                   icon: Icons.settings_outlined,
                   title: 'Settings',
-                  onTap: () {},
+                  onTap: () {
+                    GoRouter.of(context).push(AppRouter.kSettingsView);
+                  },
                 ),
                 const SizedBox(height: 12),
                 ProfileActionTile(
                   icon: Icons.logout,
                   title: 'Logout',
-                  onTap: () {},
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      backgroundColor: Colors.transparent,
+                      isScrollControlled: true,
+                      builder: (_) {
+                        return LogoutBottomSheet(
+                          onLogout: () {
+                            GoRouter.of(context).go(AppRouter.kSignInView);
+                          },
+                        );
+                      },
+                    );
+                  },
                 ),
               ],
             ),

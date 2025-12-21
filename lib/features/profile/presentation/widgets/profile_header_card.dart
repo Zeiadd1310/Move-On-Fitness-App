@@ -1,4 +1,9 @@
-part of 'profile_view_body.dart';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:move_on/constants.dart';
+import 'package:move_on/core/utils/functions/styles.dart';
+import 'package:move_on/features/profile/presentation/widgets/profile_stat.dart';
+import 'package:move_on/features/profile/presentation/widgets/profile_vertical_divider.dart';
 
 class ProfileHeaderCard extends StatelessWidget {
   const ProfileHeaderCard({
