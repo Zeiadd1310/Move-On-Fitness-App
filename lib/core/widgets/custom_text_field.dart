@@ -8,12 +8,16 @@ class CustomFormTextField extends StatefulWidget {
     this.isPassword = false,
     this.onChanged,
     this.prefixIcon,
+    this.borderColor,
+    this.width,
   });
 
   final Function(String)? onChanged;
   final String? hintText;
   final bool isPassword;
   final IconData? prefixIcon;
+  final Color? borderColor;
+  final double? width;
 
   @override
   State<CustomFormTextField> createState() => _CustomFormTextFieldState();
@@ -71,11 +75,14 @@ class _CustomFormTextFieldState extends State<CustomFormTextField> {
 
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(19),
-            borderSide: const BorderSide(color: Color(0xff24262B)),
+            borderSide: BorderSide(
+              width: widget.width ?? 0,
+              color: widget.borderColor ?? Color(0xff24262B),
+            ),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(19),
-            borderSide: const BorderSide(color: Color(0xff24262B)),
+            borderSide: BorderSide(color: Color(0xff24262B)),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(19),

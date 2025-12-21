@@ -11,6 +11,7 @@ class CustomButton extends StatelessWidget {
     required this.style,
     required this.radius,
     this.icon,
+    this.color,
   });
 
   final VoidCallback? onTap;
@@ -20,7 +21,7 @@ class CustomButton extends StatelessWidget {
   final TextStyle style;
   final double radius;
   final IconData? icon;
-
+  final Color? color;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -29,7 +30,7 @@ class CustomButton extends StatelessWidget {
         width: width,
         height: height,
         decoration: BoxDecoration(
-          color: kPrimaryColor,
+          color: color ?? kPrimaryColor,
           borderRadius: BorderRadius.circular(radius),
         ),
         child: Center(
