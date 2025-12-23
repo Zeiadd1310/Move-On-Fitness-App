@@ -83,6 +83,9 @@ class ProfileViewBody extends StatelessWidget {
                       isScrollControlled: true,
                       builder: (_) {
                         return LogoutBottomSheet(
+                          text: 'Are you sure you want to\nlogout?',
+                          option1: 'Cancel',
+                          option2: 'Yes, logout',
                           onLogout: () {
                             GoRouter.of(context).go(AppRouter.kSignInView);
                           },

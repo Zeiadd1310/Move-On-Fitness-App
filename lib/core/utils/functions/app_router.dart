@@ -2,6 +2,8 @@ import 'package:move_on/features/information/presentation/views/assessment_one_v
 import 'package:move_on/features/information/presentation/views/assessment_three_view.dart';
 import 'package:move_on/features/information/presentation/views/assessment_two_view.dart';
 import 'package:move_on/features/profile/presentation/edit_profile_view.dart';
+import 'package:move_on/features/profile/presentation/notification_settings_view.dart';
+import 'package:move_on/features/profile/presentation/password_settings_view.dart';
 import 'package:move_on/features/profile/presentation/profile_view.dart';
 import 'package:move_on/features/profile/presentation/settings_view.dart';
 import 'package:move_on/features/sign/presentation/views/forget_password_view.dart';
@@ -50,6 +52,8 @@ abstract class AppRouter {
   static const kProfileView = '/profileView';
   static const kEditProfileView = '/editProfileView';
   static const kSettingsView = '/settingsView';
+  static const kNotificationSettingsView = '/notificationSettingsView';
+  static const kPasswordSettingsView = '/passwordSettingsView';
 
   static final router = GoRouter(
     routes: [
@@ -146,6 +150,14 @@ abstract class AppRouter {
       GoRoute(
         path: kSettingsView,
         builder: (context, state) => const SettingsView(),
+      ),
+      GoRoute(
+        path: kNotificationSettingsView,
+        builder: (context, state) => const NotificationSettingsView(),
+      ),
+      GoRoute(
+        path: kPasswordSettingsView,
+        builder: (context, state) => const PasswordSettingsView(),
       ),
     ],
   );

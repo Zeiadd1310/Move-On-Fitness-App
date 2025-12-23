@@ -49,6 +49,11 @@ class EditProfileViewBody extends StatelessWidget {
                 profileImageUrl: profileImageUrl,
                 profileImageAsset: profileImageAsset,
                 profileImageFile: profileImageFile,
+                isEditMode: true,
+                onImageEdit: () {
+                  // TODO: Implement image picker functionality
+                  print('Edit image tapped');
+                },
               ),
             ),
             Positioned(

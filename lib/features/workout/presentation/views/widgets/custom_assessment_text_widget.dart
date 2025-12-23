@@ -3,8 +3,9 @@ import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_back_button.dart';
 
 class CustomAssessmentTextWidget extends StatelessWidget {
-  const CustomAssessmentTextWidget({super.key});
+  const CustomAssessmentTextWidget({super.key, this.text = 'Assessment'});
 
+  final String? text;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -20,7 +21,7 @@ class CustomAssessmentTextWidget extends StatelessWidget {
           CustomBackButton(width: 48, height: 48),
           const SizedBox(width: 12),
           Text(
-            'Assessment',
+            text ?? 'Assessment',
             style: Styles.textStyle24.copyWith(
               fontFamily: 'Work Sans',
               fontWeight: FontWeight.bold,

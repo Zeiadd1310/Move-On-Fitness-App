@@ -18,6 +18,8 @@ class ProfileHeaderCard extends StatelessWidget {
     this.profileImageUrl,
     this.profileImageAsset,
     this.profileImageFile,
+    this.isEditMode = false,
+    this.onImageEdit,
   });
 
   final String title;
@@ -36,6 +38,12 @@ class ProfileHeaderCard extends StatelessWidget {
 
   /// File path (e.g., '/path/to/image.jpg')
   final String? profileImageFile;
+
+  /// Whether this card is in edit mode
+  final bool isEditMode;
+
+  /// Callback when the edit image button is tapped
+  final VoidCallback? onImageEdit;
 
   ImageProvider? _getImageProvider() {
     if (profileImageUrl != null) {
@@ -86,13 +94,42 @@ class ProfileHeaderCard extends StatelessWidget {
           ),
           child: Column(
             children: [
-              CircleAvatar(
-                radius: 60,
-                backgroundColor: Colors.black54,
-                backgroundImage: _getImageProvider(),
-                child: _getImageProvider() == null
-                    ? const Icon(Icons.person, color: Colors.white, size: 60)
-                    : null,
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 60,
+                    backgroundColor: Colors.black54,
+                    backgroundImage: _getImageProvider(),
+                    child: _getImageProvider() == null
+                        ? const Icon(
+                            Icons.person,
+                            color: Colors.white,
+                            size: 60,
+                          )
+                        : null,
+                  ),
+                  if (isEditMode)
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: GestureDetector(
+                        onTap: onImageEdit,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: kPrimaryColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.edit_outlined,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
               const SizedBox(height: 12),
               Text(

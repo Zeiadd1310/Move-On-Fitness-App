@@ -3,9 +3,18 @@ import 'package:move_on/constants.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 
 class LogoutBottomSheet extends StatelessWidget {
-  const LogoutBottomSheet({super.key, required this.onLogout});
+  const LogoutBottomSheet({
+    super.key,
+    required this.onLogout,
+    required this.text,
+    required this.option1,
+    required this.option2,
+  });
 
   final VoidCallback onLogout;
+  final String text;
+  final String option1;
+  final String option2;
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +37,7 @@ class LogoutBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Are you sure you want to\nlogout?',
+            text,
             textAlign: TextAlign.center,
             style: Styles.textStyle20.copyWith(
               color: Colors.black,
@@ -52,7 +61,7 @@ class LogoutBottomSheet extends StatelessWidget {
                       backgroundColor: Colors.white,
                     ),
                     child: Text(
-                      'Cancel',
+                      option1,
                       style: Styles.textStyle20.copyWith(
                         color: kPrimaryColor,
                         fontFamily: 'League Spartan',
@@ -73,7 +82,7 @@ class LogoutBottomSheet extends StatelessWidget {
                       backgroundColor: Colors.black,
                     ),
                     child: Text(
-                      'Yes, logout',
+                      option2,
                       style: Styles.textStyle20.copyWith(
                         color: Colors.white,
                         fontFamily: 'League Spartan',
