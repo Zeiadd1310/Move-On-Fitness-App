@@ -1,3 +1,4 @@
+import 'package:move_on/features/home/presentation/views/home_view.dart';
 import 'package:move_on/features/information/presentation/views/assessment_one_view.dart';
 import 'package:move_on/features/information/presentation/views/assessment_three_view.dart';
 import 'package:move_on/features/information/presentation/views/assessment_two_view.dart';
@@ -54,6 +55,7 @@ abstract class AppRouter {
   static const kSettingsView = '/settingsView';
   static const kNotificationSettingsView = '/notificationSettingsView';
   static const kPasswordSettingsView = '/passwordSettingsView';
+  static const kHomeView = '/homeView';
 
   static final router = GoRouter(
     routes: [
@@ -159,6 +161,7 @@ abstract class AppRouter {
         path: kPasswordSettingsView,
         builder: (context, state) => const PasswordSettingsView(),
       ),
+      GoRoute(path: kHomeView, builder: (context, state) => const HomeView()),
     ],
   );
 }

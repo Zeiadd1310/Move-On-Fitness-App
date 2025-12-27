@@ -15,6 +15,7 @@ class MoveOn extends StatelessWidget {
       routerConfig: AppRouter.router,
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: Colors.black,
         textTheme: GoogleFonts.poppinsTextTheme().apply(
           bodyColor: Colors.white,
           displayColor: Colors.white,
