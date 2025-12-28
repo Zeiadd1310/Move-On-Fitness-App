@@ -1,4 +1,5 @@
 import 'package:move_on/features/home/presentation/views/home_view.dart';
+import 'package:move_on/features/home/presentation/views/progress_tracking_view.dart';
 import 'package:move_on/features/information/presentation/views/assessment_one_view.dart';
 import 'package:move_on/features/information/presentation/views/assessment_three_view.dart';
 import 'package:move_on/features/information/presentation/views/assessment_two_view.dart';
@@ -56,6 +57,7 @@ abstract class AppRouter {
   static const kNotificationSettingsView = '/notificationSettingsView';
   static const kPasswordSettingsView = '/passwordSettingsView';
   static const kHomeView = '/homeView';
+  static const kProgressTrackingView = '/progressTrackingView';
 
   static final router = GoRouter(
     routes: [
@@ -162,6 +164,10 @@ abstract class AppRouter {
         builder: (context, state) => const PasswordSettingsView(),
       ),
       GoRoute(path: kHomeView, builder: (context, state) => const HomeView()),
+      GoRoute(
+        path: kProgressTrackingView,
+        builder: (context, state) => const ProgressTrackingView(),
+      ),
     ],
   );
 }

@@ -63,7 +63,11 @@ class HomeViewBody extends StatelessWidget {
                           ),
                         ),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            GoRouter.of(
+                              context,
+                            ).push(AppRouter.kNotificationSettingsView);
+                          },
                           icon: const Icon(
                             Icons.notifications,
                             color: kPrimaryColor,
@@ -71,7 +75,9 @@ class HomeViewBody extends StatelessWidget {
                           ),
                         ),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            GoRouter.of(context).push(AppRouter.kProfileView);
+                          },
                           icon: const Icon(
                             Icons.person,
                             color: kPrimaryColor,
@@ -95,7 +101,11 @@ class HomeViewBody extends StatelessWidget {
                     HomeMenuItem(
                       icon: FontAwesomeIcons.clipboardCheck,
                       title: 'Progress\nTracking',
-                      onTap: () {},
+                      onTap: () {
+                        GoRouter.of(
+                          context,
+                        ).push(AppRouter.kProgressTrackingView);
+                      },
                     ),
                     ProfileVerticalDivider(color: kPrimaryColor),
                     HomeMenuItem(
@@ -107,9 +117,7 @@ class HomeViewBody extends StatelessWidget {
                     HomeMenuItem(
                       icon: FontAwesomeIcons.robot,
                       title: 'AI Chat',
-                      onTap: () {
-                        GoRouter.of(context).push(AppRouter.kProfileView);
-                      },
+                      onTap: () {},
                     ),
                   ],
                 ),
