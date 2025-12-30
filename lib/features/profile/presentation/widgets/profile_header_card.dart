@@ -159,9 +159,17 @@ class ProfileHeaderCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ProfileStat(value: weightText, label: 'Weight'),
-                  const ProfileVerticalDivider(color: Colors.white),
+                  const ProfileVerticalDivider(
+                    color: Colors.white,
+                    height: 50,
+                    width: 2,
+                  ),
                   ProfileStat(value: ageText, label: 'Years Old'),
-                  const ProfileVerticalDivider(color: Colors.white),
+                  const ProfileVerticalDivider(
+                    color: Colors.white,
+                    height: 50,
+                    width: 2,
+                  ),
                   ProfileStat(value: heightText, label: 'Height'),
                 ],
               ),

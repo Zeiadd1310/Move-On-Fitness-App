@@ -97,7 +97,11 @@ class HomeViewBody extends StatelessWidget {
                       title: 'Workout',
                       onTap: () {},
                     ),
-                    ProfileVerticalDivider(color: kPrimaryColor),
+                    ProfileVerticalDivider(
+                      color: kPrimaryColor,
+                      height: 50,
+                      width: 2,
+                    ),
                     HomeMenuItem(
                       icon: FontAwesomeIcons.clipboardCheck,
                       title: 'Progress\nTracking',
@@ -107,13 +111,21 @@ class HomeViewBody extends StatelessWidget {
                         ).push(AppRouter.kProgressTrackingView);
                       },
                     ),
-                    ProfileVerticalDivider(color: kPrimaryColor),
+                    ProfileVerticalDivider(
+                      color: kPrimaryColor,
+                      height: 50,
+                      width: 2,
+                    ),
                     HomeMenuItem(
                       icon: FontAwesomeIcons.appleWhole,
                       title: 'Nutrition',
                       onTap: () {},
                     ),
-                    ProfileVerticalDivider(color: kPrimaryColor),
+                    ProfileVerticalDivider(
+                      color: kPrimaryColor,
+                      height: 50,
+                      width: 2,
+                    ),
                     HomeMenuItem(
                       icon: FontAwesomeIcons.robot,
                       title: 'AI Chat',
