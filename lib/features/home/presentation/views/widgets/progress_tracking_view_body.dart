@@ -505,9 +505,9 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
                         child: Text(
                           'My Progress',
                           style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
+                            color: kPrimaryColor,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
                             fontFamily: 'Poppins',
                           ),
                         ),
@@ -533,7 +533,7 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
                                 style: const TextStyle(
                                   color: kPrimaryColor,
                                   fontSize: 24,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w500,
                                   fontFamily: 'Poppins',
                                 ),
                               ),
@@ -547,10 +547,10 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: StepsBarChart(
                           data: [
-                            {'label': 'Jan', 'value': 158},
-                            {'label': 'Feb', 'value': 160},
-                            {'label': 'Mar', 'value': 155},
-                            {'label': 'Apr', 'value': 157},
+                            {'label': 'Jan', 'value': 130},
+                            {'label': 'Feb', 'value': 140},
+                            {'label': 'Mar', 'value': 130},
+                            {'label': 'Apr', 'value': 110},
                           ],
                         ),
                       ),

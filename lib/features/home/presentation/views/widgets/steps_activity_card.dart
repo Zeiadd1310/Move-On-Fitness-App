@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:move_on/constants.dart';
+import 'package:move_on/features/profile/presentation/widgets/profile_vertical_divider.dart';
 
 class StepsActivityCard extends StatelessWidget {
   final String day;
@@ -25,7 +26,12 @@ class StepsActivityCard extends StatelessWidget {
         color: kPrimaryColor,
         borderRadius: BorderRadius.circular(16),
       ),
-      padding: EdgeInsets.all(isSmallScreen ? 14 : 18),
+      padding: EdgeInsets.only(
+        left: isSmallScreen ? 20 : 24,
+        right: isSmallScreen ? 12 : 18,
+        top: isSmallScreen ? 10 : 12,
+        bottom: isSmallScreen ? 10 : 12,
+      ),
       child: Row(
         children: [
           Column(
@@ -35,9 +41,9 @@ class StepsActivityCard extends StatelessWidget {
                 day,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: isSmallScreen ? 14 : 16,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'League Spartan',
+                  fontSize: isSmallScreen ? 12 : 14,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins',
                 ),
               ),
               const SizedBox(height: 4),
@@ -45,32 +51,38 @@ class StepsActivityCard extends StatelessWidget {
                 date,
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: isSmallScreen ? 12 : 14,
-                  fontWeight: FontWeight.w400,
-                  fontFamily: 'League Spartan',
+                  fontSize: isSmallScreen ? 20 : 25,
+                  fontWeight: FontWeight.w500,
+                  fontFamily: 'Poppins',
                 ),
               ),
             ],
           ),
-          const Spacer(),
+          SizedBox(width: 30),
+          ProfileVerticalDivider(color: Colors.white, height: 50, width: 2),
+          SizedBox(width: 30),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  const Icon(
-                    Icons.directions_walk,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                  const SizedBox(width: 6),
                   Text(
-                    'Steps $steps',
+                    'Steps',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: isSmallScreen ? 14 : 16,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'League Spartan',
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                  const SizedBox(width: 80),
+                  Text(
+                    'Duration',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: isSmallScreen ? 14 : 16,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Poppins',
                     ),
                   ),
                 ],
@@ -78,15 +90,27 @@ class StepsActivityCard extends StatelessWidget {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  const Icon(Icons.access_time, color: Colors.white, size: 16),
-                  const SizedBox(width: 6),
                   Text(
-                    'Duration $duration',
+                    steps,
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: isSmallScreen ? 12 : 14,
-                      fontWeight: FontWeight.w400,
-                      fontFamily: 'League Spartan',
+                      fontSize: isSmallScreen ? 22 : 25,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                  SizedBox(width: 40),
+                  const Icon(
+                    Icons.access_time_filled,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  const SizedBox(width: 3),
+                  Text(
+                    duration,
+                    style: TextStyle(
+                      fontSize: isSmallScreen ? 22 : 25,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: 'Poppins',
                     ),
                   ),
                 ],
