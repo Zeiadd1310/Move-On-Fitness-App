@@ -7,7 +7,7 @@ import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/features/home/presentation/views/widgets/bottom_workout_card.dart';
 import 'package:move_on/features/home/presentation/views/widgets/custom_workout_card_widget.dart';
 import 'package:move_on/features/home/presentation/views/widgets/home_menu_item.dart';
-import 'package:move_on/features/profile/presentation/widgets/profile_vertical_divider.dart';
+import 'package:move_on/features/profile/presentation/views/widgets/profile_vertical_divider.dart';
 
 class HomeViewBody extends StatelessWidget {
   const HomeViewBody({super.key});
@@ -119,7 +119,11 @@ class HomeViewBody extends StatelessWidget {
                     HomeMenuItem(
                       icon: FontAwesomeIcons.appleWhole,
                       title: 'Nutrition',
-                      onTap: () {},
+                      onTap: () {
+                        GoRouter.of(
+                          context,
+                        ).push(AppRouter.kNutritionGetStartedView);
+                      },
                     ),
                     ProfileVerticalDivider(
                       color: kPrimaryColor,

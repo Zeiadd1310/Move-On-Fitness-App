@@ -3,11 +3,15 @@ import 'package:move_on/features/home/presentation/views/progress_tracking_view.
 import 'package:move_on/features/information/presentation/views/assessment_one_view.dart';
 import 'package:move_on/features/information/presentation/views/assessment_three_view.dart';
 import 'package:move_on/features/information/presentation/views/assessment_two_view.dart';
+import 'package:move_on/features/nutrition/presentation/views/breakfast_view.dart';
+import 'package:move_on/features/nutrition/presentation/views/dinner_view.dart';
+import 'package:move_on/features/nutrition/presentation/views/lunch_view.dart';
+import 'package:move_on/features/nutrition/presentation/views/nutrition_get_started_view.dart';
 import 'package:move_on/features/profile/presentation/edit_profile_view.dart';
-import 'package:move_on/features/profile/presentation/notification_settings_view.dart';
-import 'package:move_on/features/profile/presentation/password_settings_view.dart';
-import 'package:move_on/features/profile/presentation/profile_view.dart';
-import 'package:move_on/features/profile/presentation/settings_view.dart';
+import 'package:move_on/features/profile/presentation/views/notification_settings_view.dart';
+import 'package:move_on/features/profile/presentation/views/password_settings_view.dart';
+import 'package:move_on/features/profile/presentation/views/profile_view.dart';
+import 'package:move_on/features/profile/presentation/views/settings_view.dart';
 import 'package:move_on/features/sign/presentation/views/forget_password_view.dart';
 import 'package:move_on/features/sign/presentation/views/sign_up_view.dart';
 import 'package:move_on/features/splash/presentation/views/quote_view.dart';
@@ -58,6 +62,10 @@ abstract class AppRouter {
   static const kPasswordSettingsView = '/passwordSettingsView';
   static const kHomeView = '/homeView';
   static const kProgressTrackingView = '/progressTrackingView';
+  static const kNutritionGetStartedView = '/nutritionGetStartedView';
+  static const kBreakfastView = '/kBreakfastView';
+  static const kLunchView = '/kLunchView';
+  static const kDinnerView = '/kDinnerView';
 
   static final router = GoRouter(
     routes: [
@@ -168,6 +176,19 @@ abstract class AppRouter {
         path: kProgressTrackingView,
         builder: (context, state) => const ProgressTrackingView(),
       ),
+      GoRoute(
+        path: kNutritionGetStartedView,
+        builder: (context, state) => const NutritionGetStartedView(),
+      ),
+      GoRoute(
+        path: kBreakfastView,
+        builder: (context, state) => const BreakfastView(),
+      ),
+      GoRoute(
+        path: kDinnerView,
+        builder: (context, state) => const DinnerView(),
+      ),
+      GoRoute(path: kLunchView, builder: (context, state) => const LunchView()),
     ],
   );
 }

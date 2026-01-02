@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
-import 'package:move_on/features/profile/presentation/widgets/custom_edit_text_field_widget.dart';
-import 'package:move_on/features/profile/presentation/widgets/profile_header_card.dart';
+import 'package:move_on/features/profile/presentation/views/widgets/custom_edit_text_field_widget.dart';
+import 'package:move_on/features/profile/presentation/views/widgets/profile_header_card.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_button.dart';
 
 class EditProfileViewBody extends StatelessWidget {

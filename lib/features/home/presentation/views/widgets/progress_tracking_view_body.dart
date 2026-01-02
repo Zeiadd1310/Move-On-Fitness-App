@@ -9,7 +9,7 @@ import 'package:move_on/features/home/presentation/views/widgets/activity_card.d
 import 'package:move_on/features/home/presentation/views/widgets/month_picker_bottom_sheet.dart';
 import 'package:move_on/features/home/presentation/views/widgets/steps_activity_card.dart';
 import 'package:move_on/features/home/presentation/views/widgets/steps_bar_chart.dart';
-import 'package:move_on/features/profile/presentation/widgets/profile_vertical_divider.dart';
+import 'package:move_on/features/profile/presentation/views/widgets/profile_vertical_divider.dart';
 
 class ProgressTrackingViewBody extends StatefulWidget {
   const ProgressTrackingViewBody({super.key});

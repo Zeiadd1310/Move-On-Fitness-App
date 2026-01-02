@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
-import 'package:move_on/features/profile/presentation/widgets/custom_toggle.dart';
+import 'package:move_on/features/profile/presentation/views/widgets/custom_toggle.dart';
 
 class CustomTextToggleWidget extends StatelessWidget {
   const CustomTextToggleWidget({super.key, required this.text});
