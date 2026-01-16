@@ -185,7 +185,7 @@ class NutritionGetStartedViewBody extends StatelessWidget {
                       ),
                       radius: 40,
                       onTap: () {
-                        GoRouter.of(context).push(AppRouter.kBreakfastView);
+                        GoRouter.of(context).push(AppRouter.kMealIdeasView);
                       },
                     ),
                   ],

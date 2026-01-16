@@ -24,6 +24,7 @@ class CustomWorkoutCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      key: ValueKey('workout_card_$title'),
       width: cardWidth ?? 180,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
       child: Column(
@@ -69,6 +70,8 @@ class CustomWorkoutCardWidget extends StatelessWidget {
                       fontFamily: 'Poppins',
                       fontSize: 16,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Padding(
@@ -79,16 +82,19 @@ class CustomWorkoutCardWidget extends StatelessWidget {
                         child: Row(
                           children: [
                             Icon(
-                              Icons.access_time,
+                              Icons.access_time_filled,
                               color: kPrimaryColor,
                               size: 16,
                             ),
                             const SizedBox(width: 4),
-                            Text(
-                              subTitle1,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 11,
+                            Flexible(
+                              child: Text(
+                                subTitle1,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
@@ -103,11 +109,14 @@ class CustomWorkoutCardWidget extends StatelessWidget {
                               size: 16,
                             ),
                             const SizedBox(width: 4),
-                            Text(
-                              subTitle2,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
+                            Flexible(
+                              child: Text(
+                                subTitle2,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ],
