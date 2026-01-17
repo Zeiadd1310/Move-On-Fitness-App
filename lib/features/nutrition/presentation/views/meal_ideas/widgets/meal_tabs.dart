@@ -5,17 +5,31 @@ enum MealType { breakfast, lunch, dinner }
 
 class MealTabs extends StatefulWidget {
   final Function(MealType)? onTabChanged;
+  final MealType? initialSelected;
+  final bool isReadOnly;
 
-  const MealTabs({super.key, this.onTabChanged});
+  const MealTabs({
+    super.key,
+    this.onTabChanged,
+    this.initialSelected,
+    this.isReadOnly = false,
+  });
 
   @override
   State<MealTabs> createState() => _MealTabsState();
 }
 
 class _MealTabsState extends State<MealTabs> {
-  MealType _selectedMeal = MealType.breakfast;
+  late MealType _selectedMeal;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedMeal = widget.initialSelected ?? MealType.breakfast;
+  }
 
   void _selectTab(MealType mealType) {
+    if (widget.isReadOnly) return;
     if (_selectedMeal != mealType) {
       setState(() {
         _selectedMeal = mealType;

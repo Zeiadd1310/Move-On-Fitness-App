@@ -4,6 +4,7 @@ import 'package:move_on/features/information/presentation/views/assessment_one_v
 import 'package:move_on/features/information/presentation/views/assessment_three_view.dart';
 import 'package:move_on/features/information/presentation/views/assessment_two_view.dart';
 import 'package:move_on/features/nutrition/presentation/views/meal_ideas_view.dart';
+import 'package:move_on/features/nutrition/presentation/views/recipe_detail_view.dart';
 import 'package:move_on/features/nutrition/presentation/views/nutrition_get_started_view.dart';
 import 'package:move_on/features/profile/presentation/edit_profile_view.dart';
 import 'package:move_on/features/profile/presentation/views/notification_settings_view.dart';
@@ -62,6 +63,7 @@ abstract class AppRouter {
   static const kProgressTrackingView = '/progressTrackingView';
   static const kNutritionGetStartedView = '/nutritionGetStartedView';
   static const kMealIdeasView = '/mealIdeasView';
+  static const kRecipeDetailView = '/recipeDetail';
 
   static final router = GoRouter(
     routes: [
@@ -179,6 +181,11 @@ abstract class AppRouter {
       GoRoute(
         path: kMealIdeasView,
         builder: (context, state) => const MealIdeasView(),
+      ),
+      GoRoute(
+        path: kRecipeDetailView,
+        builder: (context, state) =>
+            RecipeDetailView(recipeData: state.extra as Map<String, dynamic>?),
       ),
     ],
   );

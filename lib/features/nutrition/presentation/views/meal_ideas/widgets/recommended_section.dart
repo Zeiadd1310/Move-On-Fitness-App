@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
+import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/features/home/presentation/views/widgets/custom_workout_card_widget.dart';
 import 'package:move_on/features/nutrition/presentation/views/meal_ideas/widgets/meal_tabs.dart';
 
@@ -34,8 +36,7 @@ class RecommendedSection extends StatelessWidget {
 
   const RecommendedSection({super.key, this.mealType = MealType.breakfast});
 
-  Map<String, String> _getRecipeData(int index) {
-    // Different images for each card - ensure each card has a unique image
+  Map<String, dynamic> _getRecipeData(int index) {
     final images = [
       'assets/images/recommended 1.png',
       'assets/images/recommended 2.png',
@@ -48,15 +49,35 @@ class RecommendedSection extends StatelessWidget {
         final breakfastRecipes = [
           {
             'title': 'Fruit Smoothie',
-            'time': '12 Minutes',
-            'cal': '120 Kcal',
-            'image': images[0], // First image for first card
+            'time': '12',
+            'cal': '120 Cal',
+            'image': images[0],
+            'ingredients': [
+              '1/2 cup plain Greek yogurt',
+              '1/2 cup almond milk or your favorite milk',
+              'Honey or maple syrup (optional, to sweeten to taste)',
+            ],
+            'preparation':
+                'Add all ingredients to a blender. Blend until smooth. Pour into a glass and serve. Add ice if desired.',
+            'mealType': mealType,
+            'isRecipeOfTheDay': false,
           },
           {
             'title': 'Oatmeal Bowl',
-            'time': '8 Minutes',
-            'cal': '180 Kcal',
-            'image': images[1], // Second image for second card
+            'time': '8',
+            'cal': '180 Cal',
+            'image': images[1],
+            'ingredients': [
+              'Rolled oats',
+              'Milk or water',
+              'Banana',
+              'Cinnamon',
+              'Nuts or seeds',
+            ],
+            'preparation':
+                'Cook oats with milk or water. Top with sliced banana, cinnamon, and nuts. Serve warm.',
+            'mealType': mealType,
+            'isRecipeOfTheDay': false,
           },
         ];
         return breakfastRecipes[index % breakfastRecipes.length];
@@ -64,15 +85,38 @@ class RecommendedSection extends StatelessWidget {
         final lunchRecipes = [
           {
             'title': 'Chicken Wrap',
-            'time': '15 Minutes',
-            'cal': '320 Kcal',
-            'image': images[2], // Third image for first card
+            'time': '15',
+            'cal': '320 Cal',
+            'image': images[2],
+            'ingredients': [
+              'Tortilla',
+              'Grilled chicken',
+              'Lettuce',
+              'Tomato',
+              'Sauce of choice',
+            ],
+            'preparation':
+                'Lay tortilla flat. Layer with chicken, lettuce, tomato, and sauce. Roll tightly and serve.',
+            'mealType': mealType,
+            'isRecipeOfTheDay': false,
           },
           {
             'title': 'Quinoa Salad',
-            'time': '20 Minutes',
-            'cal': '280 Kcal',
-            'image': images[3], // Fourth image for second card
+            'time': '20',
+            'cal': '280 Cal',
+            'image': images[3],
+            'ingredients': [
+              'Quinoa',
+              'Cucumber',
+              'Tomato',
+              'Feta',
+              'Olive oil',
+              'Lemon',
+            ],
+            'preparation':
+                'Cook quinoa and let cool. Mix with diced vegetables and feta. Drizzle with olive oil and lemon. Toss and serve.',
+            'mealType': mealType,
+            'isRecipeOfTheDay': false,
           },
         ];
         return lunchRecipes[index % lunchRecipes.length];
@@ -80,15 +124,37 @@ class RecommendedSection extends StatelessWidget {
         final dinnerRecipes = [
           {
             'title': 'Grilled Fish',
-            'time': '25 Minutes',
-            'cal': '380 Kcal',
-            'image': images[0], // Different image for first card
+            'time': '25',
+            'cal': '380 Cal',
+            'image': images[0],
+            'ingredients': [
+              'Fish fillet',
+              'Lemon',
+              'Herbs',
+              'Olive oil',
+              'Garlic',
+            ],
+            'preparation':
+                'Season fish with herbs, garlic, and olive oil. Grill or bake until flaky. Serve with lemon wedges.',
+            'mealType': mealType,
+            'isRecipeOfTheDay': false,
           },
           {
             'title': 'Pasta Primavera',
-            'time': '18 Minutes',
-            'cal': '350 Kcal',
-            'image': images[1], // Different image for second card
+            'time': '18',
+            'cal': '350 Cal',
+            'image': images[1],
+            'ingredients': [
+              'Pasta',
+              'Mixed vegetables',
+              'Garlic',
+              'Olive oil',
+              'Parmesan',
+            ],
+            'preparation':
+                'Cook pasta. Sauté vegetables with garlic and olive oil. Toss with pasta and parmesan. Serve.',
+            'mealType': mealType,
+            'isRecipeOfTheDay': false,
           },
         ];
         return dinnerRecipes[index % dinnerRecipes.length];
@@ -135,13 +201,24 @@ class RecommendedSection extends StatelessWidget {
                 'mealType': mealType.toString(),
               }, 'B');
               // #endregion
-              return CustomWorkoutCardWidget(
-                key: ValueKey('recipe_${mealType}_$index'),
-                title: recipeData['title']!,
-                imagePath: recipeData['image']!,
-                subTitle1: recipeData['time']!,
-                subTitle2: recipeData['cal']!,
-                cardWidth: null,
+              final timeStr =
+                  (recipeData['time'] as String?).toString().contains('Minutes')
+                  ? recipeData['time']
+                  : '${recipeData['time']} Minutes';
+              return GestureDetector(
+                onTap: () {
+                  GoRouter.of(
+                    context,
+                  ).push(AppRouter.kRecipeDetailView, extra: recipeData);
+                },
+                child: CustomWorkoutCardWidget(
+                  key: ValueKey('recipe_${mealType}_$index'),
+                  title: recipeData['title']!,
+                  imagePath: recipeData['image']!,
+                  subTitle1: timeStr,
+                  subTitle2: recipeData['cal']!,
+                  cardWidth: null,
+                ),
               );
             },
             separatorBuilder: (_, __) => const SizedBox(width: 20),
