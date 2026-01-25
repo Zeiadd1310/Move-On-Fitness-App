@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
+import 'package:move_on/core/utils/functions/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/custom_edit_text_field_widget.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/profile_header_card.dart';
@@ -21,8 +22,15 @@ class EditProfileViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final headerHeight = size.height * 0.38;
+    final responsive = ResponsiveHelper(context);
+    final headerHeight = responsive.heightPercent(0.38);
+    final horizontalPadding = responsive.horizontalPadding();
+    final verticalPadding = responsive.verticalPadding();
+    final topOffset = responsive.heightPercent(0.01);
+    final headerOffset = responsive.heightPercent(0.09);
+    final buttonWidth = responsive.buttonWidth(160);
+    final buttonHeight = responsive.buttonHeight(50);
+    final buttonFontSize = responsive.fontSize(18);
 
     return SafeArea(
       child: SingleChildScrollView(
@@ -31,13 +39,13 @@ class EditProfileViewBody extends StatelessWidget {
             Column(
               children: [
                 Container(height: headerHeight, color: kPrimaryColor),
-                Container(height: size.height, color: Colors.black),
+                Container(height: responsive.height, color: Colors.black),
               ],
             ),
             Positioned(
-              left: 16,
-              right: 16,
-              top: 10,
+              left: horizontalPadding,
+              right: horizontalPadding,
+              top: topOffset,
               child: ProfileHeaderCard(
                 title: 'My Profile',
                 name: 'Zeiad Ramadan',
@@ -59,11 +67,11 @@ class EditProfileViewBody extends StatelessWidget {
             Positioned(
               left: 0,
               right: 0,
-              top: headerHeight + 70,
+              top: headerHeight + headerOffset,
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 40,
-                  vertical: 16,
+                padding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding * 1.5,
+                  vertical: verticalPadding,
                 ),
                 child: Column(
                   children: [
@@ -75,12 +83,13 @@ class EditProfileViewBody extends StatelessWidget {
                     const CustomEditTextFieldWidget(text: 'Height'),
                     CustomButton(
                       text: 'Update Profile',
-                      width: 160,
-                      height: 50,
+                      width: buttonWidth,
+                      height: buttonHeight,
                       style: Styles.textStyle18.copyWith(
                         fontFamily: 'League Spartan',
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
+                        fontSize: buttonFontSize,
                       ),
                       radius: 100,
                       color: Colors.white,

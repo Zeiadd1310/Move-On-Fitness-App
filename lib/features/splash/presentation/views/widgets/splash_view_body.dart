@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:move_on/core/animations/animation_builders.dart';
 import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/assets.dart';
+import 'package:move_on/core/utils/functions/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/custom_background_widget.dart';
 import 'package:move_on/features/splash/view_models/splash_view_model.dart';
@@ -212,6 +213,11 @@ class _SplashContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = ResponsiveHelper(context);
+    final logoSize = responsive.imageWidth(275);
+    final spacing = responsive.spacing(12);
+    final fontSize = responsive.fontSize(18);
+    
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -221,11 +227,11 @@ class _SplashContent extends StatelessWidget {
             position: logoSlide,
             child: ScaleTransition(
               scale: logoScale,
-              child: Image.asset(AssetsData.logo, width: 275),
+              child: Image.asset(AssetsData.logo, width: logoSize),
             ),
           ),
         ),
-        const SizedBox(height: 12),
+        SizedBox(height: spacing),
         FadeTransition(
           opacity: textFade,
           child: SlideTransition(
@@ -239,6 +245,7 @@ class _SplashContent extends StatelessWidget {
                     style: GoogleFonts.workSans(
                       textStyle: Styles.textStyle18.copyWith(
                         fontWeight: FontWeight.w500,
+                        fontSize: fontSize,
                       ),
                     ),
                   ),

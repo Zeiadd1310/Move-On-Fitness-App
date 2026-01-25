@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:move_on/core/animations/animation_builders.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/core/utils/functions/assets.dart';
+import 'package:move_on/core/utils/functions/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import '../../../../../core/utils/functions/app_router.dart';
 
@@ -86,9 +87,10 @@ class _QuoteViewBodyState extends State<QuoteViewBody>
 
   @override
   Widget build(BuildContext context) {
-    final Size screenSize = MediaQuery.sizeOf(context);
-    final double iconSize = screenSize.width * 0.19;
-    final double verticalSpacing = screenSize.height * 0.08;
+    final responsive = ResponsiveHelper(context);
+    final iconSize = responsive.widthPercent(0.19);
+    final verticalSpacing = responsive.heightPercent(0.08);
+    final horizontalPadding = responsive.horizontalPadding();
 
     return Stack(
       children: [
@@ -101,11 +103,12 @@ class _QuoteViewBodyState extends State<QuoteViewBody>
         Align(
           alignment: const Alignment(0, 0.7),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
             child: _QuoteAnimatedContent(
               iconSize: iconSize,
               verticalSpacing: verticalSpacing,
               animations: _animations,
+              responsive: responsive,
             ),
           ),
         ),
@@ -119,14 +122,20 @@ class _QuoteAnimatedContent extends StatelessWidget {
     required this.iconSize,
     required this.verticalSpacing,
     required this.animations,
+    required this.responsive,
   });
 
   final double iconSize;
   final double verticalSpacing;
   final _QuoteAnimations animations;
+  final ResponsiveHelper responsive;
 
   @override
   Widget build(BuildContext context) {
+    final quoteFontSize = responsive.fontSize(24);
+    final authorFontSize = responsive.fontSize(18);
+    final borderRadius = responsive.clamp(20.0, 15.0, 30.0);
+    
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -139,14 +148,9 @@ class _QuoteAnimatedContent extends StatelessWidget {
               child: Container(
                 width: iconSize,
                 height: iconSize,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: kPrimaryColor,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(25),
-                    topRight: Radius.circular(25),
-                    bottomLeft: Radius.circular(25),
-                    bottomRight: Radius.circular(25),
-                  ),
+                  borderRadius: BorderRadius.circular(borderRadius),
                 ),
                 child: Center(
                   child: Icon(
@@ -166,7 +170,11 @@ class _QuoteAnimatedContent extends StatelessWidget {
             position: animations.quoteSlide,
             child: Text(
               '"Remember, physical fitness can neither be acquired by wishful thinking nor by outright purchase."',
-              style: GoogleFonts.workSans(textStyle: Styles.textStyle24),
+              style: GoogleFonts.workSans(
+                textStyle: Styles.textStyle24.copyWith(
+                  fontSize: quoteFontSize,
+                ),
+              ),
               textAlign: TextAlign.center,
             ),
           ),
@@ -181,6 +189,7 @@ class _QuoteAnimatedContent extends StatelessWidget {
               style: GoogleFonts.workSans(
                 textStyle: Styles.textStyle18.copyWith(
                   fontWeight: FontWeight.bold,
+                  fontSize: authorFontSize,
                 ),
               ),
             ),

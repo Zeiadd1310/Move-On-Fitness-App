@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
+import 'package:move_on/core/utils/functions/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/features/information/presentation/views/widgets/custom_assessment_options_widget.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_back_button.dart';
@@ -9,35 +10,43 @@ class AssessmentOneViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final width = size.width;
-    final height = size.height;
+    final responsive = ResponsiveHelper(context);
+    final horizontalPadding = responsive.horizontalPadding();
+    final verticalPadding = responsive.verticalPadding();
+    final spacing = responsive.heightPercent(0.04);
+    final backButtonSize = responsive.iconSize(48);
+    final titleFontSize = responsive.fontSize(24);
+    final rowSpacing = responsive.spacing(12);
 
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(
-            horizontal: width * 0.05,
-            vertical: height * 0.03,
+            horizontal: horizontalPadding,
+            vertical: verticalPadding,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  CustomBackButton(width: 48, height: 48),
-                  const SizedBox(width: 12),
+                  CustomBackButton(
+                    width: backButtonSize,
+                    height: backButtonSize,
+                  ),
+                  SizedBox(width: rowSpacing),
                   Text(
                     'Assessment',
                     style: Styles.textStyle24.copyWith(
                       fontFamily: 'Work Sans',
                       fontWeight: FontWeight.bold,
+                      fontSize: titleFontSize,
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: height * 0.04),
+              SizedBox(height: spacing),
               Expanded(
                 child: CustomAssessmentOptionsWidget(
                   title: 'Your Regular Physical Activity Level ?',

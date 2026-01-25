@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/month_utils.dart';
+import 'package:move_on/core/utils/functions/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/features/home/presentation/views/widgets/activity_card.dart';
 import 'package:move_on/features/home/presentation/views/widgets/month_picker_bottom_sheet.dart';
@@ -26,16 +27,23 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final screenHeight = MediaQuery.of(context).size.height;
+    final responsive = ResponsiveHelper(context);
+    final horizontalPadding = responsive.horizontalPadding();
+    final verticalPadding = responsive.verticalPadding();
+    final iconSize = responsive.iconSize(25);
+    final headerIconSize = responsive.iconSize(30);
+    final titleFontSize = responsive.fontSize(24);
+    final tabFontSize = responsive.fontSize(18);
+    final screenWidth = responsive.width;
+    final screenHeight = responsive.height;
 
     return Scaffold(
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: screenWidth * 0.045,
-              vertical: screenHeight * 0.02,
+              horizontal: horizontalPadding,
+              vertical: verticalPadding,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,23 +56,27 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
                       onTap: () {
                         context.pop();
                       },
-                      child: Icon(Icons.arrow_back_ios_new_rounded, size: 25),
+                      child: Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        size: iconSize,
+                      ),
                     ),
                     Text(
                       'Progess Tracking',
                       style: Styles.textStyle24.copyWith(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w700,
+                        fontSize: titleFontSize,
                       ),
                     ),
                     Row(
                       children: [
                         IconButton(
                           onPressed: () {},
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.search,
                             color: kPrimaryColor,
-                            size: 30,
+                            size: headerIconSize,
                           ),
                         ),
                         IconButton(
@@ -73,20 +85,20 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
                               context,
                             ).push(AppRouter.kNotificationSettingsView);
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.notifications,
                             color: kPrimaryColor,
-                            size: 30,
+                            size: headerIconSize,
                           ),
                         ),
                         IconButton(
                           onPressed: () {
                             GoRouter.of(context).push(AppRouter.kProfileView);
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.person,
                             color: kPrimaryColor,
-                            size: 30,
+                            size: headerIconSize,
                           ),
                         ),
                       ],
@@ -275,7 +287,7 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
                               color: _selectedTab == 0
                                   ? Colors.black
                                   : kPrimaryColor,
-                              fontSize: 18,
+                              fontSize: tabFontSize,
                               fontWeight: FontWeight.w500,
                               fontFamily: 'League Spartan',
                             ),
@@ -304,7 +316,7 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
                               color: _selectedTab == 1
                                   ? Colors.black
                                   : kPrimaryColor,
-                              fontSize: 18,
+                              fontSize: tabFontSize,
                               fontWeight: FontWeight.w600,
                               fontFamily: 'League Spartan',
                             ),

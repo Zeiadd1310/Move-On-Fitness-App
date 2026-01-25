@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
+import 'package:move_on/core/utils/functions/responsive_helper.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/logout_bottom_sheet.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/profile_action_tile.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/profile_header_card.dart';
@@ -20,8 +21,14 @@ class ProfileViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final headerHeight = size.height * 0.38;
+    final responsive = ResponsiveHelper(context);
+    final headerHeight = responsive.heightPercent(0.38);
+    final horizontalPadding = responsive.horizontalPadding();
+    final verticalPadding = responsive.verticalPadding();
+    final topOffset = responsive.heightPercent(0.01);
+    final headerOffset = responsive.heightPercent(0.09);
+    final spacing = responsive.spacing(12);
+    
     return Stack(
       children: [
         Column(
@@ -31,9 +38,9 @@ class ProfileViewBody extends StatelessWidget {
           ],
         ),
         Positioned(
-          left: 16,
-          right: 16,
-          top: 10,
+          left: horizontalPadding,
+          right: horizontalPadding,
+          top: topOffset,
           child: ProfileHeaderCard(
             title: 'My Profile',
             name: 'Zeiad Ramadan',
@@ -50,10 +57,10 @@ class ProfileViewBody extends StatelessWidget {
         Positioned(
           left: 0,
           right: 0,
-          top: headerHeight + 70,
+          top: headerHeight + headerOffset,
           bottom: 0,
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -64,7 +71,7 @@ class ProfileViewBody extends StatelessWidget {
                     GoRouter.of(context).push(AppRouter.kEditProfileView);
                   },
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: spacing),
                 ProfileActionTile(
                   icon: Icons.settings_outlined,
                   title: 'Settings',
@@ -72,7 +79,7 @@ class ProfileViewBody extends StatelessWidget {
                     GoRouter.of(context).push(AppRouter.kSettingsView);
                   },
                 ),
-                const SizedBox(height: 12),
+                SizedBox(height: spacing),
                 ProfileActionTile(
                   icon: Icons.logout,
                   title: 'Logout',

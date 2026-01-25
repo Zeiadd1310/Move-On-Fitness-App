@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 
@@ -10,6 +11,7 @@ class BodyDataInputWithUnit extends StatelessWidget {
     required this.selectedUnit,
     required this.onUnitChanged,
     required this.width,
+    this.hintText = '0',
   });
 
   final TextEditingController controller;
@@ -17,6 +19,7 @@ class BodyDataInputWithUnit extends StatelessWidget {
   final String selectedUnit;
   final Function(String) onUnitChanged;
   final double width;
+  final String hintText;
 
   @override
   Widget build(BuildContext context) {
@@ -36,16 +39,23 @@ class BodyDataInputWithUnit extends StatelessWidget {
                 controller: controller,
                 textAlign: TextAlign.center,
                 keyboardType: TextInputType.number,
-                style: Styles.textStyle30.copyWith(
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                style: Styles.textStyle24.copyWith(
                   fontFamily: 'Work Sans',
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                 ),
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(
+                  hintText: hintText,
+                  hintStyle: Styles.textStyle24.copyWith(
+                    fontFamily: 'Work Sans',
+                    color: Colors.white.withOpacity(0.5),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
-                    vertical: 16,
+                    vertical: 12,
                   ),
                 ),
               ),

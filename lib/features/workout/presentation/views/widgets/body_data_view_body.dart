@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
+import 'package:move_on/core/utils/functions/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/body_data_input_with_unit.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_button.dart';
@@ -19,21 +20,13 @@ class BodyDataViewBody extends StatefulWidget {
 
 class _BodyDataViewBodyState extends State<BodyDataViewBody> {
   // Controllers
-  final TextEditingController _ageController = TextEditingController(text: '0');
-  final TextEditingController _weightController = TextEditingController(
-    text: '0',
-  );
-  final TextEditingController _heightController = TextEditingController(
-    text: '0',
-  );
-  final TextEditingController _muscleController = TextEditingController(
-    text: '0',
-  );
-  final TextEditingController _fatController = TextEditingController(text: '0');
-  final TextEditingController _waterController = TextEditingController(
-    text: '0',
-  );
-  final TextEditingController _bmrController = TextEditingController(text: '0');
+  final TextEditingController _ageController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
+  final TextEditingController _heightController = TextEditingController();
+  final TextEditingController _muscleController = TextEditingController();
+  final TextEditingController _fatController = TextEditingController();
+  final TextEditingController _waterController = TextEditingController();
+  final TextEditingController _bmrController = TextEditingController();
 
   String _selectedGender = 'Male';
   String _weightUnit = 'Kg';
@@ -57,19 +50,26 @@ class _BodyDataViewBodyState extends State<BodyDataViewBody> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    final width = size.width;
-    final height = size.height;
-    final isTablet = width > 600;
-    final horizontalPadding = isTablet ? width * 0.1 : width * 0.03;
-    final fieldSpacing = height * 0.015;
+    final responsive = ResponsiveHelper(context);
+    final width = responsive.width;
+    final height = responsive.height;
+    final horizontalPadding = responsive.horizontalPadding();
+    final fieldSpacing = responsive.heightPercent(0.015);
+    final titleFontSize = responsive.fontSize(30);
+    final buttonFontSize = responsive.fontSize(18);
+    final buttonWidth = responsive.widthPercent(0.85);
+    final buttonHeight = responsive.buttonHeight(60);
+    final cameraButtonSize = responsive.isTablet
+        ? 100.0
+        : responsive.widthPercent(0.17);
+    final iconSize = responsive.iconSize(30);
 
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+            padding: EdgeInsets.symmetric(horizontal: horizontalPadding * 0.1),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
@@ -81,6 +81,7 @@ class _BodyDataViewBodyState extends State<BodyDataViewBody> {
                     fontFamily: 'Work Sans',
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
+                    fontSize: titleFontSize,
                   ),
                 ),
                 SizedBox(height: height * 0.015),
@@ -178,16 +179,16 @@ class _BodyDataViewBodyState extends State<BodyDataViewBody> {
                   child: GestureDetector(
                     onTap: () {},
                     child: Container(
-                      width: isTablet ? 100 : width * 0.17,
-                      height: isTablet ? 100 : width * 0.17,
+                      width: cameraButtonSize,
+                      height: cameraButtonSize,
                       decoration: BoxDecoration(
                         color: kPrimaryColor,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.camera_alt,
                         color: Colors.black,
-                        size: 30,
+                        size: iconSize,
                       ),
                     ),
                   ),
@@ -196,11 +197,12 @@ class _BodyDataViewBodyState extends State<BodyDataViewBody> {
                 Center(
                   child: CustomButton(
                     text: 'Continue',
-                    width: width * 0.85,
-                    height: 60,
+                    width: buttonWidth,
+                    height: buttonHeight,
                     style: Styles.textStyle18.copyWith(
                       fontFamily: 'Work Sans',
                       color: Colors.white,
+                      fontSize: buttonFontSize,
                     ),
                     radius: 19,
                     icon: Icons.arrow_forward,

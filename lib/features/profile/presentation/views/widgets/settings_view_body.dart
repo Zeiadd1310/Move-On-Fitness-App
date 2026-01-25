@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
+import 'package:move_on/core/utils/functions/responsive_helper.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/logout_bottom_sheet.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/profile_action_tile.dart';
 import 'package:move_on/features/workout/presentation/views/widgets/custom_assessment_text_widget.dart';
@@ -10,16 +11,22 @@ class SettingsViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = ResponsiveHelper(context);
+    final horizontalPadding = responsive.horizontalPadding();
+    final verticalPadding = responsive.verticalPadding();
+    final topSpacing = responsive.heightPercent(0.075);
+    final spacing = responsive.spacing(20);
+    
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             CustomAssessmentTextWidget(text: 'Settings'),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
               child: Column(
                 children: [
-                  SizedBox(height: 60),
+                  SizedBox(height: topSpacing),
                   ProfileActionTile(
                     icon: Icons.notifications,
                     title: 'Notification Settings',
@@ -29,7 +36,7 @@ class SettingsViewBody extends StatelessWidget {
                       ).push(AppRouter.kNotificationSettingsView);
                     },
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: spacing),
                   ProfileActionTile(
                     icon: Icons.key,
                     title: 'Password Settings',
@@ -39,7 +46,7 @@ class SettingsViewBody extends StatelessWidget {
                       ).push(AppRouter.kPasswordSettingsView);
                     },
                   ),
-                  SizedBox(height: 20),
+                  SizedBox(height: spacing),
                   ProfileActionTile(
                     icon: Icons.person,
                     title: 'Delete Account',

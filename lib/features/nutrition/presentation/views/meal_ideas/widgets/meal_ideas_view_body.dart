@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:move_on/core/utils/functions/responsive_helper.dart';
 import 'package:move_on/features/nutrition/presentation/views/meal_ideas/widgets/meal_ideas_header.dart';
 import 'package:move_on/features/nutrition/presentation/views/meal_ideas/widgets/meal_tabs.dart';
 import 'package:move_on/features/nutrition/presentation/views/meal_ideas/widgets/recipe_of_the_day_card.dart';
@@ -23,6 +24,9 @@ class _MealIdeasViewBodyState extends State<MealIdeasViewBody> {
 
   @override
   Widget build(BuildContext context) {
+    final responsive = ResponsiveHelper(context);
+    final spacing = responsive.spacing(16);
+    
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -32,11 +36,11 @@ class _MealIdeasViewBodyState extends State<MealIdeasViewBody> {
             children: [
               const MealIdeasHeader(),
               MealTabs(onTabChanged: _onMealTypeChanged),
-              const SizedBox(height: 16),
+              SizedBox(height: spacing),
               RecipeOfTheDayCard(mealType: _currentMealType),
-              const SizedBox(height: 16),
+              SizedBox(height: spacing),
               RecommendedSection(mealType: _currentMealType),
-              const SizedBox(height: 16),
+              SizedBox(height: spacing),
               RecipesForYouSection(mealType: _currentMealType),
             ],
           ),
