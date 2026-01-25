@@ -14,6 +14,7 @@ class WelcomeScreenTemplate extends StatelessWidget {
     required this.subtitle,
     required this.progress,
     required this.nextRoute,
+    this.onNextTap,
   });
 
   final String backgroundImage;
@@ -21,6 +22,7 @@ class WelcomeScreenTemplate extends StatelessWidget {
   final String subtitle;
   final double progress;
   final String nextRoute;
+  final VoidCallback? onNextTap;
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +87,10 @@ class WelcomeScreenTemplate extends StatelessWidget {
               height: 51.85,
               radius: 30,
               style: Styles.textStyle20.copyWith(fontWeight: FontWeight.bold),
-              onTap: () => context.push(nextRoute),
+              onTap: () {
+                onNextTap?.call();
+                context.push(nextRoute);
+              },
             ),
           ),
 

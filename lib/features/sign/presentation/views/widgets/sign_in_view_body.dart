@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/custom_text_field.dart';
@@ -14,6 +15,7 @@ class SignInViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localStorageService = LocalStorageService();
     return Scaffold(
       backgroundColor: Colors.black,
       body: Column(
@@ -66,8 +68,19 @@ class SignInViewBody extends StatelessWidget {
             height: 56,
             style: Styles.textStyle16.copyWith(fontFamily: 'Work Sans'),
             radius: 19,
-            onTap: () {
-              GoRouter.of(context).push(AppRouter.kHomeView);
+            onTap: () async {
+              try {
+                // حفظ حالة تسجيل الدخول
+                await localStorageService.setSignedIn(true);
+                if (context.mounted) {
+                  GoRouter.of(context).pushReplacement(AppRouter.kHomeView);
+                }
+              } catch (e) {
+                // في حالة حدوث خطأ، ننتقل على أي حال
+                if (context.mounted) {
+                  GoRouter.of(context).pushReplacement(AppRouter.kHomeView);
+                }
+              }
             },
           ),
           SizedBox(height: 50),

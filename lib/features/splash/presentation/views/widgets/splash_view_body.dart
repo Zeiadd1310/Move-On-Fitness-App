@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:move_on/core/animations/animation_builders.dart';
+import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/assets.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/custom_background_widget.dart';
+import 'package:move_on/features/splash/view_models/splash_view_model.dart';
 
 import '../../../../../core/utils/functions/app_router.dart';
 
@@ -19,12 +23,14 @@ class _SplashViewBodyState extends State<SplashViewBody>
     with SingleTickerProviderStateMixin {
   late final AnimationController _animationController;
   _SplashAnimations? _animations;
+  late final SplashViewModel _splashViewModel;
 
   @override
   void initState() {
     super.initState();
+    _splashViewModel = SplashViewModel(LocalStorageService());
     initSlidingAnimation();
-    _navigateToQuote();
+    _waitForAnimationAndNavigate();
   }
 
   @override
@@ -110,11 +116,57 @@ class _SplashViewBodyState extends State<SplashViewBody>
     _animationController.forward();
   }
 
-  void _navigateToQuote() {
-    Future.delayed(const Duration(seconds: 6), () {
-      if (!mounted) return;
-      GoRouter.of(context).push(AppRouter.kQuoteView);
-    });
+  Future<void> _waitForAnimationComplete() async {
+    // في حالة كانت الـ animation انتهت بالفعل
+    if (_animationController.isCompleted) {
+      return;
+    }
+    
+    final completer = Completer<void>();
+    late void Function(AnimationStatus) listener;
+    
+    listener = (status) {
+      if (status == AnimationStatus.completed) {
+        _animationController.removeStatusListener(listener);
+        if (!completer.isCompleted) {
+          completer.complete();
+        }
+      }
+    };
+    
+    _animationController.addStatusListener(listener);
+    
+    return completer.future;
+  }
+
+  void _waitForAnimationAndNavigate() async {
+    // انتظار انتهاء الـ animation
+    await _waitForAnimationComplete();
+    
+    // انتظار إضافي (1 ثانية) لإعطاء المستخدم وقت لرؤية الـ splash بالكامل
+    await Future.delayed(const Duration(seconds: 1));
+    
+    if (!mounted) return;
+    
+    // اتخاذ قرار التنقل
+    final destination = await _splashViewModel.decideNavigation();
+    
+    if (!mounted) return;
+    
+    switch (destination) {
+      case SplashDestination.welcome:
+        // أول مرة: splash → quote → welcome
+        GoRouter.of(context).pushReplacement(AppRouter.kQuoteView);
+        break;
+      case SplashDestination.signIn:
+        // مش أول مرة + مش عامل signing → sign in
+        GoRouter.of(context).pushReplacement(AppRouter.kSignInView);
+        break;
+      case SplashDestination.home:
+        // مش أول مرة + عامل signing → home
+        GoRouter.of(context).pushReplacement(AppRouter.kHomeView);
+        break;
+    }
   }
 }
 

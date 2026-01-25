@@ -26,9 +26,11 @@ class CustomWorkoutCardWidget extends StatelessWidget {
     return Container(
       key: ValueKey('workout_card_$title'),
       width: cardWidth ?? 180,
+      height: 200,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(16)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.max,
         children: [
           Expanded(
             child: ClipRRect(
