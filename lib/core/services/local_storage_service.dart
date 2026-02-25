@@ -25,8 +25,6 @@ class LocalStorageService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_isSignedInKey, value);
     } catch (e) {
-      // في حالة حدوث خطأ، نطبع الخطأ لكن لا نرمي exception
-      // لأن هذا قد يسبب مشاكل في UI
       debugPrint('Error setting signed in status: $e');
     }
   }

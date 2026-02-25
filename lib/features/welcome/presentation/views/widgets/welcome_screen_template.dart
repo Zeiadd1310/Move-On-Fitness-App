@@ -36,7 +36,7 @@ class WelcomeScreenTemplate extends StatelessWidget {
     final backButtonWidth = responsive.buttonWidth(57.29);
     final backButtonHeight = responsive.buttonHeight(56);
     final horizontalPadding = responsive.horizontalPadding();
-    
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,

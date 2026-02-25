@@ -28,7 +28,7 @@ class ProfileViewBody extends StatelessWidget {
     final topOffset = responsive.heightPercent(0.01);
     final headerOffset = responsive.heightPercent(0.09);
     final spacing = responsive.spacing(12);
-    
+
     return Stack(
       children: [
         Column(
@@ -60,7 +60,10 @@ class ProfileViewBody extends StatelessWidget {
           top: headerHeight + headerOffset,
           bottom: 0,
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: verticalPadding,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

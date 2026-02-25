@@ -21,7 +21,7 @@ class GetStartedViewBody extends StatelessWidget {
     final buttonHeight = responsive.buttonHeight(64);
     final horizontalPadding = responsive.horizontalPadding();
     final fontSize = responsive.fontSize(16);
-    
+
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,

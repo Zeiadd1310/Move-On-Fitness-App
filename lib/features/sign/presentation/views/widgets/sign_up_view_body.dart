@@ -25,7 +25,7 @@ class SignUpViewBody extends StatelessWidget {
     final buttonHeight = responsive.buttonHeight(56);
     final snackbarWidth = responsive.buttonWidth(360);
     final snackbarHeight = responsive.buttonHeight(60);
-    
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: SingleChildScrollView(

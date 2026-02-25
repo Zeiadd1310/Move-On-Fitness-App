@@ -16,14 +16,17 @@ class SettingsViewBody extends StatelessWidget {
     final verticalPadding = responsive.verticalPadding();
     final topSpacing = responsive.heightPercent(0.075);
     final spacing = responsive.spacing(20);
-    
+
     return Scaffold(
       body: SafeArea(
         child: Column(
           children: [
             CustomAssessmentTextWidget(text: 'Settings'),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: verticalPadding,
+              ),
               child: Column(
                 children: [
                   SizedBox(height: topSpacing),

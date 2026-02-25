@@ -26,7 +26,7 @@ class _MealIdeasViewBodyState extends State<MealIdeasViewBody> {
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
     final spacing = responsive.spacing(16);
-    
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(

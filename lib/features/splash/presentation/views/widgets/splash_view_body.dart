@@ -122,10 +122,10 @@ class _SplashViewBodyState extends State<SplashViewBody>
     if (_animationController.isCompleted) {
       return;
     }
-    
+
     final completer = Completer<void>();
     late void Function(AnimationStatus) listener;
-    
+
     listener = (status) {
       if (status == AnimationStatus.completed) {
         _animationController.removeStatusListener(listener);
@@ -134,26 +134,26 @@ class _SplashViewBodyState extends State<SplashViewBody>
         }
       }
     };
-    
+
     _animationController.addStatusListener(listener);
-    
+
     return completer.future;
   }
 
   void _waitForAnimationAndNavigate() async {
     // انتظار انتهاء الـ animation
     await _waitForAnimationComplete();
-    
+
     // انتظار إضافي (1 ثانية) لإعطاء المستخدم وقت لرؤية الـ splash بالكامل
     await Future.delayed(const Duration(seconds: 1));
-    
+
     if (!mounted) return;
-    
+
     // اتخاذ قرار التنقل
     final destination = await _splashViewModel.decideNavigation();
-    
+
     if (!mounted) return;
-    
+
     switch (destination) {
       case SplashDestination.welcome:
         // أول مرة: splash → quote → welcome
@@ -217,7 +217,7 @@ class _SplashContent extends StatelessWidget {
     final logoSize = responsive.imageWidth(275);
     final spacing = responsive.spacing(12);
     final fontSize = responsive.fontSize(18);
-    
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [

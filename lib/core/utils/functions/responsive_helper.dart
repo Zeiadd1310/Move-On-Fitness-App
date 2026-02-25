@@ -18,14 +18,24 @@ class ResponsiveHelper {
   bool get isDesktop => width >= 900;
 
   /// Responsive padding
-  double horizontalPadding({double? small, double? medium, double? tablet, double? desktop}) {
+  double horizontalPadding({
+    double? small,
+    double? medium,
+    double? tablet,
+    double? desktop,
+  }) {
     if (isSmallScreen) return small ?? width * 0.04;
     if (isMediumScreen) return medium ?? width * 0.045;
     if (isTablet) return tablet ?? width * 0.06;
     return desktop ?? width * 0.08;
   }
 
-  double verticalPadding({double? small, double? medium, double? tablet, double? desktop}) {
+  double verticalPadding({
+    double? small,
+    double? medium,
+    double? tablet,
+    double? desktop,
+  }) {
     if (isSmallScreen) return small ?? height * 0.02;
     if (isMediumScreen) return medium ?? height * 0.025;
     if (isTablet) return tablet ?? height * 0.03;
@@ -33,7 +43,13 @@ class ResponsiveHelper {
   }
 
   /// Responsive font sizes
-  double fontSize(double baseSize, {double? small, double? medium, double? tablet, double? desktop}) {
+  double fontSize(
+    double baseSize, {
+    double? small,
+    double? medium,
+    double? tablet,
+    double? desktop,
+  }) {
     if (isSmallScreen) return small ?? baseSize * 0.85;
     if (isMediumScreen) return medium ?? baseSize;
     if (isTablet) return tablet ?? baseSize * 1.1;
@@ -41,7 +57,13 @@ class ResponsiveHelper {
   }
 
   /// Responsive icon sizes
-  double iconSize(double baseSize, {double? small, double? medium, double? tablet, double? desktop}) {
+  double iconSize(
+    double baseSize, {
+    double? small,
+    double? medium,
+    double? tablet,
+    double? desktop,
+  }) {
     if (isSmallScreen) return small ?? baseSize * 0.85;
     if (isMediumScreen) return medium ?? baseSize;
     if (isTablet) return tablet ?? baseSize * 1.2;
@@ -49,7 +71,13 @@ class ResponsiveHelper {
   }
 
   /// Responsive spacing
-  double spacing(double baseSpacing, {double? small, double? medium, double? tablet, double? desktop}) {
+  double spacing(
+    double baseSpacing, {
+    double? small,
+    double? medium,
+    double? tablet,
+    double? desktop,
+  }) {
     if (isSmallScreen) return small ?? baseSpacing * 0.8;
     if (isMediumScreen) return medium ?? baseSpacing;
     if (isTablet) return tablet ?? baseSpacing * 1.2;
@@ -57,14 +85,26 @@ class ResponsiveHelper {
   }
 
   /// Responsive button dimensions
-  double buttonWidth(double baseWidth, {double? small, double? medium, double? tablet, double? desktop}) {
+  double buttonWidth(
+    double baseWidth, {
+    double? small,
+    double? medium,
+    double? tablet,
+    double? desktop,
+  }) {
     if (isSmallScreen) return small ?? width * 0.85;
     if (isMediumScreen) return medium ?? baseWidth;
     if (isTablet) return tablet ?? baseWidth * 1.1;
     return desktop ?? baseWidth * 1.2;
   }
 
-  double buttonHeight(double baseHeight, {double? small, double? medium, double? tablet, double? desktop}) {
+  double buttonHeight(
+    double baseHeight, {
+    double? small,
+    double? medium,
+    double? tablet,
+    double? desktop,
+  }) {
     if (isSmallScreen) return small ?? baseHeight * 0.9;
     if (isMediumScreen) return medium ?? baseHeight;
     if (isTablet) return tablet ?? baseHeight * 1.1;
@@ -72,14 +112,26 @@ class ResponsiveHelper {
   }
 
   /// Responsive image dimensions
-  double imageWidth(double baseWidth, {double? small, double? medium, double? tablet, double? desktop}) {
+  double imageWidth(
+    double baseWidth, {
+    double? small,
+    double? medium,
+    double? tablet,
+    double? desktop,
+  }) {
     if (isSmallScreen) return small ?? width * 0.9;
     if (isMediumScreen) return medium ?? baseWidth;
     if (isTablet) return tablet ?? baseWidth * 1.1;
     return desktop ?? baseWidth * 1.2;
   }
 
-  double imageHeight(double baseHeight, {double? small, double? medium, double? tablet, double? desktop}) {
+  double imageHeight(
+    double baseHeight, {
+    double? small,
+    double? medium,
+    double? tablet,
+    double? desktop,
+  }) {
     if (isSmallScreen) return small ?? baseHeight * 0.85;
     if (isMediumScreen) return medium ?? baseHeight;
     if (isTablet) return tablet ?? baseHeight * 1.1;

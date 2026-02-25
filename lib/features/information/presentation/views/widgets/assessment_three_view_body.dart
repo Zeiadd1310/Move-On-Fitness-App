@@ -48,7 +48,10 @@ class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
             children: [
               Row(
                 children: [
-                  CustomBackButton(width: backButtonSize, height: backButtonSize),
+                  CustomBackButton(
+                    width: backButtonSize,
+                    height: backButtonSize,
+                  ),
                   SizedBox(width: rowSpacing),
                   Text(
                     'Assessment',
@@ -172,7 +175,10 @@ class _DaysSlider extends StatelessWidget {
 
     return Container(
       width: sliderWidth,
-      padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
+      padding: EdgeInsets.symmetric(
+        horizontal: horizontalPadding,
+        vertical: verticalPadding,
+      ),
       decoration: BoxDecoration(
         color: const Color(0xff25282F),
         borderRadius: BorderRadius.circular(borderRadius),

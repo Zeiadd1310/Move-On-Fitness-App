@@ -135,7 +135,7 @@ class _QuoteAnimatedContent extends StatelessWidget {
     final quoteFontSize = responsive.fontSize(24);
     final authorFontSize = responsive.fontSize(18);
     final borderRadius = responsive.clamp(20.0, 15.0, 30.0);
-    
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -171,9 +171,7 @@ class _QuoteAnimatedContent extends StatelessWidget {
             child: Text(
               '"Remember, physical fitness can neither be acquired by wishful thinking nor by outright purchase."',
               style: GoogleFonts.workSans(
-                textStyle: Styles.textStyle24.copyWith(
-                  fontSize: quoteFontSize,
-                ),
+                textStyle: Styles.textStyle24.copyWith(fontSize: quoteFontSize),
               ),
               textAlign: TextAlign.center,
             ),
