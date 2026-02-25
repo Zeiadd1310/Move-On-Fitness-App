@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
-import 'package:move_on/core/widgets/custom_error_snackbar.dart';
 import 'package:move_on/core/widgets/custom_text_field.dart';
 import 'package:move_on/features/sign/presentation/views/widgets/custom_signing_view.dart';
 import 'package:move_on/features/sign/presentation/views/widgets/custom_text_span_widget.dart';
+import 'package:move_on/features/sign/presentation/views/widgets/social_icon.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_button.dart';
 
 class SignUpViewBody extends StatelessWidget {
@@ -104,12 +105,12 @@ class SignUpViewBody extends StatelessWidget {
               ),
             ),
 
-            CustomErrorSnackBar(
-              message: "ERROR: Password Doesn't Match!",
-              width: snackbarWidth,
-              height: snackbarHeight,
-            ),
-            SizedBox(height: mediumSpacing),
+            // CustomErrorSnackBar(
+            //   message: "ERROR: Password Doesn't Match!",
+            //   width: snackbarWidth,
+            //   height: snackbarHeight,
+            // ),
+            SizedBox(height: spacing),
             CustomButton(
               text: 'Sign Up',
               width: buttonWidth,
@@ -135,6 +136,15 @@ class SignUpViewBody extends StatelessWidget {
               },
             ),
             SizedBox(height: mediumSpacing),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SocialIcon(icon: FontAwesomeIcons.google),
+                const SizedBox(width: 20),
+                SocialIcon(icon: FontAwesomeIcons.facebook),
+              ],
+            ),
+            SizedBox(height: spacing * 1.5),
             CustomTextSpanWidget(
               text: 'Already have account? ',
               textSpan: 'Sign In',

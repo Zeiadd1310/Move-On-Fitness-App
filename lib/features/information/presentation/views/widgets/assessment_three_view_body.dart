@@ -195,10 +195,6 @@ class _DaysSlider extends StatelessWidget {
               decoration: BoxDecoration(
                 color: const Color(0xffF97316),
                 borderRadius: BorderRadius.circular(dayBorderRadius),
-                border: Border.all(
-                  color: Color(0xff2563EB).withOpacity(0.6),
-                  width: 2,
-                ),
               ),
               child: Center(
                 child: Text(
@@ -212,7 +208,7 @@ class _DaysSlider extends StatelessWidget {
               ),
             );
           }
-          return GestureDetector(
+          return InkWell(
             onTap: () => onChanged(day),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: itemPadding),
