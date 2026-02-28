@@ -3,12 +3,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
-import 'package:move_on/core/utils/functions/responsive_helper.dart';
+import 'package:move_on/core/utils/helpers/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/custom_text_field.dart';
-import 'package:move_on/features/sign/presentation/views/widgets/custom_signing_view.dart';
-import 'package:move_on/features/sign/presentation/views/widgets/custom_text_span_widget.dart';
-import 'package:move_on/features/sign/presentation/views/widgets/social_icon.dart';
+import 'package:move_on/features/authentication/presentation/views/widgets/custom_signing_view.dart';
+import 'package:move_on/features/authentication/presentation/views/widgets/custom_text_span_widget.dart';
+import 'package:move_on/features/authentication/presentation/views/widgets/social_icon.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_button.dart';
 
 class SignUpViewBody extends StatelessWidget {
@@ -24,8 +24,8 @@ class SignUpViewBody extends StatelessWidget {
     final fontSize = responsive.fontSize(16);
     final buttonWidth = responsive.buttonWidth(360);
     final buttonHeight = responsive.buttonHeight(56);
-    final snackbarWidth = responsive.buttonWidth(360);
-    final snackbarHeight = responsive.buttonHeight(60);
+    // final snackbarWidth = responsive.buttonWidth(360);
+    // final snackbarHeight = responsive.buttonHeight(60);
 
     return Scaffold(
       backgroundColor: Colors.black,

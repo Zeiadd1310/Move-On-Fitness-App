@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:move_on/constants.dart';
-import 'package:move_on/core/utils/functions/month_utils.dart';
+import 'package:move_on/core/utils/helpers/month_utils.dart';
 
 class MonthPickerBottomSheet extends StatelessWidget {
   final DateTime selectedDate;

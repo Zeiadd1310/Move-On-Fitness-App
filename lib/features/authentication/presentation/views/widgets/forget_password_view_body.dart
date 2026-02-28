@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/custom_background_widget.dart';
-import 'package:move_on/features/sign/presentation/views/widgets/reset_option_card.dart';
+import 'package:move_on/features/authentication/presentation/views/widgets/reset_option_card.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_back_button.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_button.dart';
 

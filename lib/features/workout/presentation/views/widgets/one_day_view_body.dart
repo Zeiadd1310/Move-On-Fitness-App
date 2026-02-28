@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
-import 'package:move_on/core/utils/functions/responsive_helper.dart';
+import 'package:move_on/core/utils/helpers/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_button.dart';
 import 'package:move_on/features/workout/presentation/views/widgets/custom_assessment_text_widget.dart';

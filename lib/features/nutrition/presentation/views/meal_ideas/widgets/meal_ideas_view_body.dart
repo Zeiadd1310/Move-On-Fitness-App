@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:move_on/core/utils/functions/responsive_helper.dart';
+import 'package:move_on/core/utils/helpers/responsive_helper.dart';
 import 'package:move_on/features/nutrition/presentation/views/meal_ideas/widgets/meal_ideas_header.dart';
 import 'package:move_on/features/nutrition/presentation/views/meal_ideas/widgets/meal_tabs.dart';
 import 'package:move_on/features/nutrition/presentation/views/meal_ideas/widgets/recipe_of_the_day_card.dart';

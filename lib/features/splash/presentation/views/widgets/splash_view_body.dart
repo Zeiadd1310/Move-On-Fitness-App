@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:move_on/core/animations/animation_builders.dart';
 import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/assets.dart';
-import 'package:move_on/core/utils/functions/responsive_helper.dart';
+import 'package:move_on/core/utils/helpers/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/custom_background_widget.dart';
 import 'package:move_on/features/splash/view_models/splash_view_model.dart';

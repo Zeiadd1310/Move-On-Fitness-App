@@ -11,8 +11,8 @@ import 'package:move_on/features/profile/presentation/views/notification_setting
 import 'package:move_on/features/profile/presentation/views/password_settings_view.dart';
 import 'package:move_on/features/profile/presentation/views/profile_view.dart';
 import 'package:move_on/features/profile/presentation/views/settings_view.dart';
-import 'package:move_on/features/sign/presentation/views/forget_password_view.dart';
-import 'package:move_on/features/sign/presentation/views/sign_up_view.dart';
+import 'package:move_on/features/authentication/presentation/views/forget_password_view.dart';
+import 'package:move_on/features/authentication/presentation/views/sign_up_view.dart';
 import 'package:move_on/features/splash/presentation/views/quote_view.dart';
 import 'package:move_on/features/splash/presentation/views/splash_view.dart';
 import 'package:go_router/go_router.dart';
@@ -21,7 +21,7 @@ import 'package:move_on/features/welcome/presentation/views/first_welcome_view.d
 import 'package:move_on/features/welcome/presentation/views/fourth_welcome_view.dart';
 import 'package:move_on/features/welcome/presentation/views/get_started_view.dart';
 import 'package:move_on/features/welcome/presentation/views/second_welcome_view.dart';
-import 'package:move_on/features/sign/presentation/views/sign_in_view.dart';
+import 'package:move_on/features/authentication/presentation/views/sign_in_view.dart';
 import 'package:move_on/features/welcome/presentation/views/third_welcome_view.dart';
 import 'package:move_on/features/workout/presentation/views/about_workout_view.dart';
 import 'package:move_on/features/workout/presentation/views/body_data_view.dart';

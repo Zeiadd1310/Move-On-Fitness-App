@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:move_on/core/animations/animation_builders.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/core/utils/functions/assets.dart';
-import 'package:move_on/core/utils/functions/responsive_helper.dart';
+import 'package:move_on/core/utils/helpers/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import '../../../../../core/utils/functions/app_router.dart';
 

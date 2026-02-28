@@ -4,9 +4,9 @@ import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/custom_text_field.dart';
-import 'package:move_on/features/sign/presentation/views/widgets/custom_signing_view.dart';
-import 'package:move_on/features/sign/presentation/views/widgets/custom_text_span_widget.dart';
-import 'package:move_on/features/sign/presentation/views/widgets/social_icon.dart';
+import 'package:move_on/features/authentication/presentation/views/widgets/custom_signing_view.dart';
+import 'package:move_on/features/authentication/presentation/views/widgets/custom_text_span_widget.dart';
+import 'package:move_on/features/authentication/presentation/views/widgets/social_icon.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_button.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 

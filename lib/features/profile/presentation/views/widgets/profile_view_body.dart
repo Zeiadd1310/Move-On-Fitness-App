@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
-import 'package:move_on/core/utils/functions/responsive_helper.dart';
+import 'package:move_on/core/utils/helpers/responsive_helper.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/logout_bottom_sheet.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/profile_action_tile.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/profile_header_card.dart';
