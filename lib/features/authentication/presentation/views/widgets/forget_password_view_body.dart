@@ -77,18 +77,18 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 16.0),
-                      child: Text(
-                        'Select what method you\'d like to reset.',
-                        style: Styles.textStyle16.copyWith(
-                          fontWeight: FontWeight.w500,
-                          fontFamily: 'Work Sans',
-                          color: const Color(0xffD7D8D9),
-                        ),
-                      ),
-                    ),
+                    // const SizedBox(height: 10),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(left: 16.0),
+                    //   child: Text(
+                    //     'Select what method you\'d like to reset.',
+                    //     style: Styles.textStyle16.copyWith(
+                    //       fontWeight: FontWeight.w500,
+                    //       fontFamily: 'Work Sans',
+                    //       color: const Color(0xffD7D8D9),
+                    //     ),
+                    //   ),
+                    // ),
                     const SizedBox(height: 40),
                     Center(
                       child: SizedBox(
@@ -109,25 +109,25 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                         ),
                       ),
                     ),
-                    Center(
-                      child: SizedBox(
-                        width: 380,
-                        child: GestureDetector(
-                          onTap: () =>
-                              setState(() => _selectedMethod = 'phone'),
-                          child: ResetOptionCard(
-                            iconBg: _selectedMethod == 'phone'
-                                ? const Color(0xff2563EB).withOpacity(0.2)
-                                : const Color(0xff24262B),
-                            icon: Icons.phone,
-                            title: 'Send via Phone Number',
-                            subtitle:
-                                'Seamlessly reset your password via 2 Numbers.',
-                            icColor: const Color(0xff2563EB),
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Center(
+                    //   child: SizedBox(
+                    //     width: 380,
+                    //     child: GestureDetector(
+                    //       onTap: () =>
+                    //           setState(() => _selectedMethod = 'phone'),
+                    //       child: ResetOptionCard(
+                    //         iconBg: _selectedMethod == 'phone'
+                    //             ? const Color(0xff2563EB).withOpacity(0.2)
+                    //             : const Color(0xff24262B),
+                    //         icon: Icons.phone,
+                    //         title: 'Send via Phone Number',
+                    //         subtitle:
+                    //             'Seamlessly reset your password via 2 Numbers.',
+                    //         icColor: const Color(0xff2563EB),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     const SizedBox(height: 20),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -164,7 +164,9 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                                       );
                                 } else {
                                   CustomErrorSnackBar.show(
-                                      context, 'Please enter your email');
+                                    context,
+                                    'Please enter your email',
+                                  );
                                 }
                               },
                             ),

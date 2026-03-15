@@ -6,8 +6,8 @@ class CustomErrorSnackBar extends StatelessWidget {
   final Color backgroundColor;
   final Color borderColor;
   final IconData icon;
-  final double? width = 360;
-  final double? height = 60;
+  final double? width = 380;
+  final double? height = 80;
 
   const CustomErrorSnackBar({
     super.key,
@@ -17,7 +17,6 @@ class CustomErrorSnackBar extends StatelessWidget {
     this.icon = Icons.error_outline,
   });
 
-  /// يعرض رسالة خطأ بتصميم الـ app (استخدمها في الـ listener بدل SnackBar العادي)
   static void show(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(

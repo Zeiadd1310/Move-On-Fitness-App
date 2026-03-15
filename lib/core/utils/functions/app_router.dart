@@ -1,3 +1,4 @@
+import 'package:move_on/features/chat/Presentation/views/chat_bot_view.dart';
 import 'package:move_on/features/home/presentation/views/home_view.dart';
 import 'package:move_on/features/home/presentation/views/progress_tracking_view.dart';
 import 'package:move_on/features/information/presentation/views/assessment_one_view.dart';
@@ -64,6 +65,7 @@ abstract class AppRouter {
   static const kNutritionGetStartedView = '/nutritionGetStartedView';
   static const kMealIdeasView = '/mealIdeasView';
   static const kRecipeDetailView = '/recipeDetail';
+  static const kChatBotView = '/chatBotView';
 
   static final router = GoRouter(
     routes: [
@@ -186,6 +188,10 @@ abstract class AppRouter {
         path: kRecipeDetailView,
         builder: (context, state) =>
             RecipeDetailView(recipeData: state.extra as Map<String, dynamic>?),
+      ),
+      GoRoute(
+        path: kChatBotView,
+        builder: (context, state) => const ChatBotView(),
       ),
     ],
   );

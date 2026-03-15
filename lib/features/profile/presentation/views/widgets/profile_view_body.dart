@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
+import 'package:move_on/core/services/local_storage_service.dart';
+import 'package:move_on/core/utils/functions/api_service.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/helpers/responsive_helper.dart';
+import 'package:move_on/core/widgets/custom_error_snackbar.dart';
+import 'package:move_on/features/authentication/data/repos/auth_repo_impl.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/logout_bottom_sheet.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/profile_action_tile.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/profile_header_card.dart';
@@ -97,7 +101,7 @@ class ProfileViewBody extends StatelessWidget {
                           option1: 'Cancel',
                           option2: 'Yes, logout',
                           onLogout: () {
-                            GoRouter.of(context).go(AppRouter.kSignInView);
+                            _handleLogout(context);
                           },
                         );
                       },
@@ -109,6 +113,27 @@ class ProfileViewBody extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Future<void> _handleLogout(BuildContext context) async {
+    final authRepo = AuthRepoImpl(ApiService());
+    final localStorage = LocalStorageService();
+
+    final result = await authRepo.logout();
+    await result.fold(
+      (failure) async {
+        if (context.mounted) {
+          CustomErrorSnackBar.show(context, failure.errMessage);
+        }
+      },
+      (_) async {
+        await localStorage.setSignedIn(false);
+        await localStorage.clearToken();
+        if (context.mounted) {
+          GoRouter.of(context).go(AppRouter.kSignInView);
+        }
+      },
     );
   }
 }

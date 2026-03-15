@@ -39,7 +39,8 @@ class ServerFailure extends Failure {
 
   factory ServerFailure.fromResponse(int statusCode, dynamic response) {
     if (statusCode == 400 || statusCode == 401 || statusCode == 403) {
-      final message = response?['error']?['message'] ??
+      final message =
+          response?['error']?['message'] ??
           response?['message'] ??
           response?['errors']?[0] ??
           'Something went wrong, please try again';

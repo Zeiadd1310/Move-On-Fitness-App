@@ -6,23 +6,20 @@ class ApiService {
   final Dio _dio;
 
   ApiService()
-      : _dio = Dio(
-          BaseOptions(
-            baseUrl: _baseUrl,
-            connectTimeout: const Duration(seconds: 10),
-            receiveTimeout: const Duration(seconds: 10),
-            headers: {'Content-Type': 'application/json'},
-          ),
-        );
+    : _dio = Dio(
+        BaseOptions(
+          baseUrl: _baseUrl,
+          connectTimeout: const Duration(seconds: 10),
+          receiveTimeout: const Duration(seconds: 10),
+          headers: {'Content-Type': 'application/json'},
+        ),
+      );
 
   Future<Map<String, dynamic>> get({
     required String endPoint,
     String? token,
   }) async {
-    final response = await _dio.get(
-      endPoint,
-      options: _buildOptions(token),
-    );
+    final response = await _dio.get(endPoint, options: _buildOptions(token));
     return response.data;
   }
 
@@ -56,10 +53,7 @@ class ApiService {
     required String endPoint,
     String? token,
   }) async {
-    final response = await _dio.delete(
-      endPoint,
-      options: _buildOptions(token),
-    );
+    final response = await _dio.delete(endPoint, options: _buildOptions(token));
     return response.data;
   }
 

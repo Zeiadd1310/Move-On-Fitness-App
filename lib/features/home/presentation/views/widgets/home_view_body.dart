@@ -133,7 +133,9 @@ class HomeViewBody extends StatelessWidget {
                     HomeMenuItem(
                       icon: FontAwesomeIcons.robot,
                       title: 'AI Chat',
-                      onTap: () {},
+                      onTap: () {
+                        GoRouter.of(context).push(AppRouter.kChatBotView);
+                      },
                     ),
                   ],
                 ),

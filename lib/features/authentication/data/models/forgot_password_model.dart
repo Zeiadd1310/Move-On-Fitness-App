@@ -2,19 +2,15 @@ import 'package:equatable/equatable.dart';
 
 class ForgotPasswordModel extends Equatable {
   final String? message;
-  final String? token;
 
-  const ForgotPasswordModel({this.message, this.token});
+  const ForgotPasswordModel({this.message});
 
   factory ForgotPasswordModel.fromJson(Map<String, dynamic> json) {
-    return ForgotPasswordModel(
-      message: json['message'] as String?,
-      token: json['token'] as String?,
-    );
+    return ForgotPasswordModel(message: json['message'] as String?);
   }
 
-  Map<String, dynamic> toJson() => {'message': message, 'token': token};
+  Map<String, dynamic> toJson() => {'message': message};
 
   @override
-  List<Object?> get props => [message, token];
+  List<Object?> get props => [message];
 }
