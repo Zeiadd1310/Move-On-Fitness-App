@@ -25,7 +25,7 @@ import 'package:move_on/features/welcome/presentation/views/second_welcome_view.
 import 'package:move_on/features/authentication/presentation/views/sign_in_view.dart';
 import 'package:move_on/features/welcome/presentation/views/third_welcome_view.dart';
 import 'package:move_on/features/workout/presentation/views/about_workout_view.dart';
-import 'package:move_on/features/workout/presentation/views/body_data_view.dart';
+import 'package:move_on/features/body_data/presentation/views/body_data_view.dart';
 import 'package:move_on/features/workout/presentation/views/five_days_view.dart';
 import 'package:move_on/features/workout/presentation/views/four_days_view.dart';
 import 'package:move_on/features/workout/presentation/views/one_day_view.dart';

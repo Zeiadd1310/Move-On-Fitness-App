@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/custom_text_toggle_widget.dart';
-import 'package:move_on/features/workout/presentation/views/widgets/custom_assessment_text_widget.dart';
+import 'package:move_on/core/widgets/custom_assessment_text_widget.dart';
 
 class NotificationSettingsViewBody extends StatelessWidget {
   const NotificationSettingsViewBody({super.key});

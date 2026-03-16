@@ -5,7 +5,7 @@ import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/custom_text_field.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_button.dart';
-import 'package:move_on/features/workout/presentation/views/widgets/custom_assessment_text_widget.dart';
+import 'package:move_on/core/widgets/custom_assessment_text_widget.dart';
 
 class PasswordSettingsViewBody extends StatelessWidget {
   const PasswordSettingsViewBody({super.key});

@@ -6,10 +6,10 @@ import 'package:move_on/core/utils/helpers/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/body_data_input_with_unit.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_button.dart';
-import 'package:move_on/features/workout/presentation/views/widgets/body_data_gender_selector.dart';
-import 'package:move_on/features/workout/presentation/views/widgets/body_data_input_field.dart';
-import 'package:move_on/features/workout/presentation/views/widgets/custom_assessment_text_widget.dart';
-import 'package:move_on/features/workout/presentation/views/widgets/custom_row_text_widget.dart';
+import 'package:move_on/features/body_data/presentation/views/widgets/body_data_gender_selector.dart';
+import 'package:move_on/features/body_data/presentation/views/widgets/body_data_input_field.dart';
+import 'package:move_on/core/widgets/custom_assessment_text_widget.dart';
+import 'package:move_on/features/body_data/presentation/views/widgets/custom_row_text_widget.dart';
 
 class BodyDataViewBody extends StatefulWidget {
   const BodyDataViewBody({super.key});

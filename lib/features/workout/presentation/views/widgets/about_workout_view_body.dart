@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
-import 'package:move_on/features/workout/presentation/views/widgets/custom_assessment_text_widget.dart';
+import 'package:move_on/core/widgets/custom_assessment_text_widget.dart';
 
 class AboutWorkoutViewBody extends StatelessWidget {
   const AboutWorkoutViewBody({super.key});

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:move_on/features/workout/presentation/views/widgets/body_data_view_body.dart';
+import 'package:move_on/features/body_data/presentation/views/widgets/body_data_view_body.dart';
 
 class BodyDataView extends StatelessWidget {
   const BodyDataView({super.key});
