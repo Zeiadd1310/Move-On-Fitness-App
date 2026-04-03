@@ -163,6 +163,10 @@ class _SplashViewBodyState extends State<SplashViewBody>
         // مش أول مرة + مش عامل signing → sign in
         GoRouter.of(context).pushReplacement(AppRouter.kSignInView);
         break;
+      case SplashDestination.bodyData:
+        // عامل signing لكن لسه ماكمّلش بيانات الجسم → body data
+        GoRouter.of(context).pushReplacement(AppRouter.kBodyDataView);
+        break;
       case SplashDestination.home:
         // مش أول مرة + عامل signing → home
         GoRouter.of(context).pushReplacement(AppRouter.kHomeView);

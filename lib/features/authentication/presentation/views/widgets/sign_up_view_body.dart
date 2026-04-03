@@ -53,6 +53,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
           final localStorage = LocalStorageService();
           await localStorage.saveToken(state.token);
           await localStorage.setSignedIn(true);
+          await localStorage.setBodyDataCompleted(true);
           if (context.mounted) {
             GoRouter.of(context).push(AppRouter.kBodyDataView);
           }
@@ -125,10 +126,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(
-                      left: horizontalPadding,
-                      top: spacing,
-                    ),
+                    padding: EdgeInsets.only(left: horizontalPadding),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(
@@ -154,10 +152,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(
-                      left: horizontalPadding,
-                      top: spacing,
-                    ),
+                    padding: EdgeInsets.only(left: horizontalPadding),
                     child: Align(
                       alignment: Alignment.centerLeft,
                       child: Text(

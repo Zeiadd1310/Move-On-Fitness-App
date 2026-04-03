@@ -39,11 +39,35 @@ class ServerFailure extends Failure {
 
   factory ServerFailure.fromResponse(int statusCode, dynamic response) {
     if (statusCode == 400 || statusCode == 401 || statusCode == 403) {
-      final message =
-          response?['error']?['message'] ??
-          response?['message'] ??
-          response?['errors']?[0] ??
-          'Something went wrong, please try again';
+      dynamic message;
+
+      try {
+        message = response?['error']?['message'] ?? response?['message'];
+
+        // Handle common validation/error shapes for the `errors` field safely
+        if (message == null && response?['errors'] != null) {
+          final errors = response['errors'];
+
+          if (errors is List && errors.isNotEmpty) {
+            // e.g. ["Email is required", "Password is required"]
+            message = errors.first;
+          } else if (errors is Map && errors.isNotEmpty) {
+            // e.g. { "Email": ["Email is required"] }
+            final firstKey = errors.keys.first;
+            final value = errors[firstKey];
+            if (value is List && value.isNotEmpty) {
+              message = value.first;
+            } else if (value != null) {
+              message = value.toString();
+            }
+          }
+        }
+      } catch (_) {
+        // Fallback to generic message if parsing fails for any reason
+        message = null;
+      }
+
+      message ??= 'Something went wrong, please try again';
       return ServerFailure(message.toString());
     } else if (statusCode == 404) {
       return ServerFailure('Your request not found, please try again later!');

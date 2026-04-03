@@ -40,8 +40,14 @@ class _SignInViewBodyState extends State<SignInViewBody> {
           final localStorage = LocalStorageService();
           await localStorage.saveToken(state.token);
           await localStorage.setSignedIn(true);
+          final isBodyDataCompleted =
+              await localStorage.isBodyDataCompleted();
           if (context.mounted) {
-            GoRouter.of(context).pushReplacement(AppRouter.kHomeView);
+            if (isBodyDataCompleted) {
+              GoRouter.of(context).pushReplacement(AppRouter.kHomeView);
+            } else {
+              GoRouter.of(context).pushReplacement(AppRouter.kBodyDataView);
+            }
           }
         } else if (state is SignInFailure) {
           CustomErrorSnackBar.show(context, state.errMessage);

@@ -59,7 +59,10 @@ class ApiService {
 
   Options _buildOptions(String? token) {
     return Options(
-      headers: token != null ? {'Authorization': 'Bearer $token'} : null,
+      headers: {
+        'Content-Type': 'application/json',
+        if (token != null) 'Authorization': 'Bearer $token',
+      },
     );
   }
 }

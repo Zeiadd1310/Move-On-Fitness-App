@@ -38,8 +38,13 @@ class BodyDataInputWithUnit extends StatelessWidget {
               child: TextField(
                 controller: controller,
                 textAlign: TextAlign.center,
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+                ],
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+
                 style: Styles.textStyle24.copyWith(
                   fontFamily: 'Work Sans',
                   color: Colors.white,

@@ -8,6 +8,7 @@ import 'package:move_on/features/authentication/data/models/reset_password_model
 import 'package:move_on/features/authentication/data/models/signin_model.dart';
 import 'package:move_on/features/authentication/data/models/signup_model.dart';
 import 'package:move_on/features/authentication/data/repos/auth_repo.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepoImpl implements AuthRepo {
   final ApiService apiService;
@@ -24,7 +25,10 @@ class AuthRepoImpl implements AuthRepo {
         endPoint: 'Account/login',
         body: {'email': email, 'password': password},
       );
-      return Right(SigninModel.fromJson(data));
+      final model = SigninModel.fromJson(data);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', model.token ?? '');
+      return Right(model);
     } on DioException catch (e) {
       return Left(ServerFailure.fromDioError(e));
     }
@@ -47,7 +51,12 @@ class AuthRepoImpl implements AuthRepo {
           'confirmPassword': confirmPassword,
         },
       );
-      return Right(SignupModel.fromJson(data));
+      final model = SignupModel.fromJson(data);
+      print('✅ SIGNUP TOKEN: ${model.token}');
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('token', model.token);
+      print('✅ TOKEN SAVED');
+      return Right(model);
     } on DioException catch (e) {
       return Left(ServerFailure.fromDioError(e));
     }
@@ -87,6 +96,8 @@ class AuthRepoImpl implements AuthRepo {
   @override
   Future<Either<Failure, LogoutModel>> logout() async {
     try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('token');
       final data = await apiService.post(endPoint: 'Account/logout', body: {});
       return Right(LogoutModel.fromJson(data));
     } on DioException catch (e) {
