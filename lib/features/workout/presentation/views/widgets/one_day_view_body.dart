@@ -32,16 +32,6 @@ class OneDayViewBody extends StatelessWidget {
                 imagePath: 'assets/images/full body.png',
                 onStart: () {},
               ),
-              CustomButton(
-                text: 'Continue',
-                width: buttonSize,
-                height: buttonHeight,
-                style: Styles.textStyle14.copyWith(fontSize: fontSize),
-                radius: 15,
-                onTap: () {
-                  GoRouter.of(context).push(AppRouter.kTwoDaysView);
-                },
-              ),
             ],
           ),
         ),

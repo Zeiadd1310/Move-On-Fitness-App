@@ -78,7 +78,10 @@ class _BodyDataViewBodyState extends State<BodyDataViewBody> {
         } else if (state is ManualAssessmentSuccess) {
           final localStorage = LocalStorageService();
           await localStorage.setBodyDataCompleted(true);
-          GoRouter.of(context).push(AppRouter.kAssessmentOneView);
+          GoRouter.of(context).push(
+            AppRouter.kAssessmentOneView,
+            extra: {'assessmentId': state.assessmentId ?? 0},
+          );
         }
       },
       builder: (context, state) {

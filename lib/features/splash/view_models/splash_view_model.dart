@@ -12,8 +12,9 @@ class SplashViewModel {
   Future<SplashDestination> decideNavigation() async {
     final isFirstTime = await _localStorageService.isFirstTime();
     final isSignedIn = await _localStorageService.isSignedIn();
-    final isBodyDataCompleted =
-        isSignedIn ? await _localStorageService.isBodyDataCompleted() : false;
+    final isBodyDataCompleted = isSignedIn
+        ? await _localStorageService.isBodyDataCompleted()
+        : false;
 
     if (isFirstTime) {
       return SplashDestination.welcome;

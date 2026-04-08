@@ -55,17 +55,6 @@ class FiveDaysViewBody extends StatelessWidget {
                 imagePath: 'assets/images/leg and abs.png',
                 onStart: () {},
               ),
-              SizedBox(height: height * 0.06),
-              CustomButton(
-                text: 'Continue',
-                width: 60,
-                height: 60,
-                style: Styles.textStyle14,
-                radius: 15,
-                onTap: () {
-                  GoRouter.of(context).push(AppRouter.kBodyDataView);
-                },
-              ),
             ],
           ),
         ),

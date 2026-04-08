@@ -5,8 +5,5 @@ import 'package:move_on/features/body_data/data/models/manual_assessment_respons
 
 abstract class BodyDataRepo {
   Future<Either<Failure, ManualAssessmentResponseModel>>
-      submitManualAssessment({
-    required ManualAssessmentRequestModel request,
-  });
+  submitManualAssessment({required ManualAssessmentRequestModel request});
 }
-

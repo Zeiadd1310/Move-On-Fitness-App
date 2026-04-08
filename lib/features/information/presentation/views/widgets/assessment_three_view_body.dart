@@ -1,13 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/helpers/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
+import 'package:move_on/core/widgets/custom_error_snackbar.dart';
+import 'package:move_on/features/information/presentation/cubits/days_cubit/days_cubit.dart';
+import 'package:move_on/features/information/presentation/cubits/generate_workout_plan_cubit/generate_workout_plan_cubit.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_back_button.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_button.dart';
 
 class AssessmentThreeViewBody extends StatefulWidget {
-  const AssessmentThreeViewBody({super.key});
+  final int assessmentId;
+  final int activityLevel;
+  final String goal;
+
+  const AssessmentThreeViewBody({
+    super.key,
+    required this.assessmentId,
+    required this.activityLevel,
+    required this.goal,
+  });
 
   @override
   State<AssessmentThreeViewBody> createState() =>
@@ -17,8 +30,29 @@ class AssessmentThreeViewBody extends StatefulWidget {
 class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
   int _selectedDays = 5;
 
+  String _routeForDays(int days) {
+    switch (days) {
+      case 1:
+        return AppRouter.kOneDayView;
+      case 2:
+        return AppRouter.kTwoDaysView;
+      case 3:
+        return AppRouter.kThreeDaysView;
+      case 4:
+        return AppRouter.kFourDaysView;
+      case 5:
+      default:
+        return AppRouter.kFiveDaysView;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final selectedDays =
+        context.watch<DaysCubit>().selectedDays ??
+        _selectedDays;
+    _selectedDays = selectedDays;
+
     final responsive = ResponsiveHelper(context);
     final horizontalPadding = responsive.horizontalPadding();
     final verticalPadding = responsive.verticalPadding();
@@ -35,17 +69,26 @@ class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
     final buttonWidth = responsive.widthPercent(0.9);
     final buttonHeight = responsive.buttonHeight(56);
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: horizontalPadding,
-            vertical: verticalPadding,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+    return BlocConsumer<GenerateWorkoutPlanCubit, GenerateWorkoutPlanState>(
+      listener: (context, state) {
+        if (state is GenerateWorkoutPlanFailure) {
+          CustomErrorSnackBar.show(context, state.errorMessage);
+        } else if (state is GenerateWorkoutPlanSuccess) {
+          GoRouter.of(context).push(_routeForDays(_selectedDays));
+        }
+      },
+      builder: (context, state) {
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: horizontalPadding,
+                vertical: verticalPadding,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
               Row(
                 children: [
                   CustomBackButton(
@@ -88,13 +131,13 @@ class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
                 ),
               ),
               SizedBox(height: mediumSpacing),
-              _DaysSlider(
-                selected: _selectedDays,
-                onChanged: (value) {
-                  setState(() => _selectedDays = value);
-                },
-                responsive: responsive,
-              ),
+                  _DaysSlider(
+                    selected: _selectedDays,
+                    onChanged: (value) {
+                      context.read<DaysCubit>().selectDays(value);
+                    },
+                    responsive: responsive,
+                  ),
               SizedBox(height: mediumSpacing),
               Center(
                 child: Text.rich(
@@ -128,24 +171,48 @@ class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
                 ),
               ),
               const Spacer(),
-              CustomButton(
-                text: 'Continue',
-                width: buttonWidth,
-                height: buttonHeight,
-                style: Styles.textStyle18.copyWith(
-                  fontFamily: 'Work Sans',
-                  fontWeight: FontWeight.w600,
-                  fontSize: textFontSize,
-                ),
-                radius: 19,
-                onTap: () {
-                  GoRouter.of(context).push(AppRouter.kOneDayView);
-                },
+                  state is GenerateWorkoutPlanLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : CustomButton(
+                          text: 'Continue',
+                          width: buttonWidth,
+                          height: buttonHeight,
+                          style: Styles.textStyle18.copyWith(
+                            fontFamily: 'Work Sans',
+                            fontWeight: FontWeight.w600,
+                            fontSize: textFontSize,
+                          ),
+                          radius: 19,
+                          onTap: () {
+                            if (widget.goal.trim().isEmpty) {
+                              CustomErrorSnackBar.show(
+                                context,
+                                'Please choose your goal first',
+                              );
+                              return;
+                            }
+                            if (widget.activityLevel <= 0) {
+                              CustomErrorSnackBar.show(
+                                context,
+                                'Please choose your activity level first',
+                              );
+                              return;
+                            }
+                            context
+                                .read<GenerateWorkoutPlanCubit>()
+                                .generateWorkoutPlan(
+                                  activityLevel: widget.activityLevel,
+                                  goal: widget.goal,
+                                  availableDays: _selectedDays,
+                                );
+                          },
+                        ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

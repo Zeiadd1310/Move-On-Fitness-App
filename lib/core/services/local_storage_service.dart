@@ -40,10 +40,9 @@ class LocalStorageService {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString(_tokenKey);
     if (kDebugMode) {
-      final masked =
-          (token == null || token.length < 16)
-              ? token
-              : '${token.substring(0, 8)}...${token.substring(token.length - 8)}';
+      final masked = (token == null || token.length < 16)
+          ? token
+          : '${token.substring(0, 8)}...${token.substring(token.length - 8)}';
       debugPrint('🗝️ KEY: $_tokenKey | TOKEN: $masked');
     }
     return token;

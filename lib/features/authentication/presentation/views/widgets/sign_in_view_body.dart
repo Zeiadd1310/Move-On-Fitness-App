@@ -40,8 +40,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
           final localStorage = LocalStorageService();
           await localStorage.saveToken(state.token);
           await localStorage.setSignedIn(true);
-          final isBodyDataCompleted =
-              await localStorage.isBodyDataCompleted();
+          final isBodyDataCompleted = await localStorage.isBodyDataCompleted();
           if (context.mounted) {
             if (isBodyDataCompleted) {
               GoRouter.of(context).pushReplacement(AppRouter.kHomeView);

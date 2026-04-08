@@ -72,7 +72,34 @@ class ServerFailure extends Failure {
     } else if (statusCode == 404) {
       return ServerFailure('Your request not found, please try again later!');
     } else if (statusCode == 500) {
-      return ServerFailure('Internal Server error, please try later');
+      dynamic message;
+      try {
+        message =
+            response?['error']?['message'] ??
+            response?['message'] ??
+            response?['title'] ??
+            response?['detail'];
+
+        if (message == null && response?['errors'] != null) {
+          final errors = response['errors'];
+          if (errors is Map && errors.isNotEmpty) {
+            final firstKey = errors.keys.first;
+            final value = errors[firstKey];
+            if (value is List && value.isNotEmpty) {
+              message = value.first;
+            } else if (value != null) {
+              message = value.toString();
+            }
+          }
+        }
+      } catch (_) {
+        message = null;
+      }
+      return ServerFailure(
+        (message?.toString().trim().isNotEmpty ?? false)
+            ? message.toString()
+            : 'Internal Server error, please try later',
+      );
     } else {
       return ServerFailure('Oops, there was an error, please try again');
     }

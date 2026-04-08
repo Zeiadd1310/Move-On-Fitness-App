@@ -109,15 +109,55 @@ abstract class AppRouter {
       ),
       GoRoute(
         path: kAssessmentOneView,
-        builder: (context, state) => const AssessmentOneView(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          int parseInt(dynamic value, [int fallback = 0]) {
+            if (value is int) return value;
+            if (value is String) return int.tryParse(value) ?? fallback;
+            return fallback;
+          }
+
+          final assessmentId = parseInt(extra?['assessmentId']);
+          return AssessmentOneView(assessmentId: assessmentId);
+        },
       ),
       GoRoute(
         path: kAssessmentTwoView,
-        builder: (context, state) => const AssessmentTwoView(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          int parseInt(dynamic value, [int fallback = 0]) {
+            if (value is int) return value;
+            if (value is String) return int.tryParse(value) ?? fallback;
+            return fallback;
+          }
+
+          final assessmentId = parseInt(extra?['assessmentId']);
+          final activityLevel = parseInt(extra?['activityLevel']);
+          return AssessmentTwoView(
+            assessmentId: assessmentId,
+            activityLevel: activityLevel,
+          );
+        },
       ),
       GoRoute(
         path: kAssessmentThreeView,
-        builder: (context, state) => const AssessmentThreeView(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          int parseInt(dynamic value, [int fallback = 0]) {
+            if (value is int) return value;
+            if (value is String) return int.tryParse(value) ?? fallback;
+            return fallback;
+          }
+
+          final assessmentId = parseInt(extra?['assessmentId']);
+          final activityLevel = parseInt(extra?['activityLevel']);
+          final goal = (extra?['goal']?.toString() ?? '');
+          return AssessmentThreeView(
+            assessmentId: assessmentId,
+            activityLevel: activityLevel,
+            goal: goal,
+          );
+        },
       ),
       GoRoute(
         path: kOneDayView,
