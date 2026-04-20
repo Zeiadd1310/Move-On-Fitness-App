@@ -21,20 +21,26 @@ class WorkoutPlan extends Equatable {
   });
 
   factory WorkoutPlan.fromJson(Map<String, dynamic> json) {
-    final rawGeneratedAt = json['generated_at'] as String?;
+    final rawGeneratedAt =
+        (json['generated_at'] ?? json['generatedAt'])?.toString();
+    final rawWeeks = json['weeks'] as List? ?? const [];
 
     return WorkoutPlan(
       userId: json['user_id']?.toString() ?? '',
-      userName: json['user_name']?.toString() ?? '',
-      fitnessLevel: json['fitness_level']?.toString() ?? '',
+      userName: (json['user_name'] ?? json['userName'])?.toString() ?? '',
+      fitnessLevel:
+          (json['fitness_level'] ?? json['fitnessLevel'])?.toString() ?? '',
       goal: json['goal']?.toString() ?? '',
-      availableDays: (json['available_days'] as num?)?.toInt() ?? 0,
+      availableDays: ((json['available_days'] ?? json['availableDays']) as num?)
+              ?.toInt() ??
+          0,
       generatedAt: rawGeneratedAt != null && rawGeneratedAt.isNotEmpty
           ? DateTime.tryParse(rawGeneratedAt) ??
               DateTime.fromMillisecondsSinceEpoch(0)
           : DateTime.fromMillisecondsSinceEpoch(0),
-      weeks: (json['weeks'] as List? ?? [])
-          .map((w) => WorkoutWeek.fromJson(w as Map<String, dynamic>))
+      weeks: rawWeeks
+          .whereType<Map<String, dynamic>>()
+          .map(WorkoutWeek.fromJson)
           .toList(),
     );
   }

@@ -25,12 +25,12 @@ import 'package:move_on/features/welcome/presentation/views/second_welcome_view.
 import 'package:move_on/features/authentication/presentation/views/sign_in_view.dart';
 import 'package:move_on/features/welcome/presentation/views/third_welcome_view.dart';
 import 'package:move_on/features/workout/presentation/views/about_workout_view.dart';
+import 'package:move_on/features/workout/presentation/views/workout_plan_view.dart';
+import 'package:move_on/features/workout/presentation/views/workout_video_view.dart';
 import 'package:move_on/features/body_data/presentation/views/body_data_view.dart';
-import 'package:move_on/features/workout/presentation/views/five_days_view.dart';
-import 'package:move_on/features/workout/presentation/views/four_days_view.dart';
-import 'package:move_on/features/workout/presentation/views/one_day_view.dart';
-import 'package:move_on/features/workout/presentation/views/three_days_view.dart';
-import 'package:move_on/features/workout/presentation/views/two_days_view.dart';
+import 'package:move_on/features/information/data/models/workout_day_model.dart';
+import 'package:move_on/features/information/data/models/workout_excersice_model.dart';
+import 'package:move_on/features/information/data/models/workout_plan_model.dart';
 import 'package:move_on/features/workout/presentation/views/workout_details_view.dart';
 
 abstract class AppRouter {
@@ -47,13 +47,10 @@ abstract class AppRouter {
   static const kAssessmentOneView = '/assessmentOneView';
   static const kAssessmentTwoView = '/assessmentTwoView';
   static const kAssessmentThreeView = '/assessmentThreeView';
-  static const kOneDayView = '/oneDayView';
-  static const kTwoDaysView = '/twoDaysView';
-  static const kThreeDaysView = '/threeDaysView';
-  static const kFourDaysView = '/fourDaysView';
-  static const kFiveDaysView = '/fiveDaysView';
   static const kWorkoutDetailsView = '/workoutDetailsView';
   static const kAboutWorkoutView = '/aboutWorkoutView';
+  static const kWorkoutPlanView = '/workoutPlanView';
+  static const kWorkoutVideoView = '/workoutVideoView';
   static const kBodyDataView = '/bodyDataView';
   static const kProfileView = '/profileView';
   static const kEditProfileView = '/editProfileView';
@@ -159,33 +156,75 @@ abstract class AppRouter {
           );
         },
       ),
+
       GoRoute(
-        path: kOneDayView,
-        builder: (context, state) => const OneDayView(),
-      ),
-      GoRoute(
-        path: kTwoDaysView,
-        builder: (context, state) => const TwoDaysView(),
-      ),
-      GoRoute(
-        path: kThreeDaysView,
-        builder: (context, state) => const ThreeDaysView(),
-      ),
-      GoRoute(
-        path: kFourDaysView,
-        builder: (context, state) => const FourDaysView(),
-      ),
-      GoRoute(
-        path: kFiveDaysView,
-        builder: (context, state) => const FiveDaysView(),
+        path: kWorkoutPlanView,
+        builder: (context, state) {
+          if (state.extra is WorkoutPlan) {
+            return WorkoutPlanView(workoutPlan: state.extra! as WorkoutPlan);
+          }
+          return const WorkoutPlanLoaderView();
+        },
       ),
       GoRoute(
         path: kWorkoutDetailsView,
-        builder: (context, state) => const WorkoutDetailsView(),
+        builder: (context, state) => WorkoutDetailsView(
+          day: state.extra is WorkoutDay
+              ? state.extra! as WorkoutDay
+              : const WorkoutDay(
+                  dayKey: '',
+                  dayType: '',
+                  dayImageUrl: '',
+                  variations: {},
+                  exercises: [],
+                ),
+        ),
       ),
       GoRoute(
         path: kAboutWorkoutView,
-        builder: (context, state) => const AboutWorkoutView(),
+        builder: (context, state) {
+          final extra = state.extra;
+          if (extra is Map<String, dynamic>) {
+            return AboutWorkoutView(
+              dayType: extra['dayType']?.toString() ?? '',
+              exercise: extra['exercise'] is WorkoutExercise
+                  ? extra['exercise'] as WorkoutExercise
+                  : const WorkoutExercise(
+                      exerciseName: '',
+                      muscleGroup: '',
+                      exerciseType: '',
+                      sets: 0,
+                      reps: '',
+                      description: '',
+                      imageUrl: '',
+                      videoUrl: '',
+                    ),
+            );
+          }
+          return const AboutWorkoutView(
+            dayType: '',
+            exercise: WorkoutExercise(
+              exerciseName: '',
+              muscleGroup: '',
+              exerciseType: '',
+              sets: 0,
+              reps: '',
+              description: '',
+              imageUrl: '',
+              videoUrl: '',
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        path: kWorkoutVideoView,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return WorkoutVideoView(
+            videoUrl: extra?['videoUrl']?.toString() ?? '',
+            title: extra?['title']?.toString() ?? 'Exercise Video',
+          );
+        },
       ),
       GoRoute(
         path: kBodyDataView,

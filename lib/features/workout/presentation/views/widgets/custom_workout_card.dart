@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
+import 'package:move_on/core/widgets/network_or_asset_image.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_button.dart';
 
 class CustomWorkoutCard extends StatelessWidget {
@@ -32,11 +31,18 @@ class CustomWorkoutCard extends StatelessWidget {
           children: [
             Stack(
               children: [
-                Image.asset(
-                  imagePath,
-                  height: 175,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
+                ClipRRect(
+                  child: SizedBox(
+                    height: 175,
+                    width: double.infinity,
+                    child: imagePath.isNotEmpty
+                        ? NetworkOrAssetImage(
+                            path: imagePath,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => _placeholder(),
+                          )
+                        : _placeholder(),
+                  ),
                 ),
                 Positioned(
                   left: 16,
@@ -73,15 +79,22 @@ class CustomWorkoutCard extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                     radius: 19,
-                    onTap: () {
-                      GoRouter.of(context).push(AppRouter.kWorkoutDetailsView);
-                    },
+                    onTap: onStart ?? () {},
                   ),
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _placeholder() {
+    return const DecoratedBox(
+      decoration: BoxDecoration(color: Color(0xFF30353D)),
+      child: Center(
+        child: Icon(Icons.fitness_center, size: 40, color: Colors.white70),
       ),
     );
   }

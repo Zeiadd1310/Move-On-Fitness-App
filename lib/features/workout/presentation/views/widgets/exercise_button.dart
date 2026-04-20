@@ -33,12 +33,20 @@ class ExerciseButton extends StatelessWidget {
                 color: Colors.grey[800],
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: imagePath != null
+              child: imagePath != null && imagePath!.isNotEmpty
                   ? ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(imagePath!, fit: BoxFit.cover),
+                      child: Image.network(
+                        imagePath!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const Icon(
+                          Icons.fitness_center,
+                          color: Colors.white,
+                          size: 24,
+                        ),
+                      ),
                     )
-                  : Icon(Icons.fitness_center, color: Colors.white, size: 24),
+                  : const Icon(Icons.fitness_center, color: Colors.white, size: 24),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -50,7 +58,7 @@ class ExerciseButton extends StatelessWidget {
                 ),
               ),
             ),
-            Icon(Icons.arrow_circle_right_outlined, size: 28),
+            const Icon(Icons.arrow_circle_right_outlined, size: 28),
           ],
         ),
       ),

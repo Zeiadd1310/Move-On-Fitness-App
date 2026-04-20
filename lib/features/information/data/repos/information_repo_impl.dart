@@ -60,14 +60,24 @@ class InformationRepoImpl implements InformationRepo {
       // Supports common response shapes:
       // - full plan at root
       // - nested under `workoutPlan` / `plan` / `data`
-      final dynamic rawPlan =
+      // - status wrappers where plan still lives at root map
+      dynamic rawPlan =
           data['workoutPlan'] ?? data['plan'] ?? data['data'] ?? data;
+
+      if (rawPlan is Map<String, dynamic> && rawPlan['weeks'] == null) {
+        final nested =
+            rawPlan['result'] ?? rawPlan['payload'] ?? rawPlan['workout'];
+        if (nested is Map<String, dynamic>) {
+          rawPlan = nested;
+        }
+      }
 
       if (rawPlan is! Map<String, dynamic>) {
         return Left(ServerFailure('Invalid workout plan response format'));
       }
 
       final plan = WorkoutPlan.fromJson(rawPlan);
+      await localStorageService.saveWorkoutPlan(plan);
       log('✅ WORKOUT PLAN GENERATED');
       return Right(plan);
     } on DioException catch (e) {

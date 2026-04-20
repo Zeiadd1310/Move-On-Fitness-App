@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:move_on/constants.dart';
+import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/custom_assessment_text_widget.dart';
+import 'package:go_router/go_router.dart';
+import 'package:move_on/features/information/data/models/workout_excersice_model.dart';
 
 class AboutWorkoutViewBody extends StatelessWidget {
-  const AboutWorkoutViewBody({super.key});
+  const AboutWorkoutViewBody({
+    super.key,
+    required this.exercise,
+    required this.dayType,
+  });
+
+  final WorkoutExercise exercise;
+  final String dayType;
 
   @override
   Widget build(BuildContext context) {
@@ -26,12 +36,25 @@ class AboutWorkoutViewBody extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Image.asset(
-                      'assets/images/leg day.png',
-                      width: double.infinity,
-                      height: height * 0.26,
-                      fit: BoxFit.cover,
-                    ),
+                    exercise.imageUrl.isNotEmpty
+                        ? Image.network(
+                            exercise.imageUrl,
+                            width: double.infinity,
+                            height: height * 0.26,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => Image.asset(
+                              'assets/images/workout.png',
+                              width: double.infinity,
+                              height: height * 0.26,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Image.asset(
+                            'assets/images/workout.png',
+                            width: double.infinity,
+                            height: height * 0.26,
+                            fit: BoxFit.cover,
+                          ),
                     Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: horizontalPadding,
@@ -42,7 +65,7 @@ class AboutWorkoutViewBody extends StatelessWidget {
                         children: [
                           SizedBox(height: height * 0.02),
                           Text(
-                            'Lat Pull Down',
+                            exercise.exerciseName,
                             style: Styles.textStyle24.copyWith(
                               fontFamily: 'Open Sans',
                               fontWeight: FontWeight.w600,
@@ -50,7 +73,7 @@ class AboutWorkoutViewBody extends StatelessWidget {
                           ),
                           SizedBox(height: height * 0.01),
                           Text(
-                            '01 Workouts in pull Day',
+                            '01 workout in $dayType',
                             style: Styles.textStyle16.copyWith(
                               fontFamily: 'Open Sans',
                               fontWeight: FontWeight.w400,
@@ -59,7 +82,7 @@ class AboutWorkoutViewBody extends StatelessWidget {
                           ),
                           SizedBox(height: height * 0.015),
                           Text(
-                            'Sets: 3       Reps: 12',
+                            'Sets: ${exercise.sets}       Reps: ${exercise.reps}',
                             style: Styles.textStyle20.copyWith(
                               fontFamily: 'Montserrat',
                               fontWeight: FontWeight.w500,
@@ -68,7 +91,9 @@ class AboutWorkoutViewBody extends StatelessWidget {
                           ),
                           SizedBox(height: height * 0.025),
                           Text(
-                            'The Lat Pull Down is a strength training exercise that targets the latissimus dorsi, the large muscles of your back.\n\nSit on the machine with your thighs secured under the pads. Grasp the bar with a wide overhand grip, then pull it down toward your upper chest while keeping your back straight and your chest lifted.\n\nPause briefly at the bottom of the movement, then slowly return the bar to the starting position.\n\nFocus on controlled motion and avoid swinging your body.',
+                            exercise.description.isEmpty
+                                ? 'No description available for this exercise.'
+                                : exercise.description,
                             style: Styles.textStyle16.copyWith(
                               fontFamily: 'Open Sans',
                               fontWeight: FontWeight.w400,
@@ -77,6 +102,27 @@ class AboutWorkoutViewBody extends StatelessWidget {
                             ),
                           ),
                           SizedBox(height: height * 0.02),
+                          if (exercise.videoUrl.isNotEmpty)
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: kPrimaryColor,
+                                  foregroundColor: Colors.white,
+                                ),
+                                onPressed: () {
+                                  GoRouter.of(context).push(
+                                    AppRouter.kWorkoutVideoView,
+                                    extra: {
+                                      'videoUrl': exercise.videoUrl,
+                                      'title': exercise.exerciseName,
+                                    },
+                                  );
+                                },
+                                icon: const Icon(Icons.play_circle_fill),
+                                label: const Text('Watch Exercise Video'),
+                              ),
+                            ),
                         ],
                       ),
                     ),

@@ -1,11 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:move_on/features/information/data/models/workout_plan_model.dart';
 
 class LocalStorageService {
   static const _isFirstTimeKey = 'is_first_time';
   static const _isSignedInKey = 'is_signed_in';
   static const _tokenKey = 'auth_token';
   static const _isBodyDataCompletedKey = 'is_body_data_completed';
+  static const _cachedWorkoutPlanJsonKey = 'cached_workout_plan_json';
 
   Future<bool> isFirstTime() async {
     final prefs = await SharedPreferences.getInstance();
@@ -64,6 +68,41 @@ class LocalStorageService {
       await prefs.setBool(_isBodyDataCompletedKey, value);
     } catch (e) {
       debugPrint('Error setting body data completed status: $e');
+    }
+  }
+
+  /// Persists the last generated workout plan so screens opened without route
+  /// `extra` (e.g. Home → Workout) can still show the user's plan.
+  Future<void> saveWorkoutPlan(WorkoutPlan plan) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final encoded = jsonEncode(plan.toJson());
+      await prefs.setString(_cachedWorkoutPlanJsonKey, encoded);
+    } catch (e) {
+      debugPrint('Error saving workout plan: $e');
+    }
+  }
+
+  Future<WorkoutPlan?> loadWorkoutPlan() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_cachedWorkoutPlanJsonKey);
+      if (raw == null || raw.isEmpty) return null;
+      final map = jsonDecode(raw);
+      if (map is! Map<String, dynamic>) return null;
+      return WorkoutPlan.fromJson(map);
+    } catch (e) {
+      debugPrint('Error loading workout plan: $e');
+      return null;
+    }
+  }
+
+  Future<void> clearWorkoutPlan() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_cachedWorkoutPlanJsonKey);
+    } catch (e) {
+      debugPrint('Error clearing workout plan: $e');
     }
   }
 }

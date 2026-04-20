@@ -30,22 +30,6 @@ class AssessmentThreeViewBody extends StatefulWidget {
 class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
   int _selectedDays = 5;
 
-  String _routeForDays(int days) {
-    switch (days) {
-      case 1:
-        return AppRouter.kOneDayView;
-      case 2:
-        return AppRouter.kTwoDaysView;
-      case 3:
-        return AppRouter.kThreeDaysView;
-      case 4:
-        return AppRouter.kFourDaysView;
-      case 5:
-      default:
-        return AppRouter.kFiveDaysView;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final selectedDays =
@@ -74,7 +58,10 @@ class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
         if (state is GenerateWorkoutPlanFailure) {
           CustomErrorSnackBar.show(context, state.errorMessage);
         } else if (state is GenerateWorkoutPlanSuccess) {
-          GoRouter.of(context).push(_routeForDays(_selectedDays));
+          GoRouter.of(context).push(
+            AppRouter.kWorkoutPlanView,
+            extra: state.workoutPlan,
+          );
         }
       },
       builder: (context, state) {

@@ -20,7 +20,12 @@ class WorkoutWeek extends Equatable {
   });
 
   factory WorkoutWeek.fromJson(Map<String, dynamic> json) {
-    final daysMap = (json['days'] as Map<String, dynamic>? ?? {});
+    final dynamic rawDays = json['days'];
+    final daysMap = rawDays is Map<String, dynamic>
+        ? rawDays
+        : rawDays is Map
+            ? rawDays.map((k, v) => MapEntry(k.toString(), v))
+            : <String, dynamic>{};
 
     final sortedEntries = daysMap.entries.toList()
       ..sort((a, b) {
@@ -38,7 +43,9 @@ class WorkoutWeek extends Equatable {
         .toList();
 
     return WorkoutWeek(
-      weekNumber: (json['week_number'] as num?)?.toInt() ?? 0,
+      weekNumber: ((json['week_number'] ?? json['weekNumber']) as num?)
+              ?.toInt() ??
+          0,
       phase: json['phase']?.toString() ?? '',
       warmup: (json['warmup'] as List? ?? [])
           .map((e) => WarmupCooldownItem.fromJson(e as Map<String, dynamic>))

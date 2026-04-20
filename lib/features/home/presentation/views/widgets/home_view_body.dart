@@ -95,7 +95,9 @@ class HomeViewBody extends StatelessWidget {
                     HomeMenuItem(
                       icon: Icons.fitness_center,
                       title: 'Workout',
-                      onTap: () {},
+                      onTap: () {
+                        GoRouter.of(context).push(AppRouter.kWorkoutPlanView);
+                      },
                     ),
                     ProfileVerticalDivider(
                       color: kPrimaryColor,
