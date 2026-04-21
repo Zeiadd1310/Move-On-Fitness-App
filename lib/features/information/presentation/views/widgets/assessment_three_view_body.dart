@@ -33,8 +33,7 @@ class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
   @override
   Widget build(BuildContext context) {
     final selectedDays =
-        context.watch<DaysCubit>().selectedDays ??
-        _selectedDays;
+        context.watch<DaysCubit>().selectedDays ?? _selectedDays;
     _selectedDays = selectedDays;
 
     final responsive = ResponsiveHelper(context);
@@ -58,10 +57,7 @@ class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
         if (state is GenerateWorkoutPlanFailure) {
           CustomErrorSnackBar.show(context, state.errorMessage);
         } else if (state is GenerateWorkoutPlanSuccess) {
-          GoRouter.of(context).push(
-            AppRouter.kWorkoutPlanView,
-            extra: state.workoutPlan,
-          );
+          GoRouter.of(context).go(AppRouter.kHomeView);
         }
       },
       builder: (context, state) {
@@ -76,48 +72,48 @@ class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-              Row(
-                children: [
-                  CustomBackButton(
-                    width: backButtonSize,
-                    height: backButtonSize,
+                  Row(
+                    children: [
+                      CustomBackButton(
+                        width: backButtonSize,
+                        height: backButtonSize,
+                      ),
+                      SizedBox(width: rowSpacing),
+                      Text(
+                        'Assessment',
+                        style: Styles.textStyle24.copyWith(
+                          fontFamily: 'Work Sans',
+                          fontWeight: FontWeight.bold,
+                          fontSize: titleFontSize,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(width: rowSpacing),
-                  Text(
-                    'Assessment',
-                    style: Styles.textStyle24.copyWith(
-                      fontFamily: 'Work Sans',
-                      fontWeight: FontWeight.bold,
-                      fontSize: titleFontSize,
+                  SizedBox(height: largeSpacing),
+                  Center(
+                    child: Text(
+                      'How many days/wk\nwill you commit?',
+                      textAlign: TextAlign.center,
+                      style: Styles.textStyle36.copyWith(
+                        fontFamily: 'Work Sans',
+                        fontWeight: FontWeight.bold,
+                        fontSize: questionFontSize,
+                      ),
                     ),
                   ),
-                ],
-              ),
-              SizedBox(height: largeSpacing),
-              Center(
-                child: Text(
-                  'How many days/wk\nwill you commit?',
-                  textAlign: TextAlign.center,
-                  style: Styles.textStyle36.copyWith(
-                    fontFamily: 'Work Sans',
-                    fontWeight: FontWeight.bold,
-                    fontSize: questionFontSize,
+                  SizedBox(height: smallSpacing),
+                  // big "5x" text
+                  Center(
+                    child: Text(
+                      '${_selectedDays}x',
+                      style: Styles.textStyle36.copyWith(
+                        fontSize: bigNumberFontSize,
+                        fontFamily: 'Work Sans',
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              SizedBox(height: smallSpacing),
-              // big "5x" text
-              Center(
-                child: Text(
-                  '${_selectedDays}x',
-                  style: Styles.textStyle36.copyWith(
-                    fontSize: bigNumberFontSize,
-                    fontFamily: 'Work Sans',
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              SizedBox(height: mediumSpacing),
+                  SizedBox(height: mediumSpacing),
                   _DaysSlider(
                     selected: _selectedDays,
                     onChanged: (value) {
@@ -125,39 +121,39 @@ class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
                     },
                     responsive: responsive,
                   ),
-              SizedBox(height: mediumSpacing),
-              Center(
-                child: Text.rich(
-                  TextSpan(
-                    text: "I'm committed to exercising ",
-                    style: Styles.textStyle18.copyWith(
-                      fontFamily: 'Montserrat',
-                      fontWeight: FontWeight.w500,
-                      fontSize: textFontSize,
-                    ),
-                    children: [
+                  SizedBox(height: mediumSpacing),
+                  Center(
+                    child: Text.rich(
                       TextSpan(
-                        text: '${_selectedDays}x ',
-                        style: Styles.textStyle24.copyWith(
-                          fontFamily: 'Montserrat',
-                          fontWeight: FontWeight.bold,
-                          fontSize: textBoldFontSize,
-                        ),
-                      ),
-                      TextSpan(
-                        text: 'weekly',
+                        text: "I'm committed to exercising ",
                         style: Styles.textStyle18.copyWith(
                           fontFamily: 'Montserrat',
                           fontWeight: FontWeight.w500,
                           fontSize: textFontSize,
                         ),
+                        children: [
+                          TextSpan(
+                            text: '${_selectedDays}x ',
+                            style: Styles.textStyle24.copyWith(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.bold,
+                              fontSize: textBoldFontSize,
+                            ),
+                          ),
+                          TextSpan(
+                            text: 'weekly',
+                            style: Styles.textStyle18.copyWith(
+                              fontFamily: 'Montserrat',
+                              fontWeight: FontWeight.w500,
+                              fontSize: textFontSize,
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const Spacer(),
+                  const Spacer(),
                   state is GenerateWorkoutPlanLoading
                       ? const Center(child: CircularProgressIndicator())
                       : CustomButton(
