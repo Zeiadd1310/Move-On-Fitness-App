@@ -13,7 +13,9 @@ class WorkoutPlanViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final firstWeek = workoutPlan.weeks.isNotEmpty ? workoutPlan.weeks.first : null;
+    final firstWeek = workoutPlan.weeks.isNotEmpty
+        ? workoutPlan.weeks.first
+        : null;
     final days = firstWeek?.days ?? const <WorkoutDay>[];
 
     return Scaffold(
@@ -24,9 +26,7 @@ class WorkoutPlanViewBody extends StatelessWidget {
             const CustomAssessmentTextWidget(),
             Expanded(
               child: days.isEmpty
-                  ? const Center(
-                      child: Text('No workout days available yet.'),
-                    )
+                  ? const Center(child: Text('No workout days available yet.'))
                   : ListView.separated(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 12,
@@ -38,10 +38,9 @@ class WorkoutPlanViewBody extends StatelessWidget {
                           title: day.dayType,
                           subtitle: day.dayKey.replaceAll('day', 'Day_'),
                           imageUrl: day.coverDisplayPath,
-                          onStart: () => GoRouter.of(context).push(
-                            AppRouter.kWorkoutDetailsView,
-                            extra: day,
-                          ),
+                          onStart: () => GoRouter.of(
+                            context,
+                          ).push(AppRouter.kWorkoutDetailsView, extra: day),
                         );
                       },
                       separatorBuilder: (_, __) => const SizedBox(height: 14),

@@ -21,8 +21,8 @@ class WorkoutPlan extends Equatable {
   });
 
   factory WorkoutPlan.fromJson(Map<String, dynamic> json) {
-    final rawGeneratedAt =
-        (json['generated_at'] ?? json['generatedAt'])?.toString();
+    final rawGeneratedAt = (json['generated_at'] ?? json['generatedAt'])
+        ?.toString();
     final rawWeeks = json['weeks'] as List? ?? const [];
 
     return WorkoutPlan(
@@ -31,12 +31,13 @@ class WorkoutPlan extends Equatable {
       fitnessLevel:
           (json['fitness_level'] ?? json['fitnessLevel'])?.toString() ?? '',
       goal: json['goal']?.toString() ?? '',
-      availableDays: ((json['available_days'] ?? json['availableDays']) as num?)
+      availableDays:
+          ((json['available_days'] ?? json['availableDays']) as num?)
               ?.toInt() ??
           0,
       generatedAt: rawGeneratedAt != null && rawGeneratedAt.isNotEmpty
           ? DateTime.tryParse(rawGeneratedAt) ??
-              DateTime.fromMillisecondsSinceEpoch(0)
+                DateTime.fromMillisecondsSinceEpoch(0)
           : DateTime.fromMillisecondsSinceEpoch(0),
       weeks: rawWeeks
           .whereType<Map<String, dynamic>>()
@@ -46,23 +47,23 @@ class WorkoutPlan extends Equatable {
   }
 
   Map<String, dynamic> toJson() => {
-        'user_id': userId,
-        'user_name': userName,
-        'fitness_level': fitnessLevel,
-        'goal': goal,
-        'available_days': availableDays,
-        'generated_at': generatedAt.toIso8601String(),
-        'weeks': weeks.map((w) => w.toJson()).toList(),
-      };
+    'user_id': userId,
+    'user_name': userName,
+    'fitness_level': fitnessLevel,
+    'goal': goal,
+    'available_days': availableDays,
+    'generated_at': generatedAt.toIso8601String(),
+    'weeks': weeks.map((w) => w.toJson()).toList(),
+  };
 
   @override
   List<Object?> get props => [
-        userId,
-        userName,
-        fitnessLevel,
-        goal,
-        availableDays,
-        generatedAt,
-        weeks,
-      ];
+    userId,
+    userName,
+    fitnessLevel,
+    goal,
+    availableDays,
+    generatedAt,
+    weeks,
+  ];
 }

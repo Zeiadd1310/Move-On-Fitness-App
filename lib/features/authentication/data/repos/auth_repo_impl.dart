@@ -97,8 +97,12 @@ class AuthRepoImpl implements AuthRepo {
   Future<Either<Failure, LogoutModel>> logout() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('token');
-      final data = await apiService.post(endPoint: 'Account/logout', body: {});
+      final token = prefs.getString('auth_token') ?? prefs.getString('token');
+      final data = await apiService.post(
+        endPoint: 'Account/logout',
+        body: {},
+        token: token,
+      );
       return Right(LogoutModel.fromJson(data));
     } on DioException catch (e) {
       return Left(ServerFailure.fromDioError(e));

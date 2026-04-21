@@ -46,7 +46,11 @@ class ExerciseButton extends StatelessWidget {
                         ),
                       ),
                     )
-                  : const Icon(Icons.fitness_center, color: Colors.white, size: 24),
+                  : const Icon(
+                      Icons.fitness_center,
+                      color: Colors.white,
+                      size: 24,
+                    ),
             ),
             const SizedBox(width: 12),
             Expanded(

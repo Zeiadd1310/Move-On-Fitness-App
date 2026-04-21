@@ -102,7 +102,9 @@ class _WorkoutVideoViewBodyState extends State<WorkoutVideoViewBody> {
             backgroundColor: Colors.black,
             foregroundColor: Colors.white,
           ),
-          if (videoId != null && lastError != null && lastError != YoutubeError.none)
+          if (videoId != null &&
+              lastError != null &&
+              lastError != YoutubeError.none)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Text(
@@ -113,10 +115,7 @@ class _WorkoutVideoViewBodyState extends State<WorkoutVideoViewBody> {
               ),
             ),
           Expanded(
-            child: ColoredBox(
-              color: Colors.black,
-              child: _buildPlayer(),
-            ),
+            child: ColoredBox(color: Colors.black, child: _buildPlayer()),
           ),
           if (videoId != null)
             Padding(

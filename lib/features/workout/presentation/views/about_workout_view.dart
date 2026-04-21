@@ -14,6 +14,8 @@ class AboutWorkoutView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: AboutWorkoutViewBody(exercise: exercise, dayType: dayType));
+    return Scaffold(
+      body: AboutWorkoutViewBody(exercise: exercise, dayType: dayType),
+    );
   }
 }

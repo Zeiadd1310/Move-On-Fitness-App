@@ -24,8 +24,8 @@ class WorkoutWeek extends Equatable {
     final daysMap = rawDays is Map<String, dynamic>
         ? rawDays
         : rawDays is Map
-            ? rawDays.map((k, v) => MapEntry(k.toString(), v))
-            : <String, dynamic>{};
+        ? rawDays.map((k, v) => MapEntry(k.toString(), v))
+        : <String, dynamic>{};
 
     final sortedEntries = daysMap.entries.toList()
       ..sort((a, b) {
@@ -43,9 +43,8 @@ class WorkoutWeek extends Equatable {
         .toList();
 
     return WorkoutWeek(
-      weekNumber: ((json['week_number'] ?? json['weekNumber']) as num?)
-              ?.toInt() ??
-          0,
+      weekNumber:
+          ((json['week_number'] ?? json['weekNumber']) as num?)?.toInt() ?? 0,
       phase: json['phase']?.toString() ?? '',
       warmup: (json['warmup'] as List? ?? [])
           .map((e) => WarmupCooldownItem.fromJson(e as Map<String, dynamic>))
@@ -53,31 +52,20 @@ class WorkoutWeek extends Equatable {
       cooldown: (json['cooldown'] as List? ?? [])
           .map((e) => WarmupCooldownItem.fromJson(e as Map<String, dynamic>))
           .toList(),
-      notes: (json['notes'] as List? ?? [])
-          .map((e) => e.toString())
-          .toList(),
+      notes: (json['notes'] as List? ?? []).map((e) => e.toString()).toList(),
       days: days,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'week_number': weekNumber,
-        'phase': phase,
-        'warmup': warmup.map((w) => w.toJson()).toList(),
-        'cooldown': cooldown.map((c) => c.toJson()).toList(),
-        'notes': notes,
-        'days': {
-          for (final day in days) day.dayKey: day.toJson(),
-        },
-      };
+    'week_number': weekNumber,
+    'phase': phase,
+    'warmup': warmup.map((w) => w.toJson()).toList(),
+    'cooldown': cooldown.map((c) => c.toJson()).toList(),
+    'notes': notes,
+    'days': {for (final day in days) day.dayKey: day.toJson()},
+  };
 
   @override
-  List<Object?> get props => [
-        weekNumber,
-        phase,
-        warmup,
-        cooldown,
-        days,
-        notes,
-      ];
+  List<Object?> get props => [weekNumber, phase, warmup, cooldown, days, notes];
 }

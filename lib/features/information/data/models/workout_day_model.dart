@@ -48,18 +48,18 @@ class WorkoutDay extends Equatable {
   }
 
   Map<String, dynamic> toJson() => {
-        'day_type': dayType,
-        'day_image_url': dayImageUrl,
-        'variations': variations,
-        'workout': exercises.map((e) => e.toJson()).toList(),
-      };
+    'day_type': dayType,
+    'day_image_url': dayImageUrl,
+    'variations': variations,
+    'workout': exercises.map((e) => e.toJson()).toList(),
+  };
 
   @override
   List<Object?> get props => [
-        dayKey,
-        dayType,
-        dayImageUrl,
-        variations,
-        exercises,
-      ];
+    dayKey,
+    dayType,
+    dayImageUrl,
+    variations,
+    exercises,
+  ];
 }

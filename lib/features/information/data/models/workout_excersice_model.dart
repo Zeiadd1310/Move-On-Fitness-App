@@ -32,32 +32,30 @@ class WorkoutExercise extends Equatable {
         sets: (json['sets'] as num?)?.toInt() ?? 0,
         reps: json['reps']?.toString() ?? '',
         description: json['description']?.toString() ?? '',
-        imageUrl:
-            (json['image_url'] ?? json['imageUrl'])?.toString() ?? '',
-        videoUrl:
-            (json['video_url'] ?? json['videoUrl'])?.toString() ?? '',
+        imageUrl: (json['image_url'] ?? json['imageUrl'])?.toString() ?? '',
+        videoUrl: (json['video_url'] ?? json['videoUrl'])?.toString() ?? '',
       );
 
   Map<String, dynamic> toJson() => {
-        'exercise_name': exerciseName,
-        'muscle_group': muscleGroup,
-        'exercise_type': exerciseType,
-        'sets': sets,
-        'reps': reps,
-        'description': description,
-        'image_url': imageUrl,
-        'video_url': videoUrl,
-      };
+    'exercise_name': exerciseName,
+    'muscle_group': muscleGroup,
+    'exercise_type': exerciseType,
+    'sets': sets,
+    'reps': reps,
+    'description': description,
+    'image_url': imageUrl,
+    'video_url': videoUrl,
+  };
 
   @override
   List<Object?> get props => [
-        exerciseName,
-        muscleGroup,
-        exerciseType,
-        sets,
-        reps,
-        description,
-        imageUrl,
-        videoUrl,
-      ];
+    exerciseName,
+    muscleGroup,
+    exerciseType,
+    sets,
+    reps,
+    description,
+    imageUrl,
+    videoUrl,
+  ];
 }
