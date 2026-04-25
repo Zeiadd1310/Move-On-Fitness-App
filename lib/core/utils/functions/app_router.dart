@@ -246,6 +246,7 @@ abstract class AppRouter {
             initialDateOfBirth: extra?['dateOfBirth']?.toString(),
             initialWeight: extra?['weight']?.toString(),
             initialHeight: extra?['height']?.toString(),
+            initialProfileImageUrl: extra?['profileImageUrl']?.toString(),
           );
         },
       ),

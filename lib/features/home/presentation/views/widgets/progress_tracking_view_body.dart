@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
+import 'package:move_on/core/services/local_storage_service.dart';
+import 'package:move_on/core/utils/functions/api_service.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/helpers/month_utils.dart';
 import 'package:move_on/core/utils/helpers/responsive_helper.dart';
@@ -10,6 +12,8 @@ import 'package:move_on/features/home/presentation/views/widgets/activity_card.d
 import 'package:move_on/features/home/presentation/views/widgets/month_picker_bottom_sheet.dart';
 import 'package:move_on/features/home/presentation/views/widgets/steps_activity_card.dart';
 import 'package:move_on/features/home/presentation/views/widgets/steps_bar_chart.dart';
+import 'package:move_on/features/profile/data/models/user_profile_model.dart';
+import 'package:move_on/features/profile/data/repos/profile_repo_impl.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/profile_vertical_divider.dart';
 
 class ProgressTrackingViewBody extends StatefulWidget {
@@ -24,6 +28,42 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
   int _selectedTab = 0;
   int _selectedDay = 9;
   DateTime _selectedDate = DateTime.now();
+  UserProfileModel? _profile;
+  String _pendingGender = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    final localStorage = LocalStorageService();
+    final cached = await localStorage.loadCachedUserProfile();
+    final pending = await localStorage.getPendingProfileData();
+    if (cached != null && mounted) {
+      setState(() {
+        _profile = UserProfileModel.fromJson(cached);
+        _pendingGender = pending['gender'] ?? '';
+      });
+    } else if (mounted) {
+      setState(() {
+        _pendingGender = pending['gender'] ?? '';
+      });
+    }
+
+    final repo = ProfileRepoImpl(
+      apiService: ApiService(),
+      localStorageService: localStorage,
+    );
+    try {
+      final remote = await repo.getMyProfile();
+      if (!mounted) return;
+      setState(() {
+        _profile = remote;
+      });
+    } catch (_) {}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -122,24 +162,30 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
                               children: [
                                 Row(
                                   children: [
-                                    Text(
-                                      'Zeiad',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.bold,
-                                        fontFamily: 'Poppins',
+                                    Expanded(
+                                      child: Text(
+                                        _profile?.fullName.isNotEmpty == true
+                                            ? _profile!.fullName
+                                            : 'Athlete',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          fontFamily: 'Poppins',
+                                        ),
                                       ),
                                     ),
                                     SizedBox(width: 8),
-                                    Icon(Icons.male, size: 30),
+                                    Icon(_genderIconData, size: 30),
                                   ],
                                 ),
                                 const SizedBox(height: 2),
                                 Row(
                                   children: [
-                                    const Text(
-                                      'Age: 21',
+                                    Text(
+                                      'Age: ${_profile?.ageInYearsText ?? '--'}',
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontFamily: 'League Spartan',
@@ -150,85 +196,20 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
                                 ),
                                 const SizedBox(height: 8),
                                 Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Row(
-                                      children: [
-                                        ProfileVerticalDivider(
-                                          color: const Color.fromARGB(
-                                            255,
-                                            255,
-                                            167,
-                                            84,
-                                          ),
-                                          height: 45,
-                                          width: 8,
-                                          radius: 6,
-                                        ),
-                                        const SizedBox(width: 6),
-                                        const Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '90 Kg',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontFamily: 'League Spartan',
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            SizedBox(height: 4),
-                                            Text(
-                                              'Weight',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontFamily: 'League Spartan',
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                    _buildStatTile(
+                                      value: _profile?.weight.isNotEmpty == true
+                                          ? '${_profile!.weight} Kg'
+                                          : '-- Kg',
+                                      label: 'Weight',
                                     ),
-                                    const SizedBox(width: 50),
-                                    Row(
-                                      children: [
-                                        ProfileVerticalDivider(
-                                          color: const Color.fromARGB(
-                                            255,
-                                            255,
-                                            167,
-                                            84,
-                                          ),
-                                          height: 45,
-                                          width: 8,
-                                          radius: 6,
-                                        ),
-                                        const SizedBox(width: 6),
-                                        const Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '175 Cm',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontFamily: 'League Spartan',
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            SizedBox(height: 4),
-                                            Text(
-                                              'Height',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                                fontFamily: 'League Spartan',
-                                                fontWeight: FontWeight.w400,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                    _buildStatTile(
+                                      value: _profile?.height.isNotEmpty == true
+                                          ? '${_profile!.height} Cm'
+                                          : '-- Cm',
+                                      label: 'Height',
                                     ),
                                   ],
                                 ),
@@ -236,27 +217,12 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: 12),
                         Container(
-                          width: 110,
-                          height: 110,
+                          width: screenWidth < 370 ? 90 : 110,
+                          height: screenWidth < 370 ? 90 : 110,
                           decoration: BoxDecoration(shape: BoxShape.circle),
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/images/home3.png',
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Container(
-                                  color: Colors.grey[800],
-                                  child: const Icon(
-                                    Icons.person,
-                                    color: Colors.white,
-                                    size: 40,
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
+                          child: ClipOval(child: _buildProfileImage()),
                         ),
                       ],
                     ),
@@ -620,5 +586,88 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
       default:
         return 'th';
     }
+  }
+
+  Widget _buildProfileImage() {
+    final imageUrl = _profile?.profilePictureUrl.trim() ?? '';
+    final parsed = Uri.tryParse(imageUrl);
+    final isValidNetworkImage =
+        parsed != null &&
+        (parsed.scheme == 'http' || parsed.scheme == 'https') &&
+        parsed.host.isNotEmpty;
+
+    if (isValidNetworkImage) {
+      return Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        errorBuilder: (context, error, stackTrace) => _fallbackAvatar(),
+      );
+    }
+
+    return _fallbackAvatar();
+  }
+
+  Widget _fallbackAvatar() {
+    return Container(
+      color: Colors.grey[800],
+      child: const Icon(Icons.person, color: Colors.white, size: 40),
+    );
+  }
+
+  Widget _buildStatTile({required String value, required String label}) {
+    return Row(
+      children: [
+        ProfileVerticalDivider(
+          color: const Color.fromARGB(255, 255, 167, 84),
+          height: 45,
+          width: 8,
+          radius: 6,
+        ),
+        const SizedBox(width: 6),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 16,
+                fontFamily: 'League Spartan',
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 16,
+                fontFamily: 'League Spartan',
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  IconData get _genderIconData {
+    final gender = (_profile?.gender.trim().isNotEmpty == true
+            ? _profile!.gender
+            : _pendingGender)
+        .trim()
+        .toLowerCase();
+    if (gender == 'female' ||
+        gender == 'f' ||
+        gender == '0' ||
+        gender == 'false') {
+      return Icons.female;
+    }
+    if (gender == 'male' ||
+        gender == 'm' ||
+        gender == '1' ||
+        gender == 'true') {
+      return Icons.male;
+    }
+    return Icons.person;
   }
 }

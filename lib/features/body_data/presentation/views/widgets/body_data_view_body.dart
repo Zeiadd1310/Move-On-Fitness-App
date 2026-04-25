@@ -81,6 +81,7 @@ class _BodyDataViewBodyState extends State<BodyDataViewBody> {
           await localStorage.savePendingProfileData(
             weight: _weightController.text.trim(),
             height: _heightController.text.trim(),
+            gender: _selectedGender,
           );
           GoRouter.of(context).push(
             AppRouter.kAssessmentOneView,

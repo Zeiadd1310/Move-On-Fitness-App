@@ -48,13 +48,29 @@ class ProfileHeaderCard extends StatelessWidget {
   final VoidCallback? onBackPressed;
 
   ImageProvider? _getImageProvider() {
-    if (profileImageUrl != null) {
-      return NetworkImage(profileImageUrl!);
-    } else if (profileImageAsset != null) {
-      return AssetImage(profileImageAsset!);
-    } else if (profileImageFile != null) {
-      return FileImage(File(profileImageFile!));
+    final networkUrl = profileImageUrl?.trim() ?? '';
+    final assetPath = profileImageAsset?.trim() ?? '';
+    final filePath = profileImageFile?.trim() ?? '';
+
+    if (networkUrl.isNotEmpty) {
+      final parsed = Uri.tryParse(networkUrl);
+      final isValidNetworkUrl =
+          parsed != null &&
+          (parsed.scheme == 'http' || parsed.scheme == 'https') &&
+          (parsed.host.isNotEmpty);
+      if (isValidNetworkUrl) {
+        return NetworkImage(networkUrl);
+      }
     }
+
+    if (assetPath.isNotEmpty) {
+      return AssetImage(assetPath);
+    }
+
+    if (filePath.isNotEmpty) {
+      return FileImage(File(filePath));
+    }
+
     return null;
   }
 

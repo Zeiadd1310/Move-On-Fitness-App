@@ -5,6 +5,8 @@ class UserProfileModel {
   final String mobileNumber;
   final String weight;
   final String height;
+  final String profilePictureUrl;
+  final String gender;
 
   const UserProfileModel({
     required this.fullName,
@@ -13,6 +15,8 @@ class UserProfileModel {
     required this.mobileNumber,
     required this.weight,
     required this.height,
+    this.profilePictureUrl = '',
+    this.gender = '',
   });
 
   String get firstName {
@@ -95,17 +99,41 @@ class UserProfileModel {
       'mobileNumber': mobileNumber,
       'weight': weight,
       'height': height,
+      'profilePictureUrl': profilePictureUrl,
+      'gender': gender,
     };
   }
 
   factory UserProfileModel.fromJson(Map<String, dynamic> json) {
-    final source = (json['data'] is Map<String, dynamic>)
-        ? json['data'] as Map<String, dynamic>
-        : json;
+    Map<String, dynamic> resolveSource() {
+      if (json['data'] is Map<String, dynamic>) {
+        final data = json['data'] as Map<String, dynamic>;
+        if (data['user'] is Map<String, dynamic>) {
+          return data['user'] as Map<String, dynamic>;
+        }
+        if (data['profile'] is Map<String, dynamic>) {
+          return data['profile'] as Map<String, dynamic>;
+        }
+        return data;
+      }
+      if (json['user'] is Map<String, dynamic>) {
+        return json['user'] as Map<String, dynamic>;
+      }
+      if (json['profile'] is Map<String, dynamic>) {
+        return json['profile'] as Map<String, dynamic>;
+      }
+      return json;
+    }
+
+    final source = resolveSource();
+    final normalizedSource = <String, dynamic>{};
+    source.forEach((key, value) {
+      normalizedSource[key.toString().toLowerCase()] = value;
+    });
 
     String readString(List<String> keys) {
       for (final key in keys) {
-        final value = source[key];
+        final value = source[key] ?? normalizedSource[key.toLowerCase()];
         if (value == null) continue;
         final text = value.toString().trim();
         if (text.isNotEmpty) return text;
@@ -114,12 +142,39 @@ class UserProfileModel {
     }
 
     return UserProfileModel(
-      fullName: readString(['fullName', 'name', 'userName']),
-      email: readString(['email']),
-      dateOfBirth: readString(['dateOfBirth', 'birthDate', 'birthday']),
-      mobileNumber: readString(['mobileNumber', 'phoneNumber', 'mobile']),
-      weight: readString(['weight']),
-      height: readString(['height']),
+      fullName: readString([
+        'fullName',
+        'name',
+        'userName',
+        'username',
+        'fullname',
+      ]),
+      email: readString(['email', 'mail']),
+      dateOfBirth: readString([
+        'dateOfBirth',
+        'birthDate',
+        'birthday',
+        'dob',
+        'dateofbirth',
+      ]),
+      mobileNumber: readString([
+        'mobileNumber',
+        'phoneNumber',
+        'mobile',
+        'phone',
+        'mobilenumber',
+        'phonenumber',
+      ]),
+      weight: readString(['weight', 'userWeight']),
+      height: readString(['height', 'userHeight']),
+      profilePictureUrl: readString([
+        'profilePictureUrl',
+        'profileImageUrl',
+        'imageUrl',
+        'avatarUrl',
+        'profilepictureurl',
+      ]),
+      gender: readString(['gender', 'sex']),
     );
   }
 }

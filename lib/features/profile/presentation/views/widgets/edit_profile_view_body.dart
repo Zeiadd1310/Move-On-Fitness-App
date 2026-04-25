@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
@@ -51,10 +53,14 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
   final _localStorageService = LocalStorageService();
+  final _imagePicker = ImagePicker();
+  String? _selectedProfileImagePath;
+  String? _uploadedProfileImageUrl;
 
   @override
   void initState() {
     super.initState();
+    _uploadedProfileImageUrl = widget.profileImageUrl;
     _fullNameController.text = widget.initialName?.trim() ?? '';
     _emailController.text = widget.initialEmail?.trim() ?? '';
     _mobileController.text = widget.initialMobileNumber?.trim() ?? '';
@@ -129,9 +135,22 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
       listener: (context, state) async {
         if (state is EditProfileFailure) {
           CustomErrorSnackBar.show(context, state.errorMessage);
+        } else if (state is EditProfileImageUploadFailure) {
+          CustomErrorSnackBar.show(context, state.errorMessage);
+        } else if (state is EditProfileImageUploadSuccess) {
+          if (!mounted) return;
+          setState(() {
+            _uploadedProfileImageUrl = state.imageUrl;
+            _selectedProfileImagePath = null;
+          });
         } else if (state is EditProfileSuccess) {
           final router = GoRouter.of(context);
-          await _localStorageService.clearPendingProfileData();
+          await _localStorageService.savePendingProfileData(
+            fullName: _fullNameController.text.trim(),
+            email: _emailController.text.trim(),
+            weight: _weightController.text.trim(),
+            height: _heightController.text.trim(),
+          );
           if (widget.firstTimeSetup) {
             router.go(AppRouter.kHomeView);
           } else {
@@ -172,11 +191,13 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
                     heightText: _heightController.text.trim().isEmpty
                         ? '-- CM'
                         : '${_heightController.text.trim()} CM',
-                    profileImageUrl: widget.profileImageUrl,
+                    profileImageUrl:
+                        _uploadedProfileImageUrl ?? widget.profileImageUrl,
                     profileImageAsset: widget.profileImageAsset,
-                    profileImageFile: widget.profileImageFile,
+                    profileImageFile:
+                        _selectedProfileImagePath ?? widget.profileImageFile,
                     isEditMode: true,
-                    onImageEdit: () {},
+                    onImageEdit: _pickAndUploadProfileImage,
                     onBackPressed: () {
                       final navigator = Navigator.of(context);
                       if (navigator.canPop()) {
@@ -273,6 +294,7 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
     final dateOfBirth = _dobController.text.trim();
     final weight = _weightController.text.trim();
     final height = _heightController.text.trim();
+    final profilePictureUrl = (_uploadedProfileImageUrl ?? '').trim();
 
     if (fullName.isEmpty ||
         email.isEmpty ||
@@ -283,6 +305,13 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
       CustomErrorSnackBar.show(context, 'Please fill in all fields');
       return;
     }
+    if (profilePictureUrl.isEmpty) {
+      CustomErrorSnackBar.show(
+        context,
+        'Please upload a profile picture first.',
+      );
+      return;
+    }
 
     context.read<EditProfileCubit>().updateProfile(
       fullName: fullName,
@@ -291,6 +320,7 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
       mobileNumber: mobileNumber,
       weight: weight,
       height: height,
+      profilePictureUrl: profilePictureUrl,
     );
   }
 
@@ -303,5 +333,34 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
       weight: _weightController.text.trim(),
       height: _heightController.text.trim(),
     );
+  }
+
+  Future<void> _pickAndUploadProfileImage() async {
+    try {
+      final pickedImage = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+      );
+      if (pickedImage == null || !mounted) return;
+
+      setState(() {
+        _selectedProfileImagePath = pickedImage.path;
+      });
+
+      await context.read<EditProfileCubit>().uploadProfilePicture(
+        imagePath: pickedImage.path,
+      );
+    } on PlatformException catch (e) {
+      if (!mounted) return;
+      CustomErrorSnackBar.show(
+        context,
+        e.message ?? 'Image picker is unavailable. Please restart the app.',
+      );
+    } catch (_) {
+      if (!mounted) return;
+      CustomErrorSnackBar.show(
+        context,
+        'Could not pick image. Please try again.',
+      );
+    }
   }
 }

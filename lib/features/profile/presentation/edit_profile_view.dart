@@ -16,6 +16,7 @@ class EditProfileView extends StatelessWidget {
     this.initialDateOfBirth,
     this.initialWeight,
     this.initialHeight,
+    this.initialProfileImageUrl,
   });
 
   final bool firstTimeSetup;
@@ -25,6 +26,7 @@ class EditProfileView extends StatelessWidget {
   final String? initialDateOfBirth;
   final String? initialWeight;
   final String? initialHeight;
+  final String? initialProfileImageUrl;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +39,7 @@ class EditProfileView extends StatelessWidget {
       ),
       child: Scaffold(
         body: EditProfileViewBody(
+          profileImageUrl: initialProfileImageUrl,
           firstTimeSetup: firstTimeSetup,
           initialName: initialName,
           initialEmail: initialEmail,

@@ -15,6 +15,7 @@ class LocalStorageService {
   static const _pendingProfileEmailKey = 'pending_profile_email';
   static const _pendingProfileWeightKey = 'pending_profile_weight';
   static const _pendingProfileHeightKey = 'pending_profile_height';
+  static const _pendingProfileGenderKey = 'pending_profile_gender';
 
   Future<bool> isFirstTime() async {
     final prefs = await SharedPreferences.getInstance();
@@ -148,6 +149,7 @@ class LocalStorageService {
     String? email,
     String? weight,
     String? height,
+    String? gender,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     if (fullName != null) {
@@ -162,6 +164,9 @@ class LocalStorageService {
     if (height != null) {
       await prefs.setString(_pendingProfileHeightKey, height);
     }
+    if (gender != null) {
+      await prefs.setString(_pendingProfileGenderKey, gender);
+    }
   }
 
   Future<Map<String, String>> getPendingProfileData() async {
@@ -171,6 +176,7 @@ class LocalStorageService {
       'email': prefs.getString(_pendingProfileEmailKey) ?? '',
       'weight': prefs.getString(_pendingProfileWeightKey) ?? '',
       'height': prefs.getString(_pendingProfileHeightKey) ?? '',
+      'gender': prefs.getString(_pendingProfileGenderKey) ?? '',
     };
   }
 
@@ -180,5 +186,6 @@ class LocalStorageService {
     await prefs.remove(_pendingProfileEmailKey);
     await prefs.remove(_pendingProfileWeightKey);
     await prefs.remove(_pendingProfileHeightKey);
+    await prefs.remove(_pendingProfileGenderKey);
   }
 }

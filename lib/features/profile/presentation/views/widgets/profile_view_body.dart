@@ -109,7 +109,9 @@ class _ProfileViewBodyState extends State<ProfileViewBody> {
             heightText: profile?.height.isNotEmpty == true
                 ? '${profile!.height} CM'
                 : '-- CM',
-            profileImageUrl: widget.profileImageUrl,
+            profileImageUrl: profile?.profilePictureUrl.isNotEmpty == true
+                ? profile!.profilePictureUrl
+                : widget.profileImageUrl,
             profileImageAsset: widget.profileImageAsset,
             profileImageFile: widget.profileImageFile,
             onBackPressed: () {
@@ -153,6 +155,7 @@ class _ProfileViewBodyState extends State<ProfileViewBody> {
                         'dateOfBirth': profile?.dateOfBirth ?? '',
                         'weight': profile?.weight ?? '',
                         'height': profile?.height ?? '',
+                        'profileImageUrl': profile?.profilePictureUrl ?? '',
                       },
                     );
                   },

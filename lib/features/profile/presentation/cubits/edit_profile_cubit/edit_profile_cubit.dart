@@ -15,6 +15,7 @@ class EditProfileCubit extends Cubit<EditProfileState> {
     required String mobileNumber,
     required String weight,
     required String height,
+    required String profilePictureUrl,
   }) async {
     emit(EditProfileLoading());
     try {
@@ -25,10 +26,35 @@ class EditProfileCubit extends Cubit<EditProfileState> {
         mobileNumber: mobileNumber,
         weight: weight,
         height: height,
+        profilePictureUrl: profilePictureUrl,
       );
       emit(EditProfileSuccess(message));
     } catch (e) {
       emit(EditProfileFailure(e.toString().replaceFirst('Exception: ', '')));
+    }
+  }
+
+  Future<void> uploadProfilePicture({required String imagePath}) async {
+    emit(EditProfileImageUploadLoading());
+    try {
+      final imageUrl = await profileRepo.uploadProfilePicture(
+        imagePath: imagePath,
+      );
+      if (imageUrl.trim().isEmpty) {
+        emit(
+          EditProfileImageUploadFailure(
+            'Upload succeeded but image URL was empty. Please try again.',
+          ),
+        );
+        return;
+      }
+      emit(EditProfileImageUploadSuccess(imageUrl));
+    } catch (e) {
+      emit(
+        EditProfileImageUploadFailure(
+          e.toString().replaceFirst('Exception: ', ''),
+        ),
+      );
     }
   }
 }

@@ -36,6 +36,19 @@ class ApiService {
     return response.data;
   }
 
+  Future<Map<String, dynamic>> postFormData({
+    required String endPoint,
+    required FormData body,
+    String? token,
+  }) async {
+    final response = await _dio.post(
+      endPoint,
+      data: body,
+      options: _buildOptions(token, contentType: 'multipart/form-data'),
+    );
+    return response.data;
+  }
+
   Future<Map<String, dynamic>> put({
     required String endPoint,
     required Map<String, dynamic> body,
@@ -57,11 +70,13 @@ class ApiService {
     return response.data;
   }
 
-  Options _buildOptions(String? token) {
+  Options _buildOptions(String? token, {String contentType = 'application/json'}) {
+    final sanitizedToken = token?.trim();
     return Options(
       headers: {
-        'Content-Type': 'application/json',
-        if (token != null) 'Authorization': 'Bearer $token',
+        'Content-Type': contentType,
+        if (sanitizedToken != null && sanitizedToken.isNotEmpty)
+          'Authorization': 'Bearer $sanitizedToken',
       },
     );
   }

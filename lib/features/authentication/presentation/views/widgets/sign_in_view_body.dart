@@ -37,6 +37,13 @@ class _SignInViewBodyState extends State<SignInViewBody> {
     return BlocConsumer<SignInCubit, SignInState>(
       listener: (context, state) async {
         if (state is SignInSuccess) {
+          if (state.token.trim().isEmpty) {
+            CustomErrorSnackBar.show(
+              context,
+              'Login succeeded but token is missing. Please try again.',
+            );
+            return;
+          }
           final localStorage = LocalStorageService();
           await localStorage.saveToken(state.token);
           await localStorage.setSignedIn(true);

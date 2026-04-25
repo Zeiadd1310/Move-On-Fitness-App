@@ -17,3 +17,17 @@ final class EditProfileFailure extends EditProfileState {
 
   EditProfileFailure(this.errorMessage);
 }
+
+final class EditProfileImageUploadLoading extends EditProfileState {}
+
+final class EditProfileImageUploadSuccess extends EditProfileState {
+  final String imageUrl;
+
+  EditProfileImageUploadSuccess(this.imageUrl);
+}
+
+final class EditProfileImageUploadFailure extends EditProfileState {
+  final String errorMessage;
+
+  EditProfileImageUploadFailure(this.errorMessage);
+}
