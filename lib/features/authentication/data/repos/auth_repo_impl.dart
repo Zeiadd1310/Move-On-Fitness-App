@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:move_on/core/errors/failures.dart';
+import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/api_service.dart';
 import 'package:move_on/features/authentication/data/models/forgot_password_model.dart';
 import 'package:move_on/features/authentication/data/models/logout_model.dart';
@@ -96,8 +97,10 @@ class AuthRepoImpl implements AuthRepo {
   @override
   Future<Either<Failure, LogoutModel>> logout() async {
     try {
+      final localStorage = LocalStorageService();
+      final localStorageToken = await localStorage.getToken();
       final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('auth_token') ?? prefs.getString('token');
+      final token = localStorageToken ?? prefs.getString('token');
       final data = await apiService.post(
         endPoint: 'Account/logout',
         body: {},

@@ -43,14 +43,14 @@ class AboutWorkoutViewBody extends StatelessWidget {
                             height: height * 0.26,
                             fit: BoxFit.cover,
                             errorBuilder: (_, __, ___) => Image.asset(
-                              'assets/images/workout.png',
+                              'assets/images/chestpressdark.png',
                               width: double.infinity,
                               height: height * 0.26,
                               fit: BoxFit.cover,
                             ),
                           )
                         : Image.asset(
-                            'assets/images/workout.png',
+                            'assets/images/chestpressdark.png',
                             width: double.infinity,
                             height: height * 0.26,
                             fit: BoxFit.cover,

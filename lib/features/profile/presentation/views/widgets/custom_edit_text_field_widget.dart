@@ -3,8 +3,17 @@ import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/custom_text_field.dart';
 
 class CustomEditTextFieldWidget extends StatelessWidget {
-  const CustomEditTextFieldWidget({super.key, required this.text});
+  const CustomEditTextFieldWidget({
+    super.key,
+    required this.text,
+    this.hintText,
+    this.controller,
+    this.onChanged,
+  });
   final String text;
+  final String? hintText;
+  final TextEditingController? controller;
+  final ValueChanged<String>? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +32,13 @@ class CustomEditTextFieldWidget extends StatelessWidget {
           ),
         ),
         SizedBox(height: headerHeight * 0.02),
-        CustomFormTextField(borderColor: Colors.white, width: 1.5),
+        CustomFormTextField(
+          borderColor: Colors.white,
+          width: 1.5,
+          hintText: hintText,
+          controller: controller,
+          onChanged: onChanged,
+        ),
       ],
     );
   }

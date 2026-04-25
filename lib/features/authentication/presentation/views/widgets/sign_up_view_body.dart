@@ -53,7 +53,11 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
           final localStorage = LocalStorageService();
           await localStorage.saveToken(state.token);
           await localStorage.setSignedIn(true);
-          await localStorage.setBodyDataCompleted(true);
+          await localStorage.setBodyDataCompleted(false);
+          await localStorage.savePendingProfileData(
+            fullName: _nameController.text.trim(),
+            email: _emailController.text.trim(),
+          );
           if (context.mounted) {
             GoRouter.of(context).push(AppRouter.kBodyDataView);
           }

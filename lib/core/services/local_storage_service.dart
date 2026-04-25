@@ -10,6 +10,11 @@ class LocalStorageService {
   static const _tokenKey = 'auth_token';
   static const _isBodyDataCompletedKey = 'is_body_data_completed';
   static const _cachedWorkoutPlanJsonKey = 'cached_workout_plan_json';
+  static const _cachedUserProfileJsonKey = 'cached_user_profile_json';
+  static const _pendingProfileNameKey = 'pending_profile_name';
+  static const _pendingProfileEmailKey = 'pending_profile_email';
+  static const _pendingProfileWeightKey = 'pending_profile_weight';
+  static const _pendingProfileHeightKey = 'pending_profile_height';
 
   Future<bool> isFirstTime() async {
     final prefs = await SharedPreferences.getInstance();
@@ -104,5 +109,76 @@ class LocalStorageService {
     } catch (e) {
       debugPrint('Error clearing workout plan: $e');
     }
+  }
+
+  Future<void> saveCachedUserProfile(Map<String, dynamic> profile) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_cachedUserProfileJsonKey, jsonEncode(profile));
+    } catch (e) {
+      debugPrint('Error saving cached user profile: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>?> loadCachedUserProfile() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_cachedUserProfileJsonKey);
+      if (raw == null || raw.isEmpty) return null;
+      final decoded = jsonDecode(raw);
+      if (decoded is Map<String, dynamic>) return decoded;
+      return null;
+    } catch (e) {
+      debugPrint('Error loading cached user profile: $e');
+      return null;
+    }
+  }
+
+  Future<void> clearCachedUserProfile() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_cachedUserProfileJsonKey);
+    } catch (e) {
+      debugPrint('Error clearing cached user profile: $e');
+    }
+  }
+
+  Future<void> savePendingProfileData({
+    String? fullName,
+    String? email,
+    String? weight,
+    String? height,
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (fullName != null) {
+      await prefs.setString(_pendingProfileNameKey, fullName);
+    }
+    if (email != null) {
+      await prefs.setString(_pendingProfileEmailKey, email);
+    }
+    if (weight != null) {
+      await prefs.setString(_pendingProfileWeightKey, weight);
+    }
+    if (height != null) {
+      await prefs.setString(_pendingProfileHeightKey, height);
+    }
+  }
+
+  Future<Map<String, String>> getPendingProfileData() async {
+    final prefs = await SharedPreferences.getInstance();
+    return {
+      'fullName': prefs.getString(_pendingProfileNameKey) ?? '',
+      'email': prefs.getString(_pendingProfileEmailKey) ?? '',
+      'weight': prefs.getString(_pendingProfileWeightKey) ?? '',
+      'height': prefs.getString(_pendingProfileHeightKey) ?? '',
+    };
+  }
+
+  Future<void> clearPendingProfileData() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_pendingProfileNameKey);
+    await prefs.remove(_pendingProfileEmailKey);
+    await prefs.remove(_pendingProfileWeightKey);
+    await prefs.remove(_pendingProfileHeightKey);
   }
 }

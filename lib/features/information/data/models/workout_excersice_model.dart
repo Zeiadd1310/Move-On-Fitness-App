@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:move_on/core/utils/functions/media_url.dart';
 
 class WorkoutExercise extends Equatable {
   final String exerciseName;
@@ -32,7 +33,9 @@ class WorkoutExercise extends Equatable {
         sets: (json['sets'] as num?)?.toInt() ?? 0,
         reps: json['reps']?.toString() ?? '',
         description: json['description']?.toString() ?? '',
-        imageUrl: (json['image_url'] ?? json['imageUrl'])?.toString() ?? '',
+        imageUrl: normalizeApiMediaUrl(
+          (json['image_url'] ?? json['imageUrl'])?.toString(),
+        ),
         videoUrl: (json['video_url'] ?? json['videoUrl'])?.toString() ?? '',
       );
 

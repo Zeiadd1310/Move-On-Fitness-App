@@ -7,11 +7,13 @@ import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/helpers/responsive_helper.dart';
 import 'package:move_on/core/widgets/custom_error_snackbar.dart';
 import 'package:move_on/features/authentication/data/repos/auth_repo_impl.dart';
+import 'package:move_on/features/profile/data/models/user_profile_model.dart';
+import 'package:move_on/features/profile/data/repos/profile_repo_impl.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/logout_bottom_sheet.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/profile_action_tile.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/profile_header_card.dart';
 
-class ProfileViewBody extends StatelessWidget {
+class ProfileViewBody extends StatefulWidget {
   const ProfileViewBody({
     super.key,
     this.profileImageUrl,
@@ -24,6 +26,49 @@ class ProfileViewBody extends StatelessWidget {
   final String? profileImageFile;
 
   @override
+  State<ProfileViewBody> createState() => _ProfileViewBodyState();
+}
+
+class _ProfileViewBodyState extends State<ProfileViewBody> {
+  late final ProfileRepoImpl _profileRepo;
+  UserProfileModel? _profile;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _profileRepo = ProfileRepoImpl(
+      apiService: ApiService(),
+      localStorageService: LocalStorageService(),
+    );
+    _loadProfile();
+  }
+
+  Future<void> _loadProfile() async {
+    final localStorage = LocalStorageService();
+    final cached = await localStorage.loadCachedUserProfile();
+    if (cached != null && mounted) {
+      setState(() {
+        _profile = UserProfileModel.fromJson(cached);
+      });
+    }
+
+    try {
+      final remote = await _profileRepo.getMyProfile();
+      if (!mounted) return;
+      setState(() {
+        _profile = remote;
+        _isLoading = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final responsive = ResponsiveHelper(context);
     final headerHeight = responsive.heightPercent(0.38);
@@ -32,6 +77,7 @@ class ProfileViewBody extends StatelessWidget {
     final topOffset = responsive.heightPercent(0.01);
     final headerOffset = responsive.heightPercent(0.09);
     final spacing = responsive.spacing(12);
+    final profile = _profile;
 
     return Stack(
       children: [
@@ -47,15 +93,33 @@ class ProfileViewBody extends StatelessWidget {
           top: topOffset,
           child: ProfileHeaderCard(
             title: 'My Profile',
-            name: 'Zeiad Ramadan',
-            email: 'zeiadramadan@example.com',
-            birthday: 'Birthday: April 05',
-            weightText: '75 Kg',
-            ageText: '21',
-            heightText: '175 CM',
-            profileImageUrl: profileImageUrl,
-            profileImageAsset: profileImageAsset,
-            profileImageFile: profileImageFile,
+            name: profile?.fullName.isNotEmpty == true
+                ? profile!.fullName
+                : 'Complete your profile',
+            email: profile?.email.isNotEmpty == true
+                ? profile!.email
+                : 'No email',
+            birthday: profile?.dateOfBirth.isNotEmpty == true
+                ? 'Birthday: ${profile!.formattedDateOfBirth}'
+                : 'Birthday: --',
+            weightText: profile?.weight.isNotEmpty == true
+                ? '${profile!.weight} Kg'
+                : '-- Kg',
+            ageText: profile?.ageInYearsText ?? '--',
+            heightText: profile?.height.isNotEmpty == true
+                ? '${profile!.height} CM'
+                : '-- CM',
+            profileImageUrl: widget.profileImageUrl,
+            profileImageAsset: widget.profileImageAsset,
+            profileImageFile: widget.profileImageFile,
+            onBackPressed: () {
+              final navigator = Navigator.of(context);
+              if (navigator.canPop()) {
+                navigator.pop();
+              } else {
+                GoRouter.of(context).go(AppRouter.kHomeView);
+              }
+            },
           ),
         ),
         Positioned(
@@ -71,11 +135,26 @@ class ProfileViewBody extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (_isLoading)
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 8.0),
+                    child: LinearProgressIndicator(minHeight: 2),
+                  ),
                 ProfileActionTile(
                   icon: Icons.person_outline,
                   title: 'Edit Profile',
                   onTap: () {
-                    GoRouter.of(context).push(AppRouter.kEditProfileView);
+                    GoRouter.of(context).push(
+                      AppRouter.kEditProfileView,
+                      extra: {
+                        'fullName': profile?.fullName ?? '',
+                        'email': profile?.email ?? '',
+                        'mobileNumber': profile?.mobileNumber ?? '',
+                        'dateOfBirth': profile?.dateOfBirth ?? '',
+                        'weight': profile?.weight ?? '',
+                        'height': profile?.height ?? '',
+                      },
+                    );
                   },
                 ),
                 SizedBox(height: spacing),
@@ -123,13 +202,18 @@ class ProfileViewBody extends StatelessWidget {
     final result = await authRepo.logout();
     await result.fold(
       (failure) async {
+        await localStorage.setSignedIn(false);
+        await localStorage.clearToken();
+        await localStorage.clearCachedUserProfile();
         if (context.mounted) {
           CustomErrorSnackBar.show(context, failure.errMessage);
+          GoRouter.of(context).go(AppRouter.kSignInView);
         }
       },
       (_) async {
         await localStorage.setSignedIn(false);
         await localStorage.clearToken();
+        await localStorage.clearCachedUserProfile();
         if (context.mounted) {
           GoRouter.of(context).go(AppRouter.kSignInView);
         }

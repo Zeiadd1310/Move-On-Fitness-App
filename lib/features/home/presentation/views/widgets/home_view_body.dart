@@ -2,15 +2,55 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
+import 'package:move_on/core/services/local_storage_service.dart';
+import 'package:move_on/core/utils/functions/api_service.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/features/home/presentation/views/widgets/bottom_workout_card.dart';
 import 'package:move_on/features/home/presentation/views/widgets/custom_workout_card_widget.dart';
 import 'package:move_on/features/home/presentation/views/widgets/home_menu_item.dart';
+import 'package:move_on/features/profile/data/models/user_profile_model.dart';
+import 'package:move_on/features/profile/data/repos/profile_repo_impl.dart';
 import 'package:move_on/features/profile/presentation/views/widgets/profile_vertical_divider.dart';
 
-class HomeViewBody extends StatelessWidget {
+class HomeViewBody extends StatefulWidget {
   const HomeViewBody({super.key});
+
+  @override
+  State<HomeViewBody> createState() => _HomeViewBodyState();
+}
+
+class _HomeViewBodyState extends State<HomeViewBody> {
+  String _greetingName = 'Athlete';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadGreetingName();
+  }
+
+  Future<void> _loadGreetingName() async {
+    final localStorage = LocalStorageService();
+    final cached = await localStorage.loadCachedUserProfile();
+    if (cached != null) {
+      final profile = UserProfileModel.fromJson(cached);
+      if (profile.firstName.isNotEmpty && mounted) {
+        setState(() => _greetingName = profile.firstName);
+      }
+    }
+
+    final repo = ProfileRepoImpl(
+      apiService: ApiService(),
+      localStorageService: localStorage,
+    );
+    try {
+      final profile = await repo.getMyProfile();
+      if (!mounted) return;
+      if (profile.firstName.isNotEmpty) {
+        setState(() => _greetingName = profile.firstName);
+      }
+    } catch (_) {}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +76,7 @@ class HomeViewBody extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Hello, Zeiad',
+                          'Hi, $_greetingName',
                           style: Styles.textStyle20.copyWith(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w700,

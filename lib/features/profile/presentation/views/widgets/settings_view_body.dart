@@ -5,7 +5,6 @@ import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/api_service.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/helpers/responsive_helper.dart';
-import 'package:move_on/features/profile/data/repos/profile_repo.dart';
 import 'package:move_on/features/profile/data/repos/profile_repo_impl.dart';
 import 'package:move_on/features/profile/presentation/cubits/delete_account_cubit/delete_account_cubit.dart';
 import 'package:move_on/features/profile/presentation/cubits/delete_account_cubit/delete_account_state.dart';
@@ -33,8 +32,11 @@ class SettingsViewBody extends StatelessWidget {
       ),
 
       child: BlocListener<DeleteAccountCubit, DeleteAccountState>(
-        listener: (context, state) {
+        listener: (context, state) async {
           if (state is DeleteAccountSuccess) {
+            final localStorage = LocalStorageService();
+            await localStorage.setSignedIn(false);
+            await localStorage.clearToken();
             context.go(AppRouter.kSignInView);
           } else if (state is DeleteAccountError) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -87,14 +89,13 @@ class SettingsViewBody extends StatelessWidget {
                               context: context,
                               backgroundColor: Colors.transparent,
                               isScrollControlled: true,
-                              builder: (sheetContext) {
+                              builder: (_) {
                                 return LogoutBottomSheet(
                                   text:
                                       'Are you sure you want to delete your account?',
                                   option1: 'Cancel',
                                   option2: 'Delete',
                                   onLogout: () {
-                                    Navigator.pop(sheetContext);
                                     context
                                         .read<DeleteAccountCubit>()
                                         .deleteAccount();

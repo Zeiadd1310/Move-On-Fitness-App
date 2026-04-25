@@ -10,6 +10,7 @@ class CustomFormTextField extends StatefulWidget {
     this.prefixIcon,
     this.borderColor,
     this.width,
+    this.controller,
   });
 
   final Function(String)? onChanged;
@@ -18,6 +19,7 @@ class CustomFormTextField extends StatefulWidget {
   final IconData? prefixIcon;
   final Color? borderColor;
   final double? width;
+  final TextEditingController? controller;
 
   @override
   State<CustomFormTextField> createState() => _CustomFormTextFieldState();
@@ -40,6 +42,7 @@ class _CustomFormTextFieldState extends State<CustomFormTextField> {
       width: 360,
       height: 80,
       child: TextFormField(
+        controller: widget.controller,
         obscureText: isObscure,
         obscuringCharacter: '*',
         validator: (data) {

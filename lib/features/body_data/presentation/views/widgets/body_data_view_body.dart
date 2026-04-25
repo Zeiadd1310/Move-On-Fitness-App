@@ -78,6 +78,10 @@ class _BodyDataViewBodyState extends State<BodyDataViewBody> {
         } else if (state is ManualAssessmentSuccess) {
           final localStorage = LocalStorageService();
           await localStorage.setBodyDataCompleted(true);
+          await localStorage.savePendingProfileData(
+            weight: _weightController.text.trim(),
+            height: _heightController.text.trim(),
+          );
           GoRouter.of(context).push(
             AppRouter.kAssessmentOneView,
             extra: {'assessmentId': state.assessmentId ?? 0},

@@ -236,7 +236,18 @@ abstract class AppRouter {
       ),
       GoRoute(
         path: kEditProfileView,
-        builder: (context, state) => const EditProfileView(),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return EditProfileView(
+            firstTimeSetup: (extra?['firstTimeSetup'] as bool?) ?? false,
+            initialName: extra?['fullName']?.toString(),
+            initialEmail: extra?['email']?.toString(),
+            initialMobileNumber: extra?['mobileNumber']?.toString(),
+            initialDateOfBirth: extra?['dateOfBirth']?.toString(),
+            initialWeight: extra?['weight']?.toString(),
+            initialHeight: extra?['height']?.toString(),
+          );
+        },
       ),
       GoRoute(
         path: kSettingsView,

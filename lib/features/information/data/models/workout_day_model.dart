@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:move_on/core/utils/workout_day_cover_image.dart';
+import 'package:move_on/core/utils/functions/media_url.dart';
 import 'package:move_on/features/information/data/models/workout_excersice_model.dart';
 
 class WorkoutDay extends Equatable {
@@ -17,10 +17,8 @@ class WorkoutDay extends Equatable {
     required this.exercises,
   });
 
-  /// Assessment-style cover when available, else API `day_image_url`, else first exercise image.
+  /// Uses API cover first, then the first exercise image as fallback.
   String get coverDisplayPath {
-    final fromType = resolveWorkoutDayCoverPath(dayType);
-    if (fromType.isNotEmpty) return fromType;
     if (dayImageUrl.isNotEmpty) return dayImageUrl;
     if (exercises.isNotEmpty) return exercises.first.imageUrl;
     return '';
@@ -37,8 +35,9 @@ class WorkoutDay extends Equatable {
     return WorkoutDay(
       dayKey: key,
       dayType: (json['day_type'] ?? json['dayType'])?.toString() ?? '',
-      dayImageUrl:
-          (json['day_image_url'] ?? json['dayImageUrl'])?.toString() ?? '',
+      dayImageUrl: normalizeApiMediaUrl(
+        (json['day_image_url'] ?? json['dayImageUrl'])?.toString(),
+      ),
       variations: variationsMap,
       exercises: (json['workout'] as List? ?? [])
           .whereType<Map<String, dynamic>>()

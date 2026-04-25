@@ -20,6 +20,7 @@ class ProfileHeaderCard extends StatelessWidget {
     this.profileImageFile,
     this.isEditMode = false,
     this.onImageEdit,
+    this.onBackPressed,
   });
 
   final String title;
@@ -44,6 +45,7 @@ class ProfileHeaderCard extends StatelessWidget {
 
   /// Callback when the edit image button is tapped
   final VoidCallback? onImageEdit;
+  final VoidCallback? onBackPressed;
 
   ImageProvider? _getImageProvider() {
     if (profileImageUrl != null) {
@@ -65,7 +67,8 @@ class ProfileHeaderCard extends StatelessWidget {
             IconButton(
               padding: EdgeInsets.zero,
               constraints: const BoxConstraints(),
-              onPressed: () => Navigator.of(context).maybePop(),
+              onPressed:
+                  onBackPressed ?? () => Navigator.of(context).maybePop(),
               icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
             ),
             const SizedBox(width: 6),
@@ -86,7 +89,7 @@ class ProfileHeaderCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withValues(alpha: 0.2),
                 blurRadius: 10,
                 offset: const Offset(0, 6),
               ),

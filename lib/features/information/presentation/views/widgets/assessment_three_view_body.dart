@@ -57,7 +57,9 @@ class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
         if (state is GenerateWorkoutPlanFailure) {
           CustomErrorSnackBar.show(context, state.errorMessage);
         } else if (state is GenerateWorkoutPlanSuccess) {
-          GoRouter.of(context).go(AppRouter.kHomeView);
+          GoRouter.of(
+            context,
+          ).go(AppRouter.kEditProfileView, extra: {'firstTimeSetup': true});
         }
       },
       builder: (context, state) {
