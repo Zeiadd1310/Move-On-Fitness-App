@@ -651,11 +651,12 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
   }
 
   IconData get _genderIconData {
-    final gender = (_profile?.gender.trim().isNotEmpty == true
-            ? _profile!.gender
-            : _pendingGender)
-        .trim()
-        .toLowerCase();
+    final gender =
+        (_profile?.gender.trim().isNotEmpty == true
+                ? _profile!.gender
+                : _pendingGender)
+            .trim()
+            .toLowerCase();
     if (gender == 'female' ||
         gender == 'f' ||
         gender == '0' ||

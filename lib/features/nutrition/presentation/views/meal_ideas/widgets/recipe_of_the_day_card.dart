@@ -8,71 +8,30 @@ import 'package:move_on/features/nutrition/presentation/views/meal_ideas/widgets
 
 class RecipeOfTheDayCard extends StatelessWidget {
   final MealType mealType;
+  final List<Map<String, dynamic>> recipes;
 
-  const RecipeOfTheDayCard({super.key, this.mealType = MealType.breakfast});
-
-  Map<String, dynamic> _getMealData() {
-    switch (mealType) {
-      case MealType.breakfast:
-        return {
-          'title': 'Spinach And Tomato Omelette',
-          'time': '10',
-          'calories': '220 Cal',
-          'image': 'assets/images/nutiration meal.png',
-          'ingredients': [
-            '2-3 eggs',
-            'A handful of fresh spinach',
-            '1 small tomato',
-            'Salt and pepper to taste',
-            'Olive oil or butter',
-          ],
-          'preparation':
-              'Beat the eggs in a bowl. Heat olive oil in a non-stick pan. Add spinach and tomato, sauté briefly. Pour in eggs and cook until set. Season with salt and pepper. Fold and serve.',
-          'mealType': mealType,
-          'isRecipeOfTheDay': true,
-        };
-      case MealType.lunch:
-        return {
-          'title': 'Grilled Chicken Salad',
-          'time': '15',
-          'calories': '350 Cal',
-          'image': 'assets/images/nutiration meal.png',
-          'ingredients': [
-            'Chicken breast',
-            'Mixed greens',
-            'Cherry tomatoes',
-            'Cucumber',
-            'Olive oil and lemon juice',
-          ],
-          'preparation':
-              'Grill the chicken breast until cooked through. Chop vegetables and mix with greens. Slice chicken and place on top. Drizzle with olive oil and lemon juice. Toss and serve.',
-          'mealType': mealType,
-          'isRecipeOfTheDay': true,
-        };
-      case MealType.dinner:
-        return {
-          'title': 'Salmon with Vegetables',
-          'time': '25',
-          'calories': '420 Cal',
-          'image': 'assets/images/nutiration meal.png',
-          'ingredients': [
-            'Salmon fillet',
-            'Broccoli and carrots',
-            'Garlic and herbs',
-            'Olive oil',
-            'Lemon',
-          ],
-          'preparation':
-              'Season the salmon with herbs. Roast vegetables with olive oil. Pan-sear salmon until golden. Serve with lemon wedges and roasted vegetables.',
-          'mealType': mealType,
-          'isRecipeOfTheDay': true,
-        };
-    }
-  }
+  const RecipeOfTheDayCard({
+    super.key,
+    this.mealType = MealType.breakfast,
+    this.recipes = const [],
+  });
 
   @override
   Widget build(BuildContext context) {
-    final mealData = _getMealData();
+    final mealData = {
+      ...(recipes.isNotEmpty
+          ? recipes.first
+          : {
+              'title': 'Recipe',
+              'time': '10',
+              'calories': '0 Cal',
+              'image': 'assets/images/nutiration meal.png',
+              'ingredients': const <String>[],
+              'preparation': 'No preparation steps available.',
+              'mealType': mealType,
+            }),
+      'isRecipeOfTheDay': true,
+    };
     final timeStr = mealData['time'].toString().contains('Minutes')
         ? mealData['time']
         : '${mealData['time']} Minutes';
@@ -107,8 +66,8 @@ class RecipeOfTheDayCard extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Color(0xff212020).withOpacity(0.9),
-                    Colors.black.withOpacity(0.7),
+                    const Color(0xff212020).withValues(alpha: 0.9),
+                    Colors.black.withValues(alpha: 0.7),
                   ],
                 ),
               ),
@@ -120,6 +79,7 @@ class RecipeOfTheDayCard extends StatelessWidget {
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
                     mealData['title']!,
@@ -132,12 +92,12 @@ class RecipeOfTheDayCard extends StatelessWidget {
                         Shadow(
                           offset: const Offset(0, 2),
                           blurRadius: 4,
-                          color: Colors.black.withOpacity(0.5),
+                          color: Colors.black.withValues(alpha: 0.5),
                         ),
                         Shadow(
                           offset: const Offset(0, 1),
                           blurRadius: 2,
-                          color: Colors.black.withOpacity(0.3),
+                          color: Colors.black.withValues(alpha: 0.3),
                         ),
                       ],
                     ),
@@ -147,23 +107,29 @@ class RecipeOfTheDayCard extends StatelessWidget {
                     children: [
                       Icon(Icons.access_time_filled, size: 15),
                       SizedBox(width: 4),
-                      Text(
-                        timeStr,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'League Spartan',
+                      Flexible(
+                        child: Text(
+                          timeStr,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'League Spartan',
+                          ),
                         ),
                       ),
                       SizedBox(width: 10),
                       Icon(FontAwesomeIcons.fire, size: 15),
                       SizedBox(width: 4),
-                      Text(
-                        '${mealData['calories']}',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontFamily: 'League Spartan',
+                      Flexible(
+                        child: Text(
+                          '${mealData['calories']}',
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontFamily: 'League Spartan',
+                          ),
                         ),
                       ),
                     ],

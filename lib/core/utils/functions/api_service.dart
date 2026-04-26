@@ -9,8 +9,8 @@ class ApiService {
     : _dio = Dio(
         BaseOptions(
           baseUrl: _baseUrl,
-          connectTimeout: const Duration(seconds: 10),
-          receiveTimeout: const Duration(seconds: 10),
+          connectTimeout: const Duration(seconds: 60),
+          receiveTimeout: const Duration(seconds: 60),
           headers: {'Content-Type': 'application/json'},
         ),
       );
@@ -27,11 +27,12 @@ class ApiService {
     required String endPoint,
     required Map<String, dynamic> body,
     String? token,
+    Duration? receiveTimeout,
   }) async {
     final response = await _dio.post(
       endPoint,
       data: body,
-      options: _buildOptions(token),
+      options: _buildOptions(token, receiveTimeout: receiveTimeout),
     );
     return response.data;
   }
@@ -70,9 +71,14 @@ class ApiService {
     return response.data;
   }
 
-  Options _buildOptions(String? token, {String contentType = 'application/json'}) {
+  Options _buildOptions(
+    String? token, {
+    String contentType = 'application/json',
+    Duration? receiveTimeout,
+  }) {
     final sanitizedToken = token?.trim();
     return Options(
+      receiveTimeout: receiveTimeout,
       headers: {
         'Content-Type': contentType,
         if (sanitizedToken != null && sanitizedToken.isNotEmpty)

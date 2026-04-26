@@ -30,19 +30,41 @@ class RecipeImageWithBadge extends StatelessWidget {
     final containerH = containerHeight ?? 275.0;
     final imgH = imageHeight ?? 235.0;
 
+    final isNetworkImage =
+        imagePath.startsWith('http://') || imagePath.startsWith('https://');
+
     Widget imageWidget = ClipRRect(
       borderRadius: BorderRadius.circular(20),
-      child: Image.asset(
-        imagePath,
-        width: double.infinity,
-        height: imgH,
-        fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => Container(
-          height: imgH,
-          color: Colors.grey.shade800,
-          child: const Icon(Icons.image, size: 48),
-        ),
-      ),
+      child: isNetworkImage
+          ? Image.network(
+              imagePath,
+              width: double.infinity,
+              height: imgH,
+              fit: BoxFit.cover,
+              loadingBuilder: (_, child, progress) => progress == null
+                  ? child
+                  : Container(
+                      height: imgH,
+                      color: Colors.grey.shade800,
+                      child: const Center(child: CircularProgressIndicator()),
+                    ),
+              errorBuilder: (_, __, ___) => Container(
+                height: imgH,
+                color: Colors.grey.shade800,
+                child: const Icon(Icons.image, size: 48),
+              ),
+            )
+          : Image.asset(
+              imagePath,
+              width: double.infinity,
+              height: imgH,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                height: imgH,
+                color: Colors.grey.shade800,
+                child: const Icon(Icons.image, size: 48),
+              ),
+            ),
     );
 
     Widget badgeWidget = Container(

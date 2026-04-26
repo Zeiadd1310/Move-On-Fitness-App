@@ -32,7 +32,18 @@ class NetworkOrAssetImage extends StatelessWidget {
         errorBuilder: errorBuilder,
       );
     }
-    return Image.network(
+    // Handle network URLs (http:// or https://)
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      return Image.network(
+        path,
+        fit: fit,
+        width: width,
+        height: height,
+        errorBuilder: errorBuilder,
+      );
+    }
+    // Default to asset for other paths
+    return Image.asset(
       path,
       fit: fit,
       width: width,

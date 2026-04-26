@@ -1,180 +1,20 @@
-import 'dart:io';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:move_on/features/nutrition/presentation/views/meal_ideas/widgets/meal_tabs.dart';
-
-// #region agent log
-void _log(
-  String location,
-  String message,
-  Map<String, dynamic> data,
-  String hypothesisId,
-) {
-  try {
-    final logEntry = jsonEncode({
-      'sessionId': 'debug-session',
-      'runId': 'run1',
-      'hypothesisId': hypothesisId,
-      'location': location,
-      'message': message,
-      'data': data,
-      'timestamp': DateTime.now().millisecondsSinceEpoch,
-    });
-    File(
-      r'd:\Uni\Graduation\MoveOn\move_on\.cursor\debug.log',
-    ).writeAsStringSync('$logEntry\n', mode: FileMode.append);
-  } catch (_) {}
-}
-// #endregion
 
 class RecipeListCard extends StatelessWidget {
-  final MealType mealType;
-  final int index;
+  final Map<String, dynamic> recipeData;
 
-  const RecipeListCard({
-    super.key,
-    this.mealType = MealType.breakfast,
-    this.index = 0,
-  });
-
-  Map<String, dynamic> _getRecipeData() {
-    final images = [
-      'assets/images/for you 1.png',
-      'assets/images/for you 2.png',
-      'assets/images/recommended 1.png',
-      'assets/images/recommended 2.png',
-    ];
-
-    switch (mealType) {
-      case MealType.breakfast:
-        final breakfastRecipes = [
-          {
-            'title': 'Delights With Greek Yogurt',
-            'time': '6',
-            'cal': '200',
-            'image': images[0],
-            'ingredients': [
-              'Greek yogurt',
-              'Honey',
-              'Mixed berries',
-              'Granola',
-              'Mint',
-            ],
-            'preparation':
-                'Spoon yogurt into a bowl. Top with berries, granola, and drizzle with honey. Garnish with mint.',
-            'mealType': mealType,
-            'isRecipeOfTheDay': false,
-          },
-          {
-            'title': 'Avocado Toast',
-            'time': '5',
-            'cal': '250',
-            'image': images[1],
-            'ingredients': [
-              'Bread',
-              'Ripe avocado',
-              'Lemon juice',
-              'Salt and pepper',
-              'Red pepper flakes',
-            ],
-            'preparation':
-                'Toast the bread. Mash avocado with lemon, salt and pepper. Spread on toast and top with red pepper flakes.',
-            'mealType': mealType,
-            'isRecipeOfTheDay': false,
-          },
-        ];
-        return breakfastRecipes[index % breakfastRecipes.length];
-      case MealType.lunch:
-        final lunchRecipes = [
-          {
-            'title': 'Caesar Salad Bowl',
-            'time': '12',
-            'cal': '280',
-            'image': images[0],
-            'ingredients': [
-              'Romaine lettuce',
-              'Caesar dressing',
-              'Parmesan',
-              'Croutons',
-              'Lemon',
-            ],
-            'preparation':
-                'Chop romaine and add to a bowl. Toss with Caesar dressing, parmesan, and croutons. Finish with lemon.',
-            'mealType': mealType,
-            'isRecipeOfTheDay': false,
-          },
-          {
-            'title': 'Turkey Sandwich',
-            'time': '10',
-            'cal': '320',
-            'image': images[1],
-            'ingredients': [
-              'Turkey slices',
-              'Bread',
-              'Lettuce',
-              'Tomato',
-              'Mayo or mustard',
-            ],
-            'preparation':
-                'Layer turkey, lettuce, and tomato on bread. Add mayo or mustard. Serve with a side of choice.',
-            'mealType': mealType,
-            'isRecipeOfTheDay': false,
-          },
-        ];
-        return lunchRecipes[index % lunchRecipes.length];
-      case MealType.dinner:
-        final dinnerRecipes = [
-          {
-            'title': 'Beef Steak & Veggies',
-            'time': '30',
-            'cal': '450',
-            'image': images[0],
-            'ingredients': [
-              'Beef steak',
-              'Broccoli',
-              'Carrots',
-              'Garlic',
-              'Olive oil',
-              'Herbs',
-            ],
-            'preparation':
-                'Season and grill or pan-sear the steak. Roast vegetables with olive oil and garlic. Rest steak, slice, and serve with veggies.',
-            'mealType': mealType,
-            'isRecipeOfTheDay': false,
-          },
-          {
-            'title': 'Vegetable Stir Fry',
-            'time': '15',
-            'cal': '280',
-            'image': images[1],
-            'ingredients': [
-              'Mixed vegetables',
-              'Soy sauce',
-              'Garlic',
-              'Ginger',
-              'Sesame oil',
-            ],
-            'preparation':
-                'Heat oil in a wok. Add garlic and ginger, then vegetables. Stir-fry until tender. Add soy sauce and toss. Serve over rice if desired.',
-            'mealType': mealType,
-            'isRecipeOfTheDay': false,
-          },
-        ];
-        return dinnerRecipes[index % dinnerRecipes.length];
-    }
-  }
+  const RecipeListCard({super.key, required this.recipeData});
 
   @override
   Widget build(BuildContext context) {
-    final recipeData = _getRecipeData();
-
-    // #region agent log
-    _log('recipe_list_card.dart:25', 'RecipeListCard build started', {
-      'widgetType': 'RecipeListCard',
-      'mealType': mealType.toString(),
-    }, 'A');
-    // #endregion
+    final time = recipeData['time'].toString().contains('Minutes')
+        ? recipeData['time'].toString()
+        : '${recipeData['time']} Minutes';
+    final calories =
+        recipeData['cal']?.toString() ??
+        recipeData['calories']?.toString() ??
+        '0 Cal';
     return Align(
       alignment: AlignmentGeometry.center,
       child: Container(
@@ -215,7 +55,7 @@ class RecipeListCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '${recipeData['time']} Minutes',
+                          time,
                           style: const TextStyle(
                             fontSize: 12,
                             color: Color(0xff212020),
@@ -231,7 +71,7 @@ class RecipeListCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          '${recipeData['cal']} Cal',
+                          calories.contains('Cal') ? calories : '$calories Cal',
                           style: const TextStyle(
                             fontSize: 12,
                             color: Color(0xff212020),
@@ -249,22 +89,44 @@ class RecipeListCard extends StatelessWidget {
               borderRadius: const BorderRadius.horizontal(
                 right: Radius.circular(20),
               ),
-              child: Image.asset(
-                recipeData['image']!,
-                width: 150,
-                height: double.infinity,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  // #region agent log
-                  _log('recipe_list_card.dart:154', 'Image.asset error', {
-                    'error': error.toString(),
-                    'asset': recipeData['image'],
-                  }, 'B');
-                  // #endregion
-                  return Container(
-                    color: Colors.grey,
+              child: Builder(
+                builder: (_) {
+                  final imagePath = recipeData['image']!.toString();
+                  final isNetwork = imagePath.startsWith('http://') ||
+                      imagePath.startsWith('https://');
+                  if (isNetwork) {
+                    return Image.network(
+                      imagePath,
+                      width: 150,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (_, child, progress) => progress == null
+                          ? child
+                          : Container(
+                              width: 150,
+                              color: Colors.grey.shade800,
+                              child: const Center(
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              ),
+                            ),
+                      errorBuilder: (_, __, ___) => Container(
+                        color: Colors.grey.shade800,
+                        width: 150,
+                        height: double.infinity,
+                        child: const Icon(Icons.image, color: Colors.white54),
+                      ),
+                    );
+                  }
+                  return Image.asset(
+                    imagePath,
                     width: 150,
                     height: double.infinity,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: Colors.grey,
+                      width: 150,
+                      height: double.infinity,
+                    ),
                   );
                 },
               ),

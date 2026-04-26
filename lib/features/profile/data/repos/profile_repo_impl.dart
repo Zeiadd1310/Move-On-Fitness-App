@@ -86,10 +86,7 @@ class ProfileRepoImpl implements ProfileRepo {
         endPoint: 'Account/upload-picture',
         token: token,
         body: FormData.fromMap({
-          'File': await MultipartFile.fromFile(
-            imagePath,
-            filename: fileName,
-          ),
+          'File': await MultipartFile.fromFile(imagePath, filename: fileName),
         }),
       );
       final model = ProfilePictureModel.fromJson(response);
