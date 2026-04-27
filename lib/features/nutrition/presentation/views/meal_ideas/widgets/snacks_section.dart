@@ -154,6 +154,7 @@ class _SnackCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ],
+                        SizedBox(width: 10),
                         if (snacks.protein != null) ...[
                           const Icon(
                             Icons.fitness_center,
