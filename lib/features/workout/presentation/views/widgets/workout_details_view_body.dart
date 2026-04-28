@@ -163,17 +163,6 @@ class WorkoutDetailsViewBody extends StatelessWidget {
                       'duration': '${day.exercises.length * 5} Mins',
                       'exercises': day.exercises.length,
                     });
-
-                    // Navigate to first exercise
-                    if (day.exercises.isNotEmpty) {
-                      GoRouter.of(context).push(
-                        AppRouter.kAboutWorkoutView,
-                        extra: {
-                          'dayType': day.dayType,
-                          'exercise': day.exercises.first,
-                        },
-                      );
-                    }
                   },
                 ),
               ),
