@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/network_or_asset_image.dart';
@@ -152,7 +153,28 @@ class WorkoutDetailsViewBody extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                   radius: 26,
-                  onTap: () {},
+                  onTap: () async {
+                    // Save workout to history when starting
+                    final localStorage = LocalStorageService();
+                    await localStorage.addWorkoutEntry({
+                      'date': DateTime.now().toIso8601String(),
+                      'workoutType': day.dayType,
+                      'calories': '${day.exercises.length * 10} Kcal',
+                      'duration': '${day.exercises.length * 5} Mins',
+                      'exercises': day.exercises.length,
+                    });
+
+                    // Navigate to first exercise
+                    if (day.exercises.isNotEmpty) {
+                      GoRouter.of(context).push(
+                        AppRouter.kAboutWorkoutView,
+                        extra: {
+                          'dayType': day.dayType,
+                          'exercise': day.exercises.first,
+                        },
+                      );
+                    }
+                  },
                 ),
               ),
             ),

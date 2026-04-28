@@ -50,6 +50,14 @@ class ApiService {
     return response.data;
   }
 
+  Future<List<dynamic>> getList({
+    required String endPoint,
+    String? token,
+  }) async {
+    final response = await _dio.get(endPoint, options: _buildOptions(token));
+    return response.data as List<dynamic>;
+  }
+
   Future<Map<String, dynamic>> put({
     required String endPoint,
     required Map<String, dynamic> body,

@@ -16,6 +16,7 @@ class LocalStorageService {
   static const _pendingProfileWeightKey = 'pending_profile_weight';
   static const _pendingProfileHeightKey = 'pending_profile_height';
   static const _pendingProfileGenderKey = 'pending_profile_gender';
+  static const _workoutHistoryKey = 'workout_history';
 
   Future<bool> isFirstTime() async {
     final prefs = await SharedPreferences.getInstance();
@@ -187,5 +188,44 @@ class LocalStorageService {
     await prefs.remove(_pendingProfileWeightKey);
     await prefs.remove(_pendingProfileHeightKey);
     await prefs.remove(_pendingProfileGenderKey);
+  }
+
+  /// Save workout history with dates for calendar integration
+  Future<void> saveWorkoutHistory(List<Map<String, dynamic>> workouts) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final encoded = jsonEncode(workouts);
+      await prefs.setString(_workoutHistoryKey, encoded);
+    } catch (e) {
+      debugPrint('Error saving workout history: $e');
+    }
+  }
+
+  /// Load workout history for calendar display
+  Future<List<Map<String, dynamic>>> loadWorkoutHistory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_workoutHistoryKey);
+      if (raw == null || raw.isEmpty) return [];
+      final decoded = jsonDecode(raw);
+      if (decoded is List) {
+        return decoded.cast<Map<String, dynamic>>();
+      }
+      return [];
+    } catch (e) {
+      debugPrint('Error loading workout history: $e');
+      return [];
+    }
+  }
+
+  /// Add a single workout entry to history
+  Future<void> addWorkoutEntry(Map<String, dynamic> workout) async {
+    final history = await loadWorkoutHistory();
+    history.insert(0, workout);
+    // Keep only last 100 entries
+    if (history.length > 100) {
+      history.removeRange(100, history.length);
+    }
+    await saveWorkoutHistory(history);
   }
 }
