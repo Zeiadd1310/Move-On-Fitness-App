@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 
 abstract class Failure {
@@ -38,14 +40,33 @@ class ServerFailure extends Failure {
   }
 
   factory ServerFailure.fromResponse(int statusCode, dynamic response) {
+    // Some backends return a plain string body on errors (or even HTML).
+    // Handle those cases first to avoid `[]`/`{}` shape assumptions.
+    if (response is String) {
+      final trimmed = response.trim();
+      if (trimmed.isNotEmpty) {
+        if (statusCode == 401) {
+          return ServerFailure('Unauthorized. Please sign in again.');
+        }
+        if (statusCode == 403) {
+          return ServerFailure('Access denied. Please sign in again.');
+        }
+        return ServerFailure(trimmed);
+      }
+    }
+
     if (statusCode == 400 || statusCode == 401 || statusCode == 403) {
       dynamic message;
-
+      log('🔴 RAW RESPONSE [$statusCode]: $response');
       try {
-        message = response?['error']?['message'] ?? response?['message'];
+        if (response is Map) {
+          message = response['error']?['message'] ?? response['message'];
+          // Common alternative keys
+          message ??= response['title'] ?? response['detail'];
+        }
 
         // Handle common validation/error shapes for the `errors` field safely
-        if (message == null && response?['errors'] != null) {
+        if (message == null && response is Map && response['errors'] != null) {
           final errors = response['errors'];
 
           if (errors is List && errors.isNotEmpty) {
@@ -67,20 +88,32 @@ class ServerFailure extends Failure {
         message = null;
       }
 
-      message ??= 'Something went wrong, please try again';
+      if (message == null) {
+        if (statusCode == 401) {
+          message = 'Unauthorized. Please sign in again.';
+        } else if (statusCode == 403) {
+          message = 'Access denied. Please sign in again.';
+        } else {
+          message = 'Something went wrong, please try again';
+        }
+      }
       return ServerFailure(message.toString());
     } else if (statusCode == 404) {
       return ServerFailure('Your request not found, please try again later!');
     } else if (statusCode == 500) {
       dynamic message;
       try {
-        message =
-            response?['error']?['message'] ??
-            response?['message'] ??
-            response?['title'] ??
-            response?['detail'];
+        if (response is Map) {
+          message =
+              response['error']?['message'] ??
+              response['message'] ??
+              response['title'] ??
+              response['detail'];
+        } else if (response is String) {
+          message = response.trim();
+        }
 
-        if (message == null && response?['errors'] != null) {
+        if (message == null && response is Map && response['errors'] != null) {
           final errors = response['errors'];
           if (errors is Map && errors.isNotEmpty) {
             final firstKey = errors.keys.first;

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,7 +39,7 @@ class LocalStorageService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_isSignedInKey, value);
     } catch (e) {
-      debugPrint('Error setting signed in status: $e');
+      log('Error setting signed in status: $e');
     }
   }
 
@@ -54,7 +55,7 @@ class LocalStorageService {
       final masked = (token == null || token.length < 16)
           ? token
           : '${token.substring(0, 8)}...${token.substring(token.length - 8)}';
-      debugPrint('🗝️ KEY: $_tokenKey | TOKEN: $masked');
+      log('🗝️ KEY: $_tokenKey | TOKEN: $masked');
     }
     return token;
   }
@@ -74,7 +75,7 @@ class LocalStorageService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_isBodyDataCompletedKey, value);
     } catch (e) {
-      debugPrint('Error setting body data completed status: $e');
+      log('Error setting body data completed status: $e');
     }
   }
 
@@ -86,7 +87,7 @@ class LocalStorageService {
       final encoded = jsonEncode(plan.toJson());
       await prefs.setString(_cachedWorkoutPlanJsonKey, encoded);
     } catch (e) {
-      debugPrint('Error saving workout plan: $e');
+      log('Error saving workout plan: $e');
     }
   }
 
@@ -99,7 +100,7 @@ class LocalStorageService {
       if (map is! Map<String, dynamic>) return null;
       return WorkoutPlan.fromJson(map);
     } catch (e) {
-      debugPrint('Error loading workout plan: $e');
+      log('Error loading workout plan: $e');
       return null;
     }
   }
@@ -109,7 +110,7 @@ class LocalStorageService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_cachedWorkoutPlanJsonKey);
     } catch (e) {
-      debugPrint('Error clearing workout plan: $e');
+      log('Error clearing workout plan: $e');
     }
   }
 
@@ -118,7 +119,7 @@ class LocalStorageService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_cachedUserProfileJsonKey, jsonEncode(profile));
     } catch (e) {
-      debugPrint('Error saving cached user profile: $e');
+      log('Error saving cached user profile: $e');
     }
   }
 
@@ -131,7 +132,7 @@ class LocalStorageService {
       if (decoded is Map<String, dynamic>) return decoded;
       return null;
     } catch (e) {
-      debugPrint('Error loading cached user profile: $e');
+      log('Error loading cached user profile: $e');
       return null;
     }
   }
@@ -141,7 +142,7 @@ class LocalStorageService {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_cachedUserProfileJsonKey);
     } catch (e) {
-      debugPrint('Error clearing cached user profile: $e');
+      log('Error clearing cached user profile: $e');
     }
   }
 
@@ -197,7 +198,7 @@ class LocalStorageService {
       final encoded = jsonEncode(workouts);
       await prefs.setString(_workoutHistoryKey, encoded);
     } catch (e) {
-      debugPrint('Error saving workout history: $e');
+      log('Error saving workout history: $e');
     }
   }
 
@@ -213,7 +214,7 @@ class LocalStorageService {
       }
       return [];
     } catch (e) {
-      debugPrint('Error loading workout history: $e');
+      log('Error loading workout history: $e');
       return [];
     }
   }
