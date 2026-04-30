@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:move_on/core/utils/functions/api_service.dart';
 import 'package:move_on/core/widgets/custom_assessment_text_widget.dart';
 import 'package:move_on/core/widgets/custom_error_snackbar.dart';
-import 'package:move_on/features/profile/data/models/reminder_model.dart';
 import 'package:move_on/features/profile/data/repos/notification_repo_impl.dart';
 import 'package:move_on/features/profile/presentation/cubits/notification_cubit/notification_cubit.dart';
 import 'package:move_on/features/profile/presentation/cubits/notification_cubit/notification_state.dart';

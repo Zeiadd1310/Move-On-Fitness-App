@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/services.dart';
 import 'package:move_on/core/services/notification_preferences_service.dart';
 import 'package:move_on/features/profile/data/models/reminder_model.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -86,15 +87,54 @@ class LocalNotificationsService {
       }
 
       final scheduled = _nextInstanceOfTime(time.$1, time.$2);
-      await _plugin.zonedSchedule(
-        r.id,
-        r.type,
-        'It\'s time for ${r.type}',
-        scheduled,
-        _detailsForPrefs(prefs),
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        matchDateTimeComponents: DateTimeComponents.time,
-      );
+      try {
+        await _plugin.zonedSchedule(
+          r.id,
+          r.type,
+          'It\'s time for ${r.type}',
+          scheduled,
+          _detailsForPrefs(prefs),
+          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+          matchDateTimeComponents: DateTimeComponents.time,
+        );
+      } on PlatformException catch (e) {
+        // Android 12+ may block exact alarms unless the user grants permission
+        // (SCHEDULE_EXACT_ALARM / exact alarm access). Fall back to inexact mode.
+        if (e.code == 'exact_alarms_not_permitted') {
+          if (kDebugMode) {
+            log('⚠️ Exact alarms not permitted; scheduling inexact for reminder ${r.id}.');
+          }
+          try {
+            await _plugin.zonedSchedule(
+              r.id,
+              r.type,
+              'It\'s time for ${r.type}',
+              scheduled,
+              _detailsForPrefs(prefs),
+              androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+              matchDateTimeComponents: DateTimeComponents.time,
+            );
+          } on PlatformException catch (e2) {
+            // Some OEMs/versions can still throw; don't crash the app.
+            if (kDebugMode) {
+              log('⚠️ Failed to schedule inexact reminder ${r.id}: ${e2.code}');
+            }
+          } catch (e2) {
+            if (kDebugMode) {
+              log('⚠️ Failed to schedule inexact reminder ${r.id}: $e2');
+            }
+          }
+        } else {
+          if (kDebugMode) {
+            log('⚠️ Failed to schedule reminder ${r.id}: ${e.code}');
+          }
+        }
+      } catch (e) {
+        // Never crash the app due to scheduling failures.
+        if (kDebugMode) {
+          log('⚠️ Failed to schedule reminder ${r.id}: $e');
+        }
+      }
     }
   }
 
@@ -134,8 +174,33 @@ class LocalNotificationsService {
   }
 
   (int, int)? _parseTime(String raw) {
-    // Accept: "HH:mm", "HH:mm:ss", and strings with whitespace.
+    // Accept:
+    // - "HH:mm" / "H:mm"
+    // - "HH:mm:ss"
+    // - "hh:mm AM" / "hh:mm PM" (backend format)
     final cleaned = raw.trim();
+    if (cleaned.isEmpty) return null;
+
+    // 12-hour with AM/PM, e.g. "08:00 AM", "1:05 pm"
+    final ampm = RegExp(r'^(\d{1,2}):(\d{2})(?::\d{2})?\s*([aApP][mM])$');
+    final m12 = ampm.firstMatch(cleaned);
+    if (m12 != null) {
+      var hour = int.tryParse(m12.group(1)!);
+      final minute = int.tryParse(m12.group(2)!);
+      final meridiem = m12.group(3)!.toLowerCase();
+      if (hour == null || minute == null) return null;
+      if (hour < 1 || hour > 12 || minute < 0 || minute > 59) return null;
+
+      // Convert 12h → 24h
+      if (meridiem == 'am') {
+        if (hour == 12) hour = 0;
+      } else {
+        if (hour != 12) hour += 12;
+      }
+      return (hour, minute);
+    }
+
+    // 24-hour format "HH:mm" or "HH:mm:ss"
     final parts = cleaned.split(':');
     if (parts.length < 2) return null;
     final h = int.tryParse(parts[0]);

@@ -9,7 +9,6 @@ import 'package:move_on/features/authentication/data/models/reset_password_model
 import 'package:move_on/features/authentication/data/models/signin_model.dart';
 import 'package:move_on/features/authentication/data/models/signup_model.dart';
 import 'package:move_on/features/authentication/data/repos/auth_repo.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepoImpl implements AuthRepo {
   final ApiService apiService;
@@ -27,8 +26,12 @@ class AuthRepoImpl implements AuthRepo {
         body: {'email': email, 'password': password},
       );
       final model = SigninModel.fromJson(data);
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', model.token ?? '');
+      final token = (model.token ?? '').trim();
+      final localStorage = LocalStorageService();
+      if (token.isNotEmpty) {
+        await localStorage.saveToken(token);
+        await localStorage.setSignedIn(true);
+      }
       return Right(model);
     } on DioException catch (e) {
       return Left(ServerFailure.fromDioError(e));
@@ -53,10 +56,12 @@ class AuthRepoImpl implements AuthRepo {
         },
       );
       final model = SignupModel.fromJson(data);
-      print('✅ SIGNUP TOKEN: ${model.token}');
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('token', model.token);
-      print('✅ TOKEN SAVED');
+      final token = model.token.trim();
+      final localStorage = LocalStorageService();
+      if (token.isNotEmpty) {
+        await localStorage.saveToken(token);
+        await localStorage.setSignedIn(true);
+      }
       return Right(model);
     } on DioException catch (e) {
       return Left(ServerFailure.fromDioError(e));
@@ -99,8 +104,7 @@ class AuthRepoImpl implements AuthRepo {
     try {
       final localStorage = LocalStorageService();
       final localStorageToken = await localStorage.getToken();
-      final prefs = await SharedPreferences.getInstance();
-      final token = localStorageToken ?? prefs.getString('token');
+      final token = localStorageToken;
       final data = await apiService.post(
         endPoint: 'Account/logout',
         body: {},

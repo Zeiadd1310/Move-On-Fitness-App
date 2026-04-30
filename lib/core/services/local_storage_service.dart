@@ -9,6 +9,8 @@ class LocalStorageService {
   static const _isFirstTimeKey = 'is_first_time';
   static const _isSignedInKey = 'is_signed_in';
   static const _tokenKey = 'auth_token';
+  // Legacy key used by older auth code paths. Keep for migration.
+  static const _legacyTokenKey = 'token';
   static const _isBodyDataCompletedKey = 'is_body_data_completed';
   static const _cachedWorkoutPlanJsonKey = 'cached_workout_plan_json';
   static const _cachedUserProfileJsonKey = 'cached_user_profile_json';
@@ -50,7 +52,17 @@ class LocalStorageService {
 
   Future<String?> getToken() async {
     final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(_tokenKey);
+    String? token = prefs.getString(_tokenKey);
+    // Backward compatibility: older versions stored token under `_legacyTokenKey`.
+    // If present, migrate it into the canonical key.
+    if ((token == null || token.isEmpty)) {
+      final legacy = prefs.getString(_legacyTokenKey);
+      if (legacy != null && legacy.trim().isNotEmpty) {
+        token = legacy.trim();
+        await prefs.setString(_tokenKey, token);
+        await prefs.remove(_legacyTokenKey);
+      }
+    }
     if (kDebugMode) {
       final masked = (token == null || token.length < 16)
           ? token
@@ -63,6 +75,7 @@ class LocalStorageService {
   Future<void> clearToken() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_tokenKey);
+    await prefs.remove(_legacyTokenKey);
   }
 
   Future<bool> isBodyDataCompleted() async {

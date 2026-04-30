@@ -12,6 +12,11 @@ class ServerFailure extends Failure {
   ServerFailure(super.errMessage);
 
   factory ServerFailure.fromDioError(DioException dioError) {
+    final status = dioError.response?.statusCode;
+    final path = dioError.requestOptions.uri.toString();
+    if (status != null) {
+      log('🌐 HTTP $status for $path');
+    }
     switch (dioError.type) {
       case DioExceptionType.connectionTimeout:
         return ServerFailure('Connection timeout with ApiServer');

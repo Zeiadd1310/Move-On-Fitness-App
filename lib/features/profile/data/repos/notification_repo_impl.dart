@@ -36,7 +36,9 @@ class NotificationRepoImpl implements NotificationRepo {
     try {
       await apiService.post(
         endPoint: 'notification/save-token',
-        body: {'fcmToken': fcmToken},
+        // Backend expects the FCM device token under `token`.
+        // Keep `fcmToken` too for compatibility if the API accepts either.
+        body: {'token': fcmToken, 'fcmToken': fcmToken},
         token: token,
       );
       return const Right(null);
