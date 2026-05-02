@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:move_on/core/errors/failures.dart';
 import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/api_service.dart';
+import 'package:move_on/features/authentication/data/models/change_password_model.dart';
 import 'package:move_on/features/authentication/data/models/forgot_password_model.dart';
 import 'package:move_on/features/authentication/data/models/logout_model.dart';
 import 'package:move_on/features/authentication/data/models/reset_password_model.dart';
@@ -73,9 +74,12 @@ class AuthRepoImpl implements AuthRepo {
     required String email,
   }) async {
     try {
+      final localStorage = LocalStorageService();
+      final authHeader = await localStorage.getToken();
       final data = await apiService.post(
         endPoint: 'Account/forgotpassword',
         body: {'email': email},
+        token: authHeader?.trim().isEmpty == true ? null : authHeader,
       );
       return Right(ForgotPasswordModel.fromJson(data));
     } on DioException catch (e) {
@@ -85,15 +89,53 @@ class AuthRepoImpl implements AuthRepo {
 
   @override
   Future<Either<Failure, ResetPasswordModel>> resetPassword({
+    required String email,
+    required String token,
+    required String newPassword,
+  }) async {
+    try {
+      final localStorage = LocalStorageService();
+      final authHeader = await localStorage.getToken();
+      final data = await apiService.post(
+        endPoint: 'Account/resetpassword',
+        body: {
+          'email': email.trim(),
+          'token': token.trim(),
+          'newPassword': newPassword,
+        },
+        token: authHeader?.trim().isEmpty == true ? null : authHeader,
+      );
+      return Right(ResetPasswordModel.fromJson(data));
+    } on DioException catch (e) {
+      return Left(ServerFailure.fromDioError(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, ChangePasswordModel>> changePassword({
+    required String currentPassword,
     required String newPassword,
     required String confirmPassword,
   }) async {
     try {
-      final data = await apiService.post(
-        endPoint: 'Account/resetpassword',
-        body: {'newPassword': newPassword, 'confirmPassword': confirmPassword},
+      final localStorage = LocalStorageService();
+      final token = await localStorage.getToken();
+      final trimmed = token?.trim();
+      if (trimmed == null || trimmed.isEmpty) {
+        return Left(
+          ServerFailure('Not signed in. Please sign in again.'),
+        );
+      }
+      final data = await apiService.put(
+        endPoint: 'Account/change-password',
+        body: {
+          'currentPassword': currentPassword,
+          'newPassword': newPassword,
+          'confirmPassword': confirmPassword,
+        },
+        token: trimmed,
       );
-      return Right(ResetPasswordModel.fromJson(data));
+      return Right(ChangePasswordModel.fromJson(data));
     } on DioException catch (e) {
       return Left(ServerFailure.fromDioError(e));
     }

@@ -11,6 +11,7 @@ class CustomFormTextField extends StatefulWidget {
     this.borderColor,
     this.width,
     this.controller,
+    this.validator,
   });
 
   final Function(String)? onChanged;
@@ -20,6 +21,7 @@ class CustomFormTextField extends StatefulWidget {
   final Color? borderColor;
   final double? width;
   final TextEditingController? controller;
+  final String? Function(String?)? validator;
 
   @override
   State<CustomFormTextField> createState() => _CustomFormTextFieldState();
@@ -45,12 +47,14 @@ class _CustomFormTextFieldState extends State<CustomFormTextField> {
         controller: widget.controller,
         obscureText: isObscure,
         obscuringCharacter: '*',
-        validator: (data) {
-          if (data!.isEmpty) {
-            return 'Field is required';
-          }
-          return null;
-        },
+        validator:
+            widget.validator ??
+            (data) {
+              if (data == null || data.isEmpty) {
+                return 'Field is required';
+              }
+              return null;
+            },
         onChanged: widget.onChanged,
         style: Styles.textStyle16,
         decoration: InputDecoration(

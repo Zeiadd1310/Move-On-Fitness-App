@@ -13,6 +13,7 @@ import 'package:move_on/features/profile/presentation/views/password_settings_vi
 import 'package:move_on/features/profile/presentation/views/profile_view.dart';
 import 'package:move_on/features/profile/presentation/views/settings_view.dart';
 import 'package:move_on/features/authentication/presentation/views/forget_password_view.dart';
+import 'package:move_on/features/authentication/presentation/views/reset_password_view.dart';
 import 'package:move_on/features/authentication/presentation/views/sign_up_view.dart';
 import 'package:move_on/features/splash/presentation/views/quote_view.dart';
 import 'package:move_on/features/splash/presentation/views/splash_view.dart';
@@ -44,6 +45,7 @@ abstract class AppRouter {
   static const kSignUpView = '/signUpView';
   static const kSignInView = '/signInView';
   static const kForgetPasswordView = '/forgetPasswordView';
+  static const kResetPasswordView = '/resetPasswordView';
   static const kAssessmentOneView = '/assessmentOneView';
   static const kAssessmentTwoView = '/assessmentTwoView';
   static const kAssessmentThreeView = '/assessmentThreeView';
@@ -103,6 +105,17 @@ abstract class AppRouter {
       GoRoute(
         path: kForgetPasswordView,
         builder: (context, state) => const ForgetPasswordView(),
+      ),
+      GoRoute(
+        path: kResetPasswordView,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          return ResetPasswordView(
+            email: extra?['email']?.toString() ?? '',
+            initialToken: extra?['token']?.toString(),
+            forgotPasswordSentMessage: extra?['sentMessage']?.toString(),
+          );
+        },
       ),
       GoRoute(
         path: kAssessmentOneView,

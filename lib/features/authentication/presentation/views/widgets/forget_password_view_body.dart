@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
+import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/custom_background_widget.dart';
 import 'package:move_on/core/widgets/custom_error_snackbar.dart';
@@ -33,17 +34,19 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
     return BlocConsumer<ForgotPasswordCubit, ForgotPasswordState>(
       listener: (context, state) {
         if (state is ForgotPasswordSuccess) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                state.message.isNotEmpty
-                    ? state.message
-                    : 'Reset link sent successfully!',
-              ),
-              backgroundColor: Colors.green,
-            ),
+          final email = _emailController.text.trim();
+          final sentMessage = state.message.trim().isEmpty
+              ? 'Reset link sent successfully!'
+              : state.message.trim();
+          if (!context.mounted) return;
+          GoRouter.of(context).pushReplacement(
+            AppRouter.kResetPasswordView,
+            extra: {
+              'email': email,
+              'token': state.resetToken,
+              'sentMessage': sentMessage,
+            },
           );
-          context.pop();
         } else if (state is ForgotPasswordFailure) {
           CustomErrorSnackBar.show(context, state.errMessage);
         }
@@ -132,13 +135,14 @@ class _ForgetPasswordViewBodyState extends State<ForgetPasswordViewBody> {
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
                       child: CustomFormTextField(
+                        controller: _emailController,
                         prefixIcon: _selectedMethod == 'email'
                             ? Icons.mail_outline
                             : Icons.phone_outlined,
                         hintText: _selectedMethod == 'email'
                             ? 'Email Address'
                             : 'Phone Number',
-                        onChanged: (val) => _emailController.text = val,
+                        onChanged: (_) {},
                       ),
                     ),
                     const SizedBox(height: 30),
