@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:move_on/core/animations/animation_builders.dart';
 import 'package:move_on/core/services/local_storage_service.dart';
+import 'package:move_on/core/services/server_onboarding_sync.dart';
+import 'package:move_on/core/utils/functions/api_service.dart';
 import 'package:move_on/core/utils/functions/assets.dart';
 import 'package:move_on/core/utils/helpers/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
@@ -29,7 +31,11 @@ class _SplashViewBodyState extends State<SplashViewBody>
   @override
   void initState() {
     super.initState();
-    _splashViewModel = SplashViewModel(LocalStorageService());
+    final localStorage = LocalStorageService();
+    _splashViewModel = SplashViewModel(
+      localStorage,
+      ServerOnboardingSync(ApiService(), localStorage),
+    );
     initSlidingAnimation();
     _waitForAnimationAndNavigate();
   }

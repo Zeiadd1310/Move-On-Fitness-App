@@ -93,7 +93,18 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
         _mobileController.text = cachedProfile?.mobileNumber ?? '';
       }
       if (_dobController.text.trim().isEmpty) {
-        _dobController.text = cachedProfile?.dateOfBirth ?? '';
+        final dobRemote = cachedProfile?.dateOfBirth.trim() ?? '';
+        _dobController.text = dobRemote.isNotEmpty
+            ? dobRemote
+            : (cached['dateOfBirth'] ?? '');
+      }
+      if ((_uploadedProfileImageUrl ?? '').trim().isEmpty) {
+        final picRemote = cachedProfile?.profilePictureUrl.trim() ?? '';
+        final picPending = cached['profilePictureUrl'] ?? '';
+        final chosen = picRemote.isNotEmpty ? picRemote : picPending;
+        if (chosen.trim().isNotEmpty) {
+          _uploadedProfileImageUrl = chosen.trim();
+        }
       }
       if (_weightController.text.trim().isEmpty) {
         _weightController.text = cachedProfile?.weight.isNotEmpty == true
@@ -145,11 +156,15 @@ class _EditProfileViewBodyState extends State<EditProfileViewBody> {
           });
         } else if (state is EditProfileSuccess) {
           final router = GoRouter.of(context);
+          final pic = (_uploadedProfileImageUrl ?? '').trim();
+          final dob = _dobController.text.trim();
           await _localStorageService.savePendingProfileData(
             fullName: _fullNameController.text.trim(),
             email: _emailController.text.trim(),
             weight: _weightController.text.trim(),
             height: _heightController.text.trim(),
+            profilePictureUrl: pic.isNotEmpty ? pic : null,
+            dateOfBirth: dob.isNotEmpty ? dob : null,
           );
           if (widget.firstTimeSetup) {
             router.go(AppRouter.kHomeView);

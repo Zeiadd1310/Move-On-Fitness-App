@@ -40,6 +40,50 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   @override
+  Future<Either<Failure, SigninModel>> signInWithGoogle({
+    required String idToken,
+  }) async {
+    try {
+      final data = await apiService.post(
+        endPoint: 'Account/login-google',
+        body: {'idToken': idToken},
+      );
+      final model = SigninModel.fromJson(data);
+      final token = (model.token ?? '').trim();
+      final localStorage = LocalStorageService();
+      if (token.isNotEmpty) {
+        await localStorage.saveToken(token);
+        await localStorage.setSignedIn(true);
+      }
+      return Right(model);
+    } on DioException catch (e) {
+      return Left(ServerFailure.fromDioError(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, SigninModel>> signInWithFacebook({
+    required String accessToken,
+  }) async {
+    try {
+      final data = await apiService.post(
+        endPoint: 'Account/login-facebook',
+        body: {'accessToken': accessToken},
+      );
+      final model = SigninModel.fromJson(data);
+      final token = (model.token ?? '').trim();
+      final localStorage = LocalStorageService();
+      if (token.isNotEmpty) {
+        await localStorage.saveToken(token);
+        await localStorage.setSignedIn(true);
+      }
+      return Right(model);
+    } on DioException catch (e) {
+      return Left(ServerFailure.fromDioError(e));
+    }
+  }
+
+  @override
   Future<Either<Failure, SignupModel>> signUp({
     required String name,
     required String email,

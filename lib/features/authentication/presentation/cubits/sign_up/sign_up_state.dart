@@ -8,7 +8,9 @@ class SignUpLoading extends SignUpState {}
 
 class SignUpSuccess extends SignUpState {
   final String token;
-  SignUpSuccess(this.token);
+  final OAuthAccountSnapshot? oauthProfile;
+
+  SignUpSuccess(this.token, {this.oauthProfile});
 }
 
 class SignUpFailure extends SignUpState {

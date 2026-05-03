@@ -208,6 +208,7 @@ class _ProfileViewBodyState extends State<ProfileViewBody> {
         await localStorage.setSignedIn(false);
         await localStorage.clearToken();
         await localStorage.clearCachedUserProfile();
+        await localStorage.clearPendingProfileData();
         if (context.mounted) {
           CustomErrorSnackBar.show(context, failure.errMessage);
           GoRouter.of(context).go(AppRouter.kSignInView);
@@ -217,6 +218,7 @@ class _ProfileViewBodyState extends State<ProfileViewBody> {
         await localStorage.setSignedIn(false);
         await localStorage.clearToken();
         await localStorage.clearCachedUserProfile();
+        await localStorage.clearPendingProfileData();
         if (context.mounted) {
           GoRouter.of(context).go(AppRouter.kSignInView);
         }

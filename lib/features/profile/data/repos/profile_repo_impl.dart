@@ -47,14 +47,19 @@ class ProfileRepoImpl implements ProfileRepo {
 
       // Backend profile currently does not always return all app fields.
       // Keep locally entered values when server returns empty values.
+      //
+      // Email from OAuth (stored in pending right after Google/Facebook sign-in)
+      // wins over API email when both exist: linked accounts often keep a Gmail as
+      // primary server-side while Facebook Graph returns the user's FB email.
+      final pendingEmail = (pending['email'] ?? '').trim();
       final mergedProfile = UserProfileModel(
         fullName: remoteProfile.fullName.isNotEmpty
             ? remoteProfile.fullName
             : (pending['fullName'] ?? ''),
-        email: remoteProfile.email.isNotEmpty
-            ? remoteProfile.email
-            : (pending['email'] ?? ''),
-        dateOfBirth: remoteProfile.dateOfBirth,
+        email: pendingEmail.isNotEmpty ? pendingEmail : remoteProfile.email,
+        dateOfBirth: remoteProfile.dateOfBirth.trim().isNotEmpty
+            ? remoteProfile.dateOfBirth
+            : (pending['dateOfBirth'] ?? ''),
         mobileNumber: remoteProfile.mobileNumber,
         weight: remoteProfile.weight.isNotEmpty
             ? remoteProfile.weight
@@ -62,7 +67,9 @@ class ProfileRepoImpl implements ProfileRepo {
         height: remoteProfile.height.isNotEmpty
             ? remoteProfile.height
             : (pending['height'] ?? ''),
-        profilePictureUrl: remoteProfile.profilePictureUrl,
+        profilePictureUrl: remoteProfile.profilePictureUrl.trim().isNotEmpty
+            ? remoteProfile.profilePictureUrl
+            : (pending['profilePictureUrl'] ?? ''),
         gender: remoteProfile.gender.isNotEmpty
             ? remoteProfile.gender
             : (pending['gender'] ?? ''),

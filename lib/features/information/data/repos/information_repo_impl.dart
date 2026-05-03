@@ -35,6 +35,34 @@ class InformationRepoImpl implements InformationRepo {
     }
   }
 
+  bool _looksLikeExistingWorkoutPlanMessage(String message) {
+    final lower = message.toLowerCase();
+    if (!lower.contains('plan')) return false;
+    return lower.contains('update') ||
+        lower.contains('already') ||
+        lower.contains('exist') ||
+        lower.contains('duplicate');
+  }
+
+  Future<WorkoutPlan?> _parseAndPersistPlan(Map<String, dynamic> data) async {
+    dynamic rawPlan =
+        data['workoutPlan'] ?? data['plan'] ?? data['data'] ?? data;
+
+    if (rawPlan is Map<String, dynamic> && rawPlan['weeks'] == null) {
+      final nested =
+          rawPlan['result'] ?? rawPlan['payload'] ?? rawPlan['workout'];
+      if (nested is Map<String, dynamic>) {
+        rawPlan = nested;
+      }
+    }
+
+    if (rawPlan is! Map<String, dynamic>) return null;
+
+    final plan = WorkoutPlan.fromJson(rawPlan);
+    await localStorageService.saveWorkoutPlan(plan);
+    return plan;
+  }
+
   @override
   Future<Either<Failure, WorkoutPlan>> generateWorkoutPlan({
     required int activityLevel,
@@ -51,40 +79,44 @@ class InformationRepoImpl implements InformationRepo {
       };
       log('📤 GENERATE WORKOUT PAYLOAD: $payload');
 
-      final data = await apiService.post(
-        endPoint: 'Workout/GenerateWorkoutPlan',
-        body: payload,
-        token: token,
-      );
+      late Map<String, dynamic> envelope;
+      try {
+        envelope = await apiService.post(
+          endPoint: 'Workout/GenerateWorkoutPlan',
+          body: payload,
+          token: token,
+        );
+        log('✅ WORKOUT PLAN GENERATED');
+      } on DioException catch (eGen) {
+        log(
+          '❌ GENERATE WORKOUT DIO ERROR | status=${eGen.response?.statusCode} | data=${eGen.response?.data}',
+        );
+        final genFailure = ServerFailure.fromDioError(eGen);
+        if (!_looksLikeExistingWorkoutPlanMessage(genFailure.errMessage)) {
+          return Left(genFailure);
+        }
 
-      // Supports common response shapes:
-      // - full plan at root
-      // - nested under `workoutPlan` / `plan` / `data`
-      // - status wrappers where plan still lives at root map
-      dynamic rawPlan =
-          data['workoutPlan'] ?? data['plan'] ?? data['data'] ?? data;
-
-      if (rawPlan is Map<String, dynamic> && rawPlan['weeks'] == null) {
-        final nested =
-            rawPlan['result'] ?? rawPlan['payload'] ?? rawPlan['workout'];
-        if (nested is Map<String, dynamic>) {
-          rawPlan = nested;
+        log('🔄 Falling back to Workout/UpdateWorkoutPlan');
+        try {
+          envelope = await apiService.put(
+            endPoint: 'Workout/UpdateWorkoutPlan',
+            body: payload,
+            token: token,
+          );
+          log('✅ WORKOUT PLAN UPDATED');
+        } on DioException catch (eUpd) {
+          log(
+            '❌ UPDATE WORKOUT DIO ERROR | status=${eUpd.response?.statusCode} | data=${eUpd.response?.data}',
+          );
+          return Left(ServerFailure.fromDioError(eUpd));
         }
       }
 
-      if (rawPlan is! Map<String, dynamic>) {
+      final persisted = await _parseAndPersistPlan(envelope);
+      if (persisted == null) {
         return Left(ServerFailure('Invalid workout plan response format'));
       }
-
-      final plan = WorkoutPlan.fromJson(rawPlan);
-      await localStorageService.saveWorkoutPlan(plan);
-      log('✅ WORKOUT PLAN GENERATED');
-      return Right(plan);
-    } on DioException catch (e) {
-      log(
-        '❌ GENERATE WORKOUT DIO ERROR | status=${e.response?.statusCode} | data=${e.response?.data}',
-      );
-      return Left(ServerFailure.fromDioError(e));
+      return Right(persisted);
     } catch (e) {
       log('❌ GENERATE WORKOUT UNKNOWN ERROR: $e');
       return Left(ServerFailure(e.toString()));

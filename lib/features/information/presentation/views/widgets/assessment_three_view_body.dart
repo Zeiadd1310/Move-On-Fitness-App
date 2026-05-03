@@ -176,7 +176,9 @@ class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
                               );
                               return;
                             }
-                            if (widget.activityLevel <= 0) {
+                            // Backend ActivityLevel enum: 0 Beginner, 1 Intermediate, 2 Advanced.
+                            if (widget.activityLevel < 0 ||
+                                widget.activityLevel > 2) {
                               CustomErrorSnackBar.show(
                                 context,
                                 'Please choose your activity level first',

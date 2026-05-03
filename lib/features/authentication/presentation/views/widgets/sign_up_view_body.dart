@@ -39,25 +39,26 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
 
   @override
   Widget build(BuildContext context) {
-    final responsive = ResponsiveHelper(context);
-    final horizontalPadding = responsive.horizontalPadding();
-    final spacing = responsive.spacing(10);
-    final mediumSpacing = responsive.spacing(30);
-    final fontSize = responsive.fontSize(16);
-    final buttonWidth = responsive.buttonWidth(360);
-    final buttonHeight = responsive.buttonHeight(56);
-
     return BlocConsumer<SignUpCubit, SignUpState>(
       listener: (context, state) async {
         if (state is SignUpSuccess) {
           final localStorage = LocalStorageService();
           await localStorage.saveToken(state.token);
           await localStorage.setSignedIn(true);
+          await localStorage.alignOnboardingStateWithJwt(state.token);
           await localStorage.setBodyDataCompleted(false);
-          await localStorage.savePendingProfileData(
-            fullName: _nameController.text.trim(),
-            email: _emailController.text.trim(),
-          );
+          final oauth = state.oauthProfile;
+          if (oauth != null) {
+            await localStorage.mergeOAuthAccountHints(oauth);
+          }
+          final name = _nameController.text.trim();
+          final email = _emailController.text.trim();
+          if (oauth == null && (name.isNotEmpty || email.isNotEmpty)) {
+            await localStorage.savePendingProfileData(
+              fullName: name,
+              email: email,
+            );
+          }
           if (context.mounted) {
             GoRouter.of(context).push(AppRouter.kBodyDataView);
           }
@@ -66,6 +67,15 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
         }
       },
       builder: (context, state) {
+        final loading = state is SignUpLoading;
+        final responsive = ResponsiveHelper(context);
+        final horizontalPadding = responsive.horizontalPadding();
+        final spacing = responsive.spacing(10);
+        final mediumSpacing = responsive.spacing(30);
+        final fontSize = responsive.fontSize(16);
+        final buttonWidth = responsive.buttonWidth(360);
+        final buttonHeight = responsive.buttonHeight(56);
+
         return Scaffold(
           backgroundColor: Colors.black,
           body: SingleChildScrollView(
@@ -182,7 +192,7 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                     ),
                   ),
                   SizedBox(height: spacing),
-                  state is SignUpLoading
+                  loading
                       ? const CircularProgressIndicator()
                       : CustomButton(
                           text: 'Sign Up',
@@ -209,9 +219,23 @@ class _SignUpViewBodyState extends State<SignUpViewBody> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SocialIcon(icon: FontAwesomeIcons.google),
+                      SocialIcon(
+                        icon: FontAwesomeIcons.google,
+                        onTap: loading
+                            ? null
+                            : () => context
+                                  .read<SignUpCubit>()
+                                  .signUpWithGoogle(),
+                      ),
                       const SizedBox(width: 20),
-                      SocialIcon(icon: FontAwesomeIcons.facebook),
+                      SocialIcon(
+                        icon: FontAwesomeIcons.facebook,
+                        onTap: loading
+                            ? null
+                            : () => context
+                                  .read<SignUpCubit>()
+                                  .signUpWithFacebook(),
+                      ),
                     ],
                   ),
                   SizedBox(height: spacing * 1.5),

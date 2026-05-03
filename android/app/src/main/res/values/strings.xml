@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Meta Developer Console → Your app → Settings → Basic: App ID & Client token -->
+    <string name="facebook_app_id">1912297666137591</string>
+    <string name="fb_login_protocol_scheme">fb1912297666137591</string>
+    <string name="facebook_client_token">e7ca3a7e156de3024588946cf1f982ff</string>
+</resources>

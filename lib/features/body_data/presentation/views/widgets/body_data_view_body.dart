@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
+import 'package:move_on/core/models/oauth_account_snapshot.dart';
 import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/helpers/responsive_helper.dart';
@@ -42,6 +43,25 @@ class _BodyDataViewBodyState extends State<BodyDataViewBody> {
   String _fatUnit = 'Kg';
   String _waterUnit = 'Kg';
   String _bmrUnit = 'Kg';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final storage = LocalStorageService();
+      final p = await storage.getPendingProfileData();
+      if (!mounted) return;
+      final iso = p['dateOfBirth']?.trim();
+      final age = OAuthAccountSnapshot.computeAgeYears(iso);
+      if (age != null && _ageController.text.trim().isEmpty) {
+        setState(() => _ageController.text = '$age');
+      }
+      final g = p['gender']?.trim() ?? '';
+      if (g == 'Male' || g == 'Femail') {
+        setState(() => _selectedGender = g);
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -83,6 +103,7 @@ class _BodyDataViewBodyState extends State<BodyDataViewBody> {
             height: _heightController.text.trim(),
             gender: _selectedGender,
           );
+          if (!context.mounted) return;
           GoRouter.of(context).push(
             AppRouter.kAssessmentOneView,
             extra: {'assessmentId': state.assessmentId ?? 0},

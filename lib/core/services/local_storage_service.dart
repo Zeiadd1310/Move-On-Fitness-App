@@ -3,6 +3,8 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:move_on/core/models/oauth_account_snapshot.dart';
+import 'package:move_on/core/utils/jwt_subject_reader.dart';
 import 'package:move_on/features/information/data/models/workout_plan_model.dart';
 
 class LocalStorageService {
@@ -12,6 +14,10 @@ class LocalStorageService {
   // Legacy key used by older auth code paths. Keep for migration.
   static const _legacyTokenKey = 'token';
   static const _isBodyDataCompletedKey = 'is_body_data_completed';
+  /// Persisted onboarding scope: pipe-separated JWT identity keys so the same backend
+  /// account still matches after Google/password login emit different principal claims.
+  static const _bodyOnboardingScopedUserKey = 'body_onboarding_scoped_user_id';
+  static const _bodyOnboardingScopedUserSeparator = '|';
   static const _cachedWorkoutPlanJsonKey = 'cached_workout_plan_json';
   static const _cachedUserProfileJsonKey = 'cached_user_profile_json';
   static const _pendingProfileNameKey = 'pending_profile_name';
@@ -19,6 +25,8 @@ class LocalStorageService {
   static const _pendingProfileWeightKey = 'pending_profile_weight';
   static const _pendingProfileHeightKey = 'pending_profile_height';
   static const _pendingProfileGenderKey = 'pending_profile_gender';
+  static const _pendingProfilePictureKey = 'pending_profile_picture_url';
+  static const _pendingProfileDobKey = 'pending_profile_dob';
   static const _workoutHistoryKey = 'workout_history';
 
   Future<bool> isFirstTime() async {
@@ -89,6 +97,51 @@ class LocalStorageService {
       await prefs.setBool(_isBodyDataCompletedKey, value);
     } catch (e) {
       log('Error setting body data completed status: $e');
+    }
+  }
+
+  /// Call after saving a new auth token so onboarding flags apply to the right account.
+  /// If the signed-in account changed, clears cached plan/profile/pending profile and
+  /// resets body-data completion so the user goes through onboarding like a new sign-up.
+  Future<void> alignOnboardingStateWithJwt(String jwtToken) async {
+    final currentKeys = JwtSubjectReader.readComparableAccountKeys(jwtToken);
+    if (currentKeys.isEmpty) return;
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final scopedRaw = prefs.getString(_bodyOnboardingScopedUserKey);
+
+      Set<String> storedKeys = {};
+      if (scopedRaw != null && scopedRaw.isNotEmpty) {
+        storedKeys = scopedRaw
+            .split(_bodyOnboardingScopedUserSeparator)
+            .map((e) => e.trim().toLowerCase())
+            .where((e) => e.isNotEmpty)
+            .toSet();
+      }
+
+      Future<void> writeMergedStored(Set<String> merged) =>
+          prefs.setString(
+            _bodyOnboardingScopedUserKey,
+            merged.join(_bodyOnboardingScopedUserSeparator),
+          );
+
+      if (storedKeys.isEmpty) {
+        await writeMergedStored(currentKeys);
+        return;
+      }
+
+      if (storedKeys.intersection(currentKeys).isEmpty) {
+        await prefs.setBool(_isBodyDataCompletedKey, false);
+        await clearWorkoutPlan();
+        await clearCachedUserProfile();
+        await clearPendingProfileData();
+        await writeMergedStored(currentKeys);
+      } else {
+        await writeMergedStored(storedKeys.union(currentKeys));
+      }
+    } catch (e) {
+      log('Error aligning onboarding state: $e');
     }
   }
 
@@ -165,6 +218,8 @@ class LocalStorageService {
     String? weight,
     String? height,
     String? gender,
+    String? profilePictureUrl,
+    String? dateOfBirth,
   }) async {
     final prefs = await SharedPreferences.getInstance();
     if (fullName != null) {
@@ -182,6 +237,51 @@ class LocalStorageService {
     if (gender != null) {
       await prefs.setString(_pendingProfileGenderKey, gender);
     }
+    if (profilePictureUrl != null) {
+      await prefs.setString(_pendingProfilePictureKey, profilePictureUrl);
+    }
+    if (dateOfBirth != null) {
+      await prefs.setString(_pendingProfileDobKey, dateOfBirth);
+    }
+  }
+
+  /// Applies Google/Facebook-visible fields without wiping weight/height the user already entered.
+  Future<void> mergeOAuthAccountHints(OAuthAccountSnapshot snapshot) async {
+    await savePendingProfileData(
+      fullName: snapshot.displayName.isNotEmpty ? snapshot.displayName : null,
+      email: snapshot.email.isNotEmpty ? snapshot.email : null,
+      profilePictureUrl: snapshot.photoUrl.isNotEmpty ? snapshot.photoUrl : null,
+      gender: snapshot.gender.trim().isNotEmpty ? snapshot.gender.trim() : null,
+      dateOfBirth:
+          (snapshot.dateOfBirthIso != null &&
+              snapshot.dateOfBirthIso!.trim().isNotEmpty)
+          ? snapshot.dateOfBirthIso!.trim()
+          : null,
+    );
+
+    try {
+      final existing = await loadCachedUserProfile() ?? {};
+      final merged = Map<String, dynamic>.from(existing);
+      if (snapshot.displayName.trim().isNotEmpty) {
+        merged['fullName'] = snapshot.displayName.trim();
+      }
+      if (snapshot.email.trim().isNotEmpty) {
+        merged['email'] = snapshot.email.trim();
+      }
+      if (snapshot.photoUrl.trim().isNotEmpty) {
+        merged['profilePictureUrl'] = snapshot.photoUrl.trim();
+      }
+      if (snapshot.gender.trim().isNotEmpty) {
+        merged['gender'] = snapshot.gender.trim();
+      }
+      final dob = snapshot.dateOfBirthIso?.trim();
+      if (dob != null && dob.isNotEmpty) {
+        merged['dateOfBirth'] = dob;
+      }
+      await saveCachedUserProfile(merged);
+    } catch (e) {
+      log('Error merging OAuth hints into cached profile: $e');
+    }
   }
 
   Future<Map<String, String>> getPendingProfileData() async {
@@ -192,6 +292,8 @@ class LocalStorageService {
       'weight': prefs.getString(_pendingProfileWeightKey) ?? '',
       'height': prefs.getString(_pendingProfileHeightKey) ?? '',
       'gender': prefs.getString(_pendingProfileGenderKey) ?? '',
+      'profilePictureUrl': prefs.getString(_pendingProfilePictureKey) ?? '',
+      'dateOfBirth': prefs.getString(_pendingProfileDobKey) ?? '',
     };
   }
 
@@ -202,6 +304,8 @@ class LocalStorageService {
     await prefs.remove(_pendingProfileWeightKey);
     await prefs.remove(_pendingProfileHeightKey);
     await prefs.remove(_pendingProfileGenderKey);
+    await prefs.remove(_pendingProfilePictureKey);
+    await prefs.remove(_pendingProfileDobKey);
   }
 
   /// Save workout history with dates for calendar integration

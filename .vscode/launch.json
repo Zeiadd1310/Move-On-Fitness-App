@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "move_on",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--dart-define=GOOGLE_WEB_CLIENT_ID=4013995443-ssumt7q21p8j24hk3tn1d56gofnpqm60.apps.googleusercontent.com"
+      ]
+    },
+    {
+      "name": "move_on (no Google define)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart"
+    }
+  ]
+}

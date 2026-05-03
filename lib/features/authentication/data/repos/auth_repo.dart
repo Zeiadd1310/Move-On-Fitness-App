@@ -13,6 +13,14 @@ abstract class AuthRepo {
     required String password,
   });
 
+  Future<Either<Failure, SigninModel>> signInWithGoogle({
+    required String idToken,
+  });
+
+  Future<Either<Failure, SigninModel>> signInWithFacebook({
+    required String accessToken,
+  });
+
   Future<Either<Failure, SignupModel>> signUp({
     required String name,
     required String email,

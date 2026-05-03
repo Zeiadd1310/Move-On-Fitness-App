@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/core/services/local_storage_service.dart';
+import 'package:move_on/core/services/server_onboarding_sync.dart';
+import 'package:move_on/core/utils/functions/api_service.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/custom_error_snackbar.dart';
@@ -47,6 +49,13 @@ class _SignInViewBodyState extends State<SignInViewBody> {
           final localStorage = LocalStorageService();
           await localStorage.saveToken(state.token);
           await localStorage.setSignedIn(true);
+          await localStorage.alignOnboardingStateWithJwt(state.token);
+          final profile = state.oauthProfile;
+          if (profile != null) {
+            await localStorage.mergeOAuthAccountHints(profile);
+          }
+          await ServerOnboardingSync(ApiService(), localStorage)
+              .hydrateFromServer();
           final isBodyDataCompleted = await localStorage.isBodyDataCompleted();
           if (context.mounted) {
             if (isBodyDataCompleted) {
@@ -60,6 +69,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
         }
       },
       builder: (context, state) {
+        final loading = state is SignInLoading;
         return Scaffold(
           backgroundColor: Colors.black,
           body: SingleChildScrollView(
@@ -111,7 +121,7 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                     onChanged: (val) => _passwordController.text = val,
                   ),
                   const SizedBox(height: 10),
-                  state is SignInLoading
+                  loading
                       ? const CircularProgressIndicator()
                       : CustomButton(
                           text: 'Sign In',
@@ -134,9 +144,23 @@ class _SignInViewBodyState extends State<SignInViewBody> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      SocialIcon(icon: FontAwesomeIcons.google),
+                      SocialIcon(
+                        icon: FontAwesomeIcons.google,
+                        onTap: loading
+                            ? null
+                            : () => context
+                                  .read<SignInCubit>()
+                                  .signInWithGoogle(),
+                      ),
                       const SizedBox(width: 20),
-                      SocialIcon(icon: FontAwesomeIcons.facebook),
+                      SocialIcon(
+                        icon: FontAwesomeIcons.facebook,
+                        onTap: loading
+                            ? null
+                            : () => context
+                                  .read<SignInCubit>()
+                                  .signInWithFacebook(),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 40),
