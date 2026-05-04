@@ -23,6 +23,9 @@ class CustomWorkoutCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isNetwork =
+        imagePath.startsWith('http://') || imagePath.startsWith('https://');
+
     return Container(
       key: ValueKey('workout_card_$title'),
       width: cardWidth ?? 180,
@@ -38,11 +41,25 @@ class CustomWorkoutCardWidget extends StatelessWidget {
                 topLeft: Radius.circular(16),
                 topRight: Radius.circular(16),
               ),
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.cover,
-                width: double.infinity,
-              ),
+              child: isNetwork
+                  ? Image.network(
+                      imagePath,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      errorBuilder: (_, __, ___) => Container(
+                        color: const Color(0xFF1F2937),
+                        alignment: Alignment.center,
+                        child: const Icon(
+                          Icons.image_not_supported_outlined,
+                          color: Colors.white54,
+                        ),
+                      ),
+                    )
+                  : Image.asset(
+                      imagePath,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    ),
             ),
           ),
           Container(
@@ -72,7 +89,7 @@ class CustomWorkoutCardWidget extends StatelessWidget {
                       fontFamily: 'Poppins',
                       fontSize: 16,
                     ),
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),

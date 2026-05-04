@@ -211,6 +211,8 @@ abstract class AppRouter {
                       description: '',
                       imageUrl: '',
                       videoUrl: '',
+                      duration: '',
+                      calories: 0,
                     ),
             );
           }
@@ -225,6 +227,8 @@ abstract class AppRouter {
               description: '',
               imageUrl: '',
               videoUrl: '',
+              duration: '',
+              calories: 0,
             ),
           );
         },

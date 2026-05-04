@@ -10,6 +10,8 @@ class WorkoutExercise extends Equatable {
   final String description;
   final String imageUrl;
   final String videoUrl;
+  final String duration;
+  final num calories;
 
   const WorkoutExercise({
     required this.exerciseName,
@@ -20,23 +22,41 @@ class WorkoutExercise extends Equatable {
     required this.description,
     required this.imageUrl,
     required this.videoUrl,
+    required this.duration,
+    required this.calories,
   });
+
+  static String _readString(dynamic value) {
+    final text = value?.toString().trim() ?? '';
+    if (text.isEmpty || text.toLowerCase() == 'null') return '';
+    return text;
+  }
+
+  static num _readNum(dynamic value) {
+    if (value is num) return value;
+    final parsed = num.tryParse(value?.toString() ?? '');
+    return parsed ?? 0;
+  }
 
   factory WorkoutExercise.fromJson(Map<String, dynamic> json) =>
       WorkoutExercise(
-        exerciseName:
-            (json['exercise_name'] ?? json['exerciseName'])?.toString() ?? '',
-        muscleGroup:
-            (json['muscle_group'] ?? json['muscleGroup'])?.toString() ?? '',
-        exerciseType:
-            (json['exercise_type'] ?? json['exerciseType'])?.toString() ?? '',
+        exerciseName: _readString(json['exercise_name'] ?? json['exerciseName']),
+        muscleGroup: _readString(json['muscle_group'] ?? json['muscleGroup']),
+        exerciseType: _readString(json['exercise_type'] ?? json['exerciseType']),
         sets: (json['sets'] as num?)?.toInt() ?? 0,
-        reps: json['reps']?.toString() ?? '',
-        description: json['description']?.toString() ?? '',
+        reps: _readString(json['reps']),
+        description: _readString(json['description']),
         imageUrl: normalizeApiMediaUrl(
-          (json['image_url'] ?? json['imageUrl'])?.toString(),
+          _readString(json['image_url'] ?? json['imageUrl']),
         ),
-        videoUrl: (json['video_url'] ?? json['videoUrl'])?.toString() ?? '',
+        videoUrl: _readString(json['video_url'] ?? json['videoUrl']),
+        duration: (json['duration'] ??
+                    json['estimated_duration'] ??
+                    json['estimatedDuration'] ??
+                    json['time'])
+                ?.toString() ??
+            '',
+        calories: _readNum(json['calories'] ?? json['kcal']),
       );
 
   Map<String, dynamic> toJson() => {
@@ -48,6 +68,8 @@ class WorkoutExercise extends Equatable {
     'description': description,
     'image_url': imageUrl,
     'video_url': videoUrl,
+    'duration': duration,
+    'calories': calories,
   };
 
   @override
@@ -60,5 +82,7 @@ class WorkoutExercise extends Equatable {
     description,
     imageUrl,
     videoUrl,
+    duration,
+    calories,
   ];
 }

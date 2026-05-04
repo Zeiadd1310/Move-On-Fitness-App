@@ -3,17 +3,15 @@ import 'package:move_on/constants.dart';
 
 class BottomWorkoutCard extends StatelessWidget {
   final IconData icon;
-  final String calories;
+  final String workoutCount;
   final String duration;
-  final String date;
   final String workoutType;
 
   const BottomWorkoutCard({
     super.key,
     required this.icon,
-    required this.calories,
+    required this.workoutCount,
     required this.duration,
-    required this.date,
     required this.workoutType,
   });
 
@@ -33,32 +31,18 @@ class BottomWorkoutCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Column(
-                children: [
-                  Container(
-                    width: isSmallScreen ? 50 : 60,
-                    height: isSmallScreen ? 50 : 60,
-                    decoration: BoxDecoration(
-                      color: kPrimaryColor,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      icon,
-                      color: Colors.white,
-                      size: isSmallScreen ? 30 : 40,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    date,
-                    style: TextStyle(
-                      color: kPrimaryColor,
-                      fontSize: isSmallScreen ? 10 : 12,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+              Container(
+                width: isSmallScreen ? 40 : 60,
+                height: isSmallScreen ? 40 : 60,
+                decoration: BoxDecoration(
+                  color: kPrimaryColor,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  color: Colors.white,
+                  size: isSmallScreen ? 30 : 40,
+                ),
               ),
               SizedBox(width: isSmallScreen ? 8 : 12),
               Expanded(
@@ -68,14 +52,14 @@ class BottomWorkoutCard extends StatelessWidget {
                     Row(
                       children: [
                         Icon(
-                          Icons.local_fire_department,
+                          Icons.checklist,
                           color: kPrimaryColor,
                           size: isSmallScreen ? 20 : 30,
                         ),
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
-                            calories,
+                            workoutCount,
                             style: TextStyle(
                               color: kPrimaryColor,
                               fontSize: isSmallScreen ? 14 : 18,
@@ -120,8 +104,8 @@ class BottomWorkoutCard extends StatelessWidget {
             workoutType,
             style: TextStyle(
               fontFamily: 'Poppins',
-              fontSize: isSmallScreen ? 14 : 16,
-              fontWeight: FontWeight.w500,
+              fontSize: isSmallScreen ? 18 : 20,
+              fontWeight: FontWeight.bold,
               color: Colors.white,
             ),
             textAlign: TextAlign.center,
