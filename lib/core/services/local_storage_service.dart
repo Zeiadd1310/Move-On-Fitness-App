@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:move_on/core/models/oauth_account_snapshot.dart';
 import 'package:move_on/core/utils/jwt_subject_reader.dart';
 import 'package:move_on/features/information/data/models/workout_plan_model.dart';
+import 'package:move_on/features/nutrition/data/models/meals_model/meals_model.dart';
 
 class LocalStorageService {
   static const _isFirstTimeKey = 'is_first_time';
@@ -28,6 +29,8 @@ class LocalStorageService {
   static const _pendingProfilePictureKey = 'pending_profile_picture_url';
   static const _pendingProfileDobKey = 'pending_profile_dob';
   static const _workoutHistoryKey = 'workout_history';
+  static const _nutritionIntroSeenKey = 'nutrition_intro_seen';
+  static const _cachedNutritionPlanJsonKey = 'cached_nutrition_plan_json';
 
   Future<bool> isFirstTime() async {
     final prefs = await SharedPreferences.getInstance();
@@ -177,6 +180,48 @@ class LocalStorageService {
       await prefs.remove(_cachedWorkoutPlanJsonKey);
     } catch (e) {
       log('Error clearing workout plan: $e');
+    }
+  }
+
+  Future<bool> hasSeenNutritionIntro() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_nutritionIntroSeenKey) ?? false;
+  }
+
+  Future<void> setNutritionIntroSeen(bool value) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_nutritionIntroSeenKey, value);
+  }
+
+  Future<void> saveNutritionPlan(MealsModel plan) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_cachedNutritionPlanJsonKey, jsonEncode(plan.toJson()));
+    } catch (e) {
+      log('Error saving nutrition plan: $e');
+    }
+  }
+
+  Future<MealsModel?> loadNutritionPlan() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_cachedNutritionPlanJsonKey);
+      if (raw == null || raw.isEmpty) return null;
+      final decoded = jsonDecode(raw);
+      if (decoded is! Map<String, dynamic>) return null;
+      return MealsModel.fromJson(decoded);
+    } catch (e) {
+      log('Error loading nutrition plan: $e');
+      return null;
+    }
+  }
+
+  Future<void> clearNutritionPlan() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove(_cachedNutritionPlanJsonKey);
+    } catch (e) {
+      log('Error clearing nutrition plan: $e');
     }
   }
 

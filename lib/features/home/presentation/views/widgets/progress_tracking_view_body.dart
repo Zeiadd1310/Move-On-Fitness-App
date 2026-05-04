@@ -133,14 +133,6 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
                     Row(
                       children: [
                         IconButton(
-                          onPressed: () {},
-                          icon: Icon(
-                            Icons.search,
-                            color: kPrimaryColor,
-                            size: headerIconSize,
-                          ),
-                        ),
-                        IconButton(
                           onPressed: () => GoRouter.of(
                             context,
                           ).push(AppRouter.kNotificationSettingsView),

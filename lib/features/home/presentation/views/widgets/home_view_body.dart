@@ -95,14 +95,6 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                     Row(
                       children: [
                         IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.search,
-                            color: kPrimaryColor,
-                            size: 30,
-                          ),
-                        ),
-                        IconButton(
                           onPressed: () {
                             GoRouter.of(
                               context,

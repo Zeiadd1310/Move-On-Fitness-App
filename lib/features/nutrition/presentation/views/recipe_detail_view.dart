@@ -251,12 +251,7 @@ class _RecipeDetailViewState extends State<RecipeDetailView> {
               ),
             ),
           ),
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            onPressed: () {},
-            icon: Icon(Icons.search, color: kPrimaryColor, size: iconSize),
-          ),
+
           const SizedBox(width: 4),
           IconButton(
             padding: EdgeInsets.zero,

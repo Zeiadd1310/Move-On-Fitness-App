@@ -11,7 +11,15 @@ class GenerateNutritionPlanCubit extends Cubit<GenerateNutritionPlanState> {
   GenerateNutritionPlanCubit(this.nutritionRepo)
     : super(const GenerateNutritionPlanInitial());
 
-  Future<void> generateNutritionPlan() async {
+  Future<void> loadOrGenerateNutritionPlan({bool forceRefresh = false}) async {
+    if (!forceRefresh) {
+      final cached = await nutritionRepo.loadCachedNutritionPlan();
+      if (cached != null) {
+        emit(GenerateNutritionPlanSuccess(cached));
+        return;
+      }
+    }
+
     emit(const GenerateNutritionPlanLoading());
     final result = await nutritionRepo.generateNutritionPlan();
     result.fold(

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/api_service.dart';
 import 'package:move_on/features/nutrition/data/repos/nutrition_repo_impl.dart';
+import 'package:move_on/features/nutrition/presentation/cubits/food_scan_cubit/food_scan_cubit.dart';
 import 'package:move_on/features/nutrition/presentation/cubits/generate_nutrition_plan_cubit/generate_nutrition_plan_cubit.dart';
 import 'package:move_on/features/nutrition/presentation/views/meal_ideas/widgets/meal_ideas_view_body.dart';
 import 'package:move_on/features/nutrition/presentation/views/nutrition_get_started_view.dart';
@@ -26,13 +27,13 @@ class _MealIdeasViewState extends State<MealIdeasView> {
 
   Future<void> _checkFirstTime() async {
     final localStorage = LocalStorageService();
-    final isFirstTime = await localStorage.isFirstTime();
+    final hasSeen = await localStorage.hasSeenNutritionIntro();
     setState(() {
-      _showIntro = isFirstTime;
+      _showIntro = !hasSeen;
       _checked = true;
     });
-    if (isFirstTime) {
-      await localStorage.setNotFirstTime();
+    if (!hasSeen) {
+      await localStorage.setNutritionIntroSeen(true);
     }
   }
 
@@ -44,10 +45,15 @@ class _MealIdeasViewState extends State<MealIdeasView> {
     if (_showIntro) {
       return const NutritionGetStartedView();
     }
-    return BlocProvider(
-      create: (_) => GenerateNutritionPlanCubit(
-        NutritionRepoImpl(ApiService(), LocalStorageService()),
-      )..generateNutritionPlan(),
+    final repo = NutritionRepoImpl(ApiService(), LocalStorageService());
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) =>
+              GenerateNutritionPlanCubit(repo)..loadOrGenerateNutritionPlan(),
+        ),
+        BlocProvider(create: (_) => FoodScanCubit(repo)),
+      ],
       child: const Scaffold(body: MealIdeasViewBody()),
     );
   }
