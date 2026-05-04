@@ -28,13 +28,17 @@ class _MealIdeasViewState extends State<MealIdeasView> {
   Future<void> _checkFirstTime() async {
     final localStorage = LocalStorageService();
     final hasSeen = await localStorage.hasSeenNutritionIntro();
+    if (!mounted) return;
     setState(() {
       _showIntro = !hasSeen;
       _checked = true;
     });
-    if (!hasSeen) {
-      await localStorage.setNutritionIntroSeen(true);
-    }
+  }
+
+  Future<void> _onFinishedNutritionIntro() async {
+    await LocalStorageService().setNutritionIntroSeen(true);
+    if (!mounted) return;
+    setState(() => _showIntro = false);
   }
 
   @override
@@ -43,7 +47,11 @@ class _MealIdeasViewState extends State<MealIdeasView> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     if (_showIntro) {
-      return const NutritionGetStartedView();
+      return NutritionGetStartedView(
+        onKnowYourPlan: () {
+          _onFinishedNutritionIntro();
+        },
+      );
     }
     final repo = NutritionRepoImpl(ApiService(), LocalStorageService());
     return MultiBlocProvider(

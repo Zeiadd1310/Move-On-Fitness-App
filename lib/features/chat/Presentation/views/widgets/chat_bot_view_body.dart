@@ -251,35 +251,49 @@ class _SuggestionChips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    final padH = (width * 0.03).clamp(8.0, 18.0);
+    final chipPadH = (width * 0.035).clamp(10.0, 18.0);
+    final chipPadV = (width * 0.022).clamp(7.0, 11.0);
+    final gap = width < 360 ? 6.0 : 8.0;
+    final fontSize = width < 340 ? 11.0 : (width < 400 ? 12.0 : 13.0);
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: suggestions
-            .map(
-              (s) => GestureDetector(
-                onTap: () => onTap(s),
+      padding: EdgeInsets.fromLTRB(padH, 8, padH, 8),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        physics: const BouncingScrollPhysics(),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            for (var i = 0; i < suggestions.length; i++) ...[
+              if (i > 0) SizedBox(width: gap),
+              GestureDetector(
+                onTap: () => onTap(suggestions[i]),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 10,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: chipPadH,
+                    vertical: chipPadV,
                   ),
                   decoration: BoxDecoration(
                     color: orange,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    s,
-                    style: const TextStyle(
+                    suggestions[i],
+                    maxLines: 1,
+                    overflow: TextOverflow.visible,
+                    style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
-                      fontSize: 13,
+                      fontSize: fontSize,
                     ),
                   ),
                 ),
               ),
-            )
-            .toList(),
+            ],
+          ],
+        ),
       ),
     );
   }

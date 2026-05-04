@@ -4,13 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
+import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/custom_background_widget.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_button.dart';
 
 class NutritionGetStartedViewBody extends StatelessWidget {
-  const NutritionGetStartedViewBody({super.key});
+  final VoidCallback? onKnowYourPlan;
+
+  const NutritionGetStartedViewBody({super.key, this.onKnowYourPlan});
+
+  static Future<void> _openMealIdeasFromStandalone(BuildContext context) async {
+    await LocalStorageService().setNutritionIntroSeen(true);
+    if (!context.mounted) return;
+    GoRouter.of(context).pushReplacement(AppRouter.kMealIdeasView);
+  }
 
   // #region agent log
   void _log(String hypothesisId, String message, Map<String, dynamic> data) {
@@ -185,7 +194,11 @@ class NutritionGetStartedViewBody extends StatelessWidget {
                       ),
                       radius: 40,
                       onTap: () {
-                        GoRouter.of(context).push(AppRouter.kMealIdeasView);
+                        if (onKnowYourPlan != null) {
+                          onKnowYourPlan!();
+                          return;
+                        }
+                        _openMealIdeasFromStandalone(context);
                       },
                     ),
                   ],

@@ -48,7 +48,7 @@ class _SnackCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 220,
+      height: 240,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         color: const Color(0xFF1E1E2E),
@@ -139,23 +139,24 @@ class _SnackCard extends StatelessWidget {
                         ],
                       ],
                     ),
-                    Row(
-                      children: [
-                        if (snacks.description != null &&
-                            snacks.description!.isNotEmpty) ...[
-                          const SizedBox(height: 4),
-                          Text(
-                            snacks.description!,
-                            style: const TextStyle(
-                              color: Colors.white54,
-                              fontSize: 12,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                        SizedBox(width: 10),
-                        if (snacks.protein != null) ...[
+
+                    if (snacks.description != null &&
+                        snacks.description!.isNotEmpty) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        snacks.description!,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                    SizedBox(height: 4),
+                    if (snacks.protein != null) ...[
+                      Row(
+                        children: [
                           const Icon(
                             Icons.fitness_center,
                             color: kPrimaryColor,
@@ -166,12 +167,12 @@ class _SnackCard extends StatelessWidget {
                             '${snacks.protein}g Protein',
                             style: const TextStyle(
                               color: Colors.white70,
-                              fontSize: 13,
+                              fontSize: 12,
                             ),
                           ),
                         ],
-                      ],
-                    ),
+                      ),
+                    ],
                   ],
                 ),
               ],

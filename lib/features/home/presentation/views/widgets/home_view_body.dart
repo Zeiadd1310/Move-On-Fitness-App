@@ -310,7 +310,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                       onTap: () {
                         GoRouter.of(
                           context,
-                        ).push(AppRouter.kNutritionGetStartedView);
+                        ).push(AppRouter.kMealIdeasView);
                       },
                     ),
                     ProfileVerticalDivider(
