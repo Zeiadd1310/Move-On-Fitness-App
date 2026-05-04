@@ -29,6 +29,23 @@ class CustomErrorSnackBar extends StatelessWidget {
     );
   }
 
+  static void showSuccess(BuildContext context, String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: CustomErrorSnackBar(
+          message: message,
+          backgroundColor: const Color(0xFF052E16),
+          borderColor: const Color(0xFF22C55E),
+          icon: Icons.check_circle_outline,
+        ),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(

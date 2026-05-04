@@ -5,11 +5,15 @@ import 'package:dio/dio.dart';
 import 'package:move_on/core/errors/failures.dart';
 import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/api_service.dart';
+import 'package:move_on/features/body_data/data/models/inbody_analysis_model.dart';
 import 'package:move_on/features/body_data/data/models/manual_assessment_request_model.dart';
 import 'package:move_on/features/body_data/data/models/manual_assessment_response_model.dart';
 import 'package:move_on/features/body_data/data/repos/body_data_repo.dart';
 
 class BodyDataRepoImpl implements BodyDataRepo {
+  static const _inbodyAnalyzeUrl =
+      'https://gentle-forgiveness-production-da69.up.railway.app/analyze-inbody';
+
   final ApiService apiService;
   final LocalStorageService localStorageService;
 
@@ -37,6 +41,39 @@ class BodyDataRepoImpl implements BodyDataRepo {
       return Right(parsed);
     } on DioException catch (e) {
       return Left(ServerFailure.fromDioError(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, InbodyAnalysisModel>> analyzeInbody({
+    required String imagePath,
+  }) async {
+    try {
+      final dio = Dio(
+        BaseOptions(
+          connectTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 45),
+          headers: {'accept': 'application/json'},
+        ),
+      );
+      final fileName = imagePath.split(RegExp(r'[\\/]')).last;
+      final formData = FormData.fromMap({
+        'file': await MultipartFile.fromFile(imagePath, filename: fileName),
+      });
+      final response = await dio.post<Map<String, dynamic>>(
+        _inbodyAnalyzeUrl,
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+      final body = response.data;
+      if (body == null || body.isEmpty) {
+        return Left(ServerFailure('Empty response from InBody analyzer'));
+      }
+      return Right(InbodyAnalysisModel.fromJson(body));
+    } on DioException catch (e) {
+      return Left(ServerFailure.fromDioError(e));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
     }
   }
 }

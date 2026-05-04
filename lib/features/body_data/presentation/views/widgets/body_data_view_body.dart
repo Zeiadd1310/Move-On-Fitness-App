@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/core/models/oauth_account_snapshot.dart';
 import 'package:move_on/core/services/local_storage_service.dart';
@@ -11,7 +12,10 @@ import 'package:move_on/core/utils/helpers/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
 import 'package:move_on/core/widgets/custom_assessment_text_widget.dart';
 import 'package:move_on/core/widgets/custom_error_snackbar.dart';
+import 'package:move_on/core/widgets/custom_success_snackbar.dart';
+import 'package:move_on/features/body_data/data/models/inbody_analysis_model.dart';
 import 'package:move_on/features/body_data/data/models/manual_assessment_request_model.dart';
+import 'package:move_on/features/body_data/presentation/cubits/inbody_analysis_cubit/inbody_analysis_cubit.dart';
 import 'package:move_on/features/body_data/presentation/cubits/manual_assessment_cubit/manual_assessment_cubit.dart';
 import 'package:move_on/features/body_data/presentation/views/widgets/body_data_gender_selector.dart';
 import 'package:move_on/features/body_data/presentation/views/widgets/body_data_input_field.dart';
@@ -43,6 +47,7 @@ class _BodyDataViewBodyState extends State<BodyDataViewBody> {
   String _fatUnit = 'Kg';
   String _waterUnit = 'Kg';
   String _bmrUnit = 'Kg';
+  final ImagePicker _imagePicker = ImagePicker();
 
   @override
   void initState() {
@@ -91,27 +96,47 @@ class _BodyDataViewBodyState extends State<BodyDataViewBody> {
         : responsive.widthPercent(0.17);
     final iconSize = responsive.iconSize(30);
 
-    return BlocConsumer<ManualAssessmentCubit, ManualAssessmentState>(
-      listener: (context, state) async {
-        if (state is ManualAssessmentFailure) {
-          CustomErrorSnackBar.show(context, state.error);
-        } else if (state is ManualAssessmentSuccess) {
-          final localStorage = LocalStorageService();
-          await localStorage.setBodyDataCompleted(true);
-          await localStorage.savePendingProfileData(
-            weight: _weightController.text.trim(),
-            height: _heightController.text.trim(),
-            gender: _selectedGender,
-          );
-          if (!context.mounted) return;
-          GoRouter.of(context).push(
-            AppRouter.kAssessmentOneView,
-            extra: {'assessmentId': state.assessmentId ?? 0},
-          );
-        }
-      },
-      builder: (context, state) {
-        return Scaffold(
+    final manualState = context.watch<ManualAssessmentCubit>().state;
+    final isAnalyzingInbody =
+        context.watch<InbodyAnalysisCubit>().state is InbodyAnalysisLoading;
+
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<ManualAssessmentCubit, ManualAssessmentState>(
+          listener: (context, state) async {
+            if (state is ManualAssessmentFailure) {
+              CustomErrorSnackBar.show(context, state.error);
+            } else if (state is ManualAssessmentSuccess) {
+              final localStorage = LocalStorageService();
+              await localStorage.setBodyDataCompleted(true);
+              await localStorage.savePendingProfileData(
+                weight: _weightController.text.trim(),
+                height: _heightController.text.trim(),
+                gender: _selectedGender,
+              );
+              if (!context.mounted) return;
+              GoRouter.of(context).push(
+                AppRouter.kAssessmentOneView,
+                extra: {'assessmentId': state.assessmentId ?? 0},
+              );
+            }
+          },
+        ),
+        BlocListener<InbodyAnalysisCubit, InbodyAnalysisState>(
+          listener: (context, state) {
+            if (state is InbodyAnalysisFailure) {
+              CustomErrorSnackBar.show(context, state.error);
+            } else if (state is InbodyAnalysisSuccess) {
+              _applyInbodyData(state.analysis);
+              CustomSuccessSnackBar.show(
+                context,
+                'InBody analyzed successfully. Please review before continuing.',
+              );
+            }
+          },
+        ),
+      ],
+      child: Scaffold(
           backgroundColor: Colors.black,
           body: SafeArea(
             child: SingleChildScrollView(
@@ -246,7 +271,7 @@ class _BodyDataViewBodyState extends State<BodyDataViewBody> {
                     SizedBox(height: height * 0.04),
                     Center(
                       child: GestureDetector(
-                        onTap: () {},
+                        onTap: isAnalyzingInbody ? null : _onAnalyzeInbodyTap,
                         child: Container(
                           width: cameraButtonSize,
                           height: cameraButtonSize,
@@ -254,17 +279,25 @@ class _BodyDataViewBodyState extends State<BodyDataViewBody> {
                             color: kPrimaryColor,
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: Icon(
-                            Icons.camera_alt,
-                            color: Colors.black,
-                            size: iconSize,
-                          ),
+                          child: isAnalyzingInbody
+                              ? const Padding(
+                                  padding: EdgeInsets.all(14.0),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 3,
+                                    color: Colors.black,
+                                  ),
+                                )
+                              : Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.black,
+                                  size: iconSize,
+                                ),
                         ),
                       ),
                     ),
                     SizedBox(height: height * 0.03),
                     Center(
-                      child: state is ManualAssessmentLoading
+                      child: manualState is ManualAssessmentLoading
                           ? const CircularProgressIndicator()
                           : CustomButton(
                               text: 'Continue',
@@ -286,8 +319,7 @@ class _BodyDataViewBodyState extends State<BodyDataViewBody> {
               ),
             ),
           ),
-        );
-      },
+      ),
     );
   }
 
@@ -353,6 +385,71 @@ class _BodyDataViewBodyState extends State<BodyDataViewBody> {
   /// Trims and accepts comma as decimal separator (locales often use `,`).
   static String _normalizeDecimalText(String raw) {
     return raw.trim().replaceAll(',', '.');
+  }
+
+  Future<void> _onAnalyzeInbodyTap() async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: const Color(0xFF1A1A1A),
+      builder: (context) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_camera, color: kPrimaryColor),
+              title: const Text(
+                'Take photo',
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () => Navigator.of(context).pop(ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library, color: kPrimaryColor),
+              title: const Text(
+                'Choose from gallery',
+                style: TextStyle(color: Colors.white),
+              ),
+              onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (source == null) return;
+
+    final picked = await _imagePicker.pickImage(
+      source: source,
+      imageQuality: 92,
+    );
+    if (picked == null || !mounted) return;
+
+    context.read<InbodyAnalysisCubit>().analyzeImage(imagePath: picked.path);
+  }
+
+  void _applyInbodyData(InbodyAnalysisModel analysis) {
+    String readNumStr(num raw, {int fractionDigits = 1}) {
+      if (raw is int) return raw.toString();
+      if (raw is double) return raw.toStringAsFixed(fractionDigits);
+      final parsed = double.tryParse(raw.toString());
+      if (parsed == null) return '';
+      return parsed.toStringAsFixed(fractionDigits);
+    }
+
+    final genderRaw = analysis.gender.trim().toLowerCase();
+    final mappedGender = switch (genderRaw) {
+      'male' => 'Male',
+      'female' => 'Femail',
+      _ => _selectedGender,
+    };
+
+    _ageController.text = analysis.age.toString();
+    _weightController.text = readNumStr(analysis.weight);
+    _heightController.text = readNumStr(analysis.height);
+    _muscleController.text = readNumStr(analysis.musclePercentage);
+    _fatController.text = readNumStr(analysis.fatPercentage);
+    _waterController.text = readNumStr(analysis.waterPercentage);
+    _bmrController.text = readNumStr(analysis.bmr, fractionDigits: 0);
+    setState(() => _selectedGender = mappedGender);
   }
 }
 
