@@ -20,17 +20,25 @@ class ChatBotRepoImpl implements ChatBotRepo {
       body: {'message': message},
       token: token,
     );
-    return response['reply'];
+    return response['reply']?.toString() ??
+        response['Reply']?.toString() ??
+        '';
   }
 
   @override
   Future<List<ChatMessageModel>> getHistory() async {
     final token = await localStorageService.getToken();
-    final response = await apiService.get(
+    final raw = await apiService.getList(
       endPoint: 'Chatbot/history',
       token: token,
     );
-    return (response as List).map((e) => ChatMessageModel.fromJson(e)).toList();
+    return raw
+        .map(
+          (e) => ChatMessageModel.fromJson(
+            Map<String, dynamic>.from(e as Map),
+          ),
+        )
+        .toList();
   }
 
   @override

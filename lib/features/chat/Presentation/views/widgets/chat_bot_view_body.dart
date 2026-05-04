@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/features/chat/Presentation/cubits/chat_bot_cubit.dart';
 import 'package:move_on/features/chat/Presentation/cubits/chat_bot_state.dart';
+import 'package:move_on/core/services/local_storage_service.dart';
+import 'package:move_on/features/chat/data/models/archived_chat_session.dart';
 import 'package:move_on/features/chat/data/models/chat_message_model.dart';
 import 'package:move_on/features/welcome/presentation/views/widgets/custom_back_button.dart';
 
@@ -55,6 +58,240 @@ class _ChatBotViewBodyState extends State<ChatBotViewBody> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<ChatBotCubit>().loadHistory();
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _archiveCurrentAndStartNew() async {
+    final storage = LocalStorageService();
+    final snapshot = List<ChatMessageModel>.from(_messages);
+    if (snapshot.isNotEmpty) {
+      final storedMessages = snapshot
+          .map(
+            (m) => ChatMessageModel(
+              role: m.role,
+              text: m.text,
+              createdAt: m.createdAt,
+            ),
+          )
+          .toList();
+      final session = ArchivedChatSession(
+        id: '${DateTime.now().millisecondsSinceEpoch}_${snapshot.length}',
+        title: ChatSessionTitle.fromMessages(storedMessages),
+        updatedAt: DateTime.now(),
+        messages: storedMessages,
+      );
+      final existing = await storage.loadArchivedChatSessions();
+      await storage.saveArchivedChatSessions([session, ...existing]);
+    }
+    if (!mounted) return;
+    await context.read<ChatBotCubit>().clearHistory();
+  }
+
+  Future<void> _confirmDeleteSession(
+    ArchivedChatSession session,
+    LocalStorageService storage,
+  ) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: const Color(0xFF2C2C2C),
+        title: const Text(
+          'Delete this chat?',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: Text(
+          '"${session.title}" will be removed from this device.',
+          style: const TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text('Delete', style: TextStyle(color: kPrimaryColor)),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+    final all = await storage.loadArchivedChatSessions();
+    await storage.saveArchivedChatSessions(
+      all.where((s) => s.id != session.id).toList(),
+    );
+  }
+
+  Future<void> _openHistorySheet() async {
+    final cubit = context.read<ChatBotCubit>();
+    await cubit.loadHistory();
+    if (!mounted) return;
+
+    final h = MediaQuery.sizeOf(context).height;
+    final storage = LocalStorageService();
+    var sessions = await storage.loadArchivedChatSessions();
+
+    if (!mounted) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: const Color(0xFF1A1A1A),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (sheetContext) {
+        return StatefulBuilder(
+          builder: (ctx, setModal) {
+            Future<void> reloadSessions() async {
+              sessions = await storage.loadArchivedChatSessions();
+              setModal(() {});
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.viewInsetsOf(sheetContext).bottom,
+              ),
+              child: SizedBox(
+                height: h * 0.72,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 14, 8, 8),
+                      child: Row(
+                        children: [
+                          const Expanded(
+                            child: Text(
+                              'Your chats',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ),
+                          TextButton.icon(
+                            onPressed: () async {
+                              Navigator.of(sheetContext).pop();
+                              await _archiveCurrentAndStartNew();
+                            },
+                            icon: Icon(Icons.add, color: kPrimaryColor, size: 22),
+                            label: Text(
+                              'New chat',
+                              style: TextStyle(
+                                color: kPrimaryColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        'Each chat is saved with an auto title. Tap to continue, trash to delete.',
+                        style: TextStyle(color: Colors.white38, fontSize: 12),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Divider(height: 1, color: Colors.white24),
+                    Expanded(
+                      child: sessions.isEmpty
+                          ? const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(24),
+                                child: Text(
+                                  'No saved chats yet.\nHave a conversation, then tap New chat to save it and start fresh.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white54,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : ListView.separated(
+                              padding: const EdgeInsets.only(bottom: 16),
+                              itemCount: sessions.length,
+                              separatorBuilder: (_, __) => const Divider(
+                                color: Colors.white12,
+                                height: 1,
+                              ),
+                              itemBuilder: (c, i) {
+                                final s = sessions[i];
+                                return ListTile(
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 4,
+                                  ),
+                                  title: Text(
+                                    s.title,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    '${s.messages.length} messages · '
+                                    '${_formatHistoryTime(s.updatedAt)}',
+                                    style: const TextStyle(
+                                      color: Colors.white38,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    Navigator.of(sheetContext).pop();
+                                    cubit.replaceAllMessages(s.messages);
+                                  },
+                                  trailing: IconButton(
+                                    icon: const Icon(
+                                      Icons.delete_outline,
+                                      color: Colors.white54,
+                                    ),
+                                    tooltip: 'Delete chat',
+                                    onPressed: () async {
+                                      await _confirmDeleteSession(s, storage);
+                                      await reloadSessions();
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  String _formatHistoryTime(DateTime t) {
+    return '${t.day}/${t.month}/${t.year} · '
+        '${t.hour.toString().padLeft(2, '0')}:'
+        '${t.minute.toString().padLeft(2, '0')}';
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
@@ -87,43 +324,68 @@ class _ChatBotViewBodyState extends State<ChatBotViewBody> {
           child: Column(
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 10,
+                ),
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    CustomBackButton(width: 48, height: 48),
-                    const SizedBox(width: 55),
+                    CustomBackButton(width: 40, height: 40),
                     const Text(
                       'Move On AI Coach',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 24,
+                        fontSize: 20,
                         fontFamily: 'Poppins',
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Your chats',
+                      onPressed: () => _openHistorySheet(),
+                      icon: Icon(
+                        FontAwesomeIcons.bars,
+                        color: Colors.white,
+                        size: 25,
                       ),
                     ),
                   ],
                 ),
               ),
               Expanded(
-                child: ListView.builder(
-                  controller: _scrollController,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  itemCount: _messages.length + (_isWaitingReply ? 1 : 0),
-                  itemBuilder: (context, index) {
-                    if (index == _messages.length && _isWaitingReply) {
-                      return const _TypingIndicator();
+                child: BlocBuilder<ChatBotCubit, ChatBotState>(
+                  builder: (context, state) {
+                    final loadingInitial =
+                        _messages.isEmpty &&
+                        !_isWaitingReply &&
+                        (state is ChatBotLoading || state is ChatBotInitial);
+                    if (loadingInitial) {
+                      return const Center(
+                        child: CircularProgressIndicator(color: kPrimaryColor),
+                      );
                     }
-                    final msg = _messages[index];
-                    final isUser = msg.role == 'user';
-                    return _ChatBubble(
-                      text: msg.text,
-                      isUser: isUser,
-                      time: msg.createdAt,
-                      orange: kPrimaryColor,
-                      bubbleDark: _bubbleDark,
+                    return ListView.builder(
+                      controller: _scrollController,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      itemCount: _messages.length + (_isWaitingReply ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index == _messages.length && _isWaitingReply) {
+                          return const _TypingIndicator();
+                        }
+                        final msg = _messages[index];
+                        final isUser = msg.role == 'user';
+                        return _ChatBubble(
+                          text: msg.text,
+                          isUser: isUser,
+                          time: msg.createdAt,
+                          orange: kPrimaryColor,
+                          bubbleDark: _bubbleDark,
+                        );
+                      },
                     );
                   },
                 ),

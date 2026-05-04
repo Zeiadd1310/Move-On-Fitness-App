@@ -47,4 +47,21 @@ class ChatBotCubit extends Cubit<ChatBotState> {
       emit(ChatBotError(e.toString()));
     }
   }
+
+  /// Restores a locally saved thread into the active UI (server context may differ).
+  void replaceAllMessages(List<ChatMessageModel> messages) {
+    final copy = messages
+        .map(
+          (m) => ChatMessageModel(
+            role: m.role,
+            text: m.text,
+            createdAt: m.createdAt,
+          ),
+        )
+        .toList();
+    _messages
+      ..clear()
+      ..addAll(copy);
+    emit(ChatBotSuccess(List.from(_messages)));
+  }
 }

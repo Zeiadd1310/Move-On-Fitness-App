@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:move_on/core/models/oauth_account_snapshot.dart';
 import 'package:move_on/core/utils/jwt_subject_reader.dart';
 import 'package:move_on/features/information/data/models/workout_plan_model.dart';
+import 'package:move_on/features/chat/data/models/archived_chat_session.dart';
 import 'package:move_on/features/nutrition/data/models/meals_model/meals_model.dart';
 
 class LocalStorageService {
@@ -31,6 +32,8 @@ class LocalStorageService {
   static const _workoutHistoryKey = 'workout_history';
   static const _nutritionIntroSeenKey = 'nutrition_intro_seen';
   static const _cachedNutritionPlanJsonKey = 'cached_nutrition_plan_json';
+  static const _archivedChatSessionsKey = 'archived_chat_sessions_v1';
+  static const _maxArchivedChatSessions = 50;
 
   Future<bool> isFirstTime() async {
     final prefs = await SharedPreferences.getInstance();
@@ -213,6 +216,41 @@ class LocalStorageService {
     } catch (e) {
       log('Error loading nutrition plan: $e');
       return null;
+    }
+  }
+
+  Future<List<ArchivedChatSession>> loadArchivedChatSessions() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_archivedChatSessionsKey);
+      if (raw == null || raw.isEmpty) return const [];
+      final decoded = jsonDecode(raw);
+      if (decoded is! List) return const [];
+      final out = decoded
+          .whereType<Map>()
+          .map(
+            (e) => ArchivedChatSession.fromJson(Map<String, dynamic>.from(e)),
+          )
+          .where((s) => s.id.isNotEmpty)
+          .toList();
+      out.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+      return out;
+    } catch (e) {
+      log('Error loading archived chat sessions: $e');
+      return const [];
+    }
+  }
+
+  Future<void> saveArchivedChatSessions(List<ArchivedChatSession> sessions) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final capped = sessions.take(_maxArchivedChatSessions).toList();
+      await prefs.setString(
+        _archivedChatSessionsKey,
+        jsonEncode(capped.map((e) => e.toJson()).toList()),
+      );
+    } catch (e) {
+      log('Error saving archived chat sessions: $e');
     }
   }
 
