@@ -8,4 +8,10 @@ abstract class InformationRepo {
     required String goal,
     required int availableDays,
   });
+
+  Future<Either<Failure, WorkoutPlan>> updateWorkoutPlan({
+    required int activityLevel,
+    required String goal,
+    required int availableDays,
+  });
 }

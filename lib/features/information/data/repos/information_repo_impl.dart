@@ -122,4 +122,37 @@ class InformationRepoImpl implements InformationRepo {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, WorkoutPlan>> updateWorkoutPlan({
+    required int activityLevel,
+    required String goal,
+    required int availableDays,
+  }) async {
+    try {
+      final token = await localStorageService.getToken();
+      final normalizedGoal = _normalizeGoal(goal);
+      final payload = {
+        'goal': normalizedGoal,
+        'availableDays': availableDays,
+        'activitylevel': activityLevel,
+      };
+      log('📤 UPDATE WORKOUT PAYLOAD: $payload');
+
+      final envelope = await apiService.put(
+        endPoint: 'Workout/UpdateWorkoutPlan',
+        body: payload,
+        token: token,
+      );
+      final persisted = await _parseAndPersistPlan(envelope);
+      if (persisted == null) {
+        return Left(ServerFailure('Invalid workout plan response format'));
+      }
+      return Right(persisted);
+    } on DioException catch (e) {
+      return Left(ServerFailure.fromDioError(e));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
 }

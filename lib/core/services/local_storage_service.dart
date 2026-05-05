@@ -34,6 +34,9 @@ class LocalStorageService {
   static const _cachedNutritionPlanJsonKey = 'cached_nutrition_plan_json';
   static const _archivedChatSessionsKey = 'archived_chat_sessions_v1';
   static const _maxArchivedChatSessions = 50;
+  static const _workoutPlanGoalKey = 'workout_plan_goal';
+  static const _workoutPlanAvailableDaysKey = 'workout_plan_available_days';
+  static const _workoutPlanActivityLevelKey = 'workout_plan_activity_level';
 
   Future<bool> isFirstTime() async {
     final prefs = await SharedPreferences.getInstance();
@@ -183,6 +186,42 @@ class LocalStorageService {
       await prefs.remove(_cachedWorkoutPlanJsonKey);
     } catch (e) {
       log('Error clearing workout plan: $e');
+    }
+  }
+
+  Future<void> saveWorkoutPlanInputs({
+    required String goal,
+    required int availableDays,
+    required int activityLevel,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_workoutPlanGoalKey, goal);
+      await prefs.setInt(_workoutPlanAvailableDaysKey, availableDays);
+      await prefs.setInt(_workoutPlanActivityLevelKey, activityLevel);
+    } catch (e) {
+      log('Error saving workout plan inputs: $e');
+    }
+  }
+
+  Future<({String goal, int availableDays, int activityLevel})?>
+  loadWorkoutPlanInputs() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final goal = prefs.getString(_workoutPlanGoalKey);
+      final availableDays = prefs.getInt(_workoutPlanAvailableDaysKey);
+      final activityLevel = prefs.getInt(_workoutPlanActivityLevelKey);
+      if (goal == null || goal.trim().isEmpty) return null;
+      if (availableDays == null) return null;
+      if (activityLevel == null) return null;
+      return (
+        goal: goal.trim(),
+        availableDays: availableDays,
+        activityLevel: activityLevel,
+      );
+    } catch (e) {
+      log('Error loading workout plan inputs: $e');
+      return null;
     }
   }
 

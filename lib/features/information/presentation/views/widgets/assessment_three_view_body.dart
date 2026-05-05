@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:move_on/core/services/local_storage_service.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/helpers/responsive_helper.dart';
 import 'package:move_on/core/utils/functions/styles.dart';
@@ -192,6 +193,11 @@ class _AssessmentThreeViewBodyState extends State<AssessmentThreeViewBody> {
                                   goal: widget.goal,
                                   availableDays: _selectedDays,
                                 );
+                            LocalStorageService().saveWorkoutPlanInputs(
+                              goal: widget.goal,
+                              availableDays: _selectedDays,
+                              activityLevel: widget.activityLevel,
+                            );
                           },
                         ),
                 ],
