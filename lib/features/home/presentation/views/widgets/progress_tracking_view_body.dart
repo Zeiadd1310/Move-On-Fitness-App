@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:move_on/constants.dart';
 import 'package:move_on/core/services/local_storage_service.dart';
+import 'package:move_on/core/services/pedometer_step_tracker.dart';
 import 'package:move_on/core/utils/functions/api_service.dart';
 import 'package:move_on/core/utils/functions/app_router.dart';
 import 'package:move_on/core/utils/helpers/month_utils.dart';
@@ -36,6 +39,68 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
   String _pendingGender = '';
   String? _token;
   List<Map<String, dynamic>> _workoutHistory = [];
+  final PedometerStepTracker _pedometer = PedometerStepTracker();
+  PedometerSnapshot? _stepSnapshot;
+  String? _pedometerError;
+  bool _pedometerStarting = false;
+
+  @override
+  void dispose() {
+    unawaited(_pedometer.stop());
+    super.dispose();
+  }
+
+  Future<void> _startPedometerIfNeeded() async {
+    if (!PedometerStepTracker.isSupported) {
+      if (mounted) {
+        setState(() {
+          _pedometerError =
+              'Step counting is available on Android and iOS devices.';
+        });
+      }
+      return;
+    }
+    if (_pedometer.isListening || _pedometerStarting) return;
+    setState(() => _pedometerStarting = true);
+    final ok = await PedometerStepTracker.ensurePermission();
+    if (!mounted) return;
+    if (!ok) {
+      setState(() {
+        _pedometerStarting = false;
+        _pedometerError =
+            'Activity recognition permission is required to count steps.';
+      });
+      return;
+    }
+    setState(() {
+      _pedometerError = null;
+      _pedometerStarting = true;
+    });
+    await _pedometer.start(
+      (snap) {
+        if (mounted) {
+          setState(() {
+            _stepSnapshot = snap;
+            _pedometerStarting = false;
+          });
+        }
+      },
+      onError: (e) {
+        if (mounted) {
+          setState(() {
+            _pedometerError = e.toString();
+            _pedometerStarting = false;
+          });
+        }
+      },
+    );
+    if (mounted) setState(() => _pedometerStarting = false);
+  }
+
+  Future<void> _stopPedometer() async {
+    await _pedometer.stop();
+    if (mounted) setState(() => _stepSnapshot = null);
+  }
 
   @override
   void initState() {
@@ -259,7 +324,10 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
                   children: [
                     Expanded(
                       child: GestureDetector(
-                        onTap: () => setState(() => _selectedTab = 0),
+                        onTap: () {
+                          setState(() => _selectedTab = 0);
+                          unawaited(_stopPedometer());
+                        },
                         child: Container(
                           padding: EdgeInsets.symmetric(
                             vertical: screenHeight * 0.013,
@@ -288,7 +356,10 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
                     const SizedBox(width: 20),
                     Expanded(
                       child: GestureDetector(
-                        onTap: () => setState(() => _selectedTab = 1),
+                        onTap: () {
+                          setState(() => _selectedTab = 1);
+                          unawaited(_startPedometerIfNeeded());
+                        },
                         child: Container(
                           padding: EdgeInsets.symmetric(
                             vertical: screenHeight * 0.013,
@@ -716,42 +787,22 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
     );
   }
 
-  // ── Charts Tab ──────────────────────────────────────────────────────────
+  // ── Charts Tab (device pedometer) ───────────────────────────────────────
   Widget _buildChartsTab(ProgressState state) {
-    // Build chart data from API
-    List<Map<String, dynamic>> chartData = [
-      {'label': 'Jan', 'value': 130},
-      {'label': 'Feb', 'value': 140},
-      {'label': 'Mar', 'value': 130},
-      {'label': 'Apr', 'value': 110},
-    ];
+    final now = DateTime.now();
+    final chartData = _stepSnapshot?.chartData ??
+        List.generate(4, (i) {
+          final ref = DateTime(now.year, now.month - (3 - i), 1);
+          return {
+            'label': MonthUtils.getMonthName(ref.month).substring(0, 3),
+            'value': 0,
+          };
+        });
 
-    List<ProgressEntryModel> historyItems = [];
-
-    if (state is ProgressLoaded) {
-      // Use chartData from API (weight by month)
-      if (state.chartData.isNotEmpty) {
-        final Map<String, double> monthWeights = {};
-        for (final entry in state.chartData) {
-          if (entry.date == null) continue;
-          final d = DateTime.tryParse(entry.date!);
-          if (d == null) continue;
-          final monthLabel = MonthUtils.getMonthName(d.month).substring(0, 3);
-          // Average if multiple entries same month
-          if (!monthWeights.containsKey(monthLabel)) {
-            monthWeights[monthLabel] = entry.weight ?? 0;
-          }
-        }
-        if (monthWeights.isNotEmpty) {
-          chartData = monthWeights.entries
-              .map((e) => {'label': e.key, 'value': e.value.toInt()})
-              .toList();
-        }
-      }
-
-      // History for the steps cards — show last 3 entries
-      historyItems = state.history.take(3).toList();
-    }
+    final rows = _stepSnapshot?.recentDays ?? const <PedometerDayRow>[];
+    final showLoading =
+        PedometerStepTracker.isSupported &&
+        (_pedometerStarting || (_stepSnapshot == null && _pedometerError == null));
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -788,67 +839,75 @@ class _ProgressTrackingViewBodyState extends State<ProgressTrackingViewBody> {
             ),
           ),
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 8),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 8.0),
+          child: Text(
+            'Steps from your phone (sensor). Duration is an estimate from step count.',
+            style: TextStyle(
+              color: Colors.white54,
+              fontSize: 12,
+              fontFamily: 'Poppins',
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        if (showLoading)
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8),
+            child: LinearProgressIndicator(
+              color: kPrimaryColor,
+              backgroundColor: Colors.white10,
+            ),
+          ),
+        if (_pedometerError != null) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
+            child: Text(
+              _pedometerError!,
+              style: const TextStyle(
+                color: Colors.orangeAccent,
+                fontSize: 13,
+                fontFamily: 'Poppins',
+              ),
+            ),
+          ),
+        ],
 
-        // Bar chart
+        // Bar chart — monthly totals from recorded daily steps
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: StepsBarChart(data: chartData),
         ),
         const SizedBox(height: 24),
 
-        // History cards
+        // Last 3 days from pedometer history
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Column(
-            children: state is ProgressLoaded && historyItems.isNotEmpty
-                ? historyItems.asMap().entries.map((entry) {
-                    final item = entry.value;
-                    final d = item.date != null
-                        ? DateTime.tryParse(item.date!)
-                        : null;
-                    final dayName = d != null ? _weekdayShort(d.weekday) : '--';
-                    final dayNum = d != null ? '${d.day}' : '--';
-                    final stepsVal = item.weight != null
-                        ? '${item.weight!.toStringAsFixed(1)} kg'
-                        : '--';
-                    final fatVal = item.fatPercentage != null
-                        ? '${item.fatPercentage!.toStringAsFixed(1)}%'
-                        : '--';
-
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12.0),
-                      child: StepsActivityCard(
-                        day: dayName,
-                        date: dayNum,
-                        steps: stepsVal,
-                        duration: fatVal,
-                      ),
-                    );
-                  }).toList()
-                : [
-                    // Fallback hardcoded
-                    const StepsActivityCard(
-                      day: 'Thu',
-                      date: '14',
-                      steps: '3,679',
-                      duration: '1hr40m',
-                    ),
-                    const SizedBox(height: 12),
-                    const StepsActivityCard(
-                      day: 'Wen',
-                      date: '20',
-                      steps: '5,789',
-                      duration: '1hr20m',
-                    ),
-                    const SizedBox(height: 12),
-                    const StepsActivityCard(
-                      day: 'Sat',
-                      date: '22',
-                      steps: '1,859',
-                      duration: '1hr10m',
-                    ),
-                  ],
+            children: [
+              if (rows.isEmpty && !showLoading && _pedometerError == null)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24),
+                  child: Text(
+                    'No step data yet. Grant permission and walk to update.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.white54, fontSize: 14),
+                  ),
+                ),
+              ...rows.map((row) {
+                final dayName = _weekdayShort(row.date.weekday);
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12.0),
+                  child: StepsActivityCard(
+                    day: dayName,
+                    date: '${row.date.day}',
+                    steps: PedometerSnapshot.formatSteps(row.steps),
+                    duration: PedometerSnapshot.formatWalkDuration(row.steps),
+                  ),
+                );
+              }),
+            ],
           ),
         ),
 

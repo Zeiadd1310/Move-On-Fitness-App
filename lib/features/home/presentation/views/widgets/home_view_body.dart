@@ -27,6 +27,8 @@ class HomeViewBody extends StatefulWidget {
 
 class _HomeViewBodyState extends State<HomeViewBody> {
   String _greetingName = 'Athlete';
+  WorkoutPlan? _workoutPlan;
+  bool _workoutPlanLoading = true;
 
   static const String _cardioFallbackImage = 'assets/images/home3.png';
 
@@ -179,6 +181,26 @@ class _HomeViewBodyState extends State<HomeViewBody> {
   void initState() {
     super.initState();
     _loadGreetingName();
+    _loadWorkoutPlan();
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    // Reload when returning from workout plan (e.g. after regenerate).
+    _loadWorkoutPlan(showLoading: false);
+  }
+
+  Future<void> _loadWorkoutPlan({bool showLoading = true}) async {
+    if (showLoading) {
+      setState(() => _workoutPlanLoading = true);
+    }
+    final plan = await LocalStorageService().loadWorkoutPlan();
+    if (!mounted) return;
+    setState(() {
+      _workoutPlan = plan;
+      _workoutPlanLoading = false;
+    });
   }
 
   Future<void> _loadGreetingName() async {
@@ -338,10 +360,20 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.012),
-                FutureBuilder<WorkoutPlan?>(
-                  future: LocalStorageService().loadWorkoutPlan(),
-                  builder: (context, snap) {
-                    final plan = snap.data;
+                Builder(
+                  builder: (context) {
+                    if (_workoutPlanLoading) {
+                      return SizedBox(
+                        height: isSmallScreen ? 120 : 140,
+                        child: const Center(
+                          child: CircularProgressIndicator(
+                            color: kPrimaryColor,
+                          ),
+                        ),
+                      );
+                    }
+
+                    final plan = _workoutPlan;
                     final items = plan == null
                         ? const <_HomeRecommendation>[]
                         : _pickCardioRecommendations(plan);
@@ -472,10 +504,20 @@ class _HomeViewBodyState extends State<HomeViewBody> {
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.04),
-                FutureBuilder<WorkoutPlan?>(
-                  future: LocalStorageService().loadWorkoutPlan(),
-                  builder: (context, snap) {
-                    final plan = snap.data;
+                Builder(
+                  builder: (context) {
+                    if (_workoutPlanLoading) {
+                      return const SizedBox(
+                        height: 120,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: kPrimaryColor,
+                          ),
+                        ),
+                      );
+                    }
+
+                    final plan = _workoutPlan;
                     final days = plan != null && plan.weeks.isNotEmpty
                         ? plan.weeks.first.days
                         : const <WorkoutDay>[];
