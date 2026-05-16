@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:move_on/core/services/firebase_messaging_service.dart';
 import 'package:move_on/core/services/local_notifications_service.dart';
@@ -18,6 +19,8 @@ void main() async {
     await LocalNotificationsService.instance.init();
     await FirebaseMessagingService.instance.init();
   }
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+
   runApp(const MoveOn());
 }
 

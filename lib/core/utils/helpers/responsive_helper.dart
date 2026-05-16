@@ -92,7 +92,7 @@ class ResponsiveHelper {
     double? tablet,
     double? desktop,
   }) {
-    if (isSmallScreen) return small ?? width * 0.85;
+    if (isSmallScreen) return small ?? baseWidth;
     if (isMediumScreen) return medium ?? baseWidth;
     if (isTablet) return tablet ?? baseWidth * 1.1;
     return desktop ?? baseWidth * 1.2;

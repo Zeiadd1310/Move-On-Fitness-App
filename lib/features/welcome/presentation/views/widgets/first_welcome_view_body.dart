@@ -10,7 +10,7 @@ class FirstWelcomeViewBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return WelcomeScreenTemplate(
       backgroundImage: AssetsData.firstWelcomeBackground,
-      title: 'Personalized       Fitness Plans',
+      title: 'Personalized\nFitness Plans',
       subtitle: 'Choose your own fitness journey with AI. 🏋️‍♀️',
       progress: 0.2,
       nextRoute: AppRouter.kSecondWelcome,
